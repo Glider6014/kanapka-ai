@@ -1,18 +1,15 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import Recipe from "@/models/Recipe";
 import Ingredient from "@/models/Ingredient";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export async function GET(req: NextRequest) {
   await connectDB();
 
   const testUser = new User({
-    username: "testuser",
-    email: "testuser@example.com",
+    username: "testuser3",
+    email: "testuser@example.com3",
     password: "securepassword",
     permissions: ["read:recipes"],
     experience: 0,
@@ -21,7 +18,7 @@ export default async function handler(
   await testUser.save();
 
   const testIngredient = new Ingredient({
-    name: "Test Ingredient",
+    name: "Test Ingredient3",
     unit: "g",
     nutrition: {
       calories: 100,
@@ -37,7 +34,7 @@ export default async function handler(
   await testIngredient.save();
 
   const testRecipe = new Recipe({
-    name: "Test Recipe",
+    name: "Test Recipe3",
     description: "This is a test recipe.",
     ingredients: [
       {
@@ -55,5 +52,5 @@ export default async function handler(
 
   await testRecipe.save();
 
-  res.status(200).json({ message: "Successfully created test data." });
+  return NextResponse.json({ message: "Successfully created test data." });
 }
