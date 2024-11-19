@@ -1,13 +1,16 @@
+import type { IngredientType } from "@/models/Ingredient";
+
 export type IngredientInput = {
-  ingredient: string;
+  ingredient: string; // Can contain comma-separated ingredients
 };
 
-export type IngredientAnalysisResult = {
-  name: string;
-  nutrition: {
-    calories: string;
-    protein: string;
-    carbs: string;
-    fat: string;
-  };
+export type IngredientAnalysisResult = IngredientType;
+export type IngredientAnalysisResults = IngredientType[];
+
+export type ValidationResult = {
+  ingredient: string;
+  valid: boolean;
+  exists: boolean;
 };
+
+export type ValidationResults = ValidationResult[];

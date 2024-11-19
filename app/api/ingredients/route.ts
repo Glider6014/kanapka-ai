@@ -1,40 +1,67 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { NextRequest, NextResponse } from "next/server";
-import { IngredientInput, IngredientAnalysisResult } from "./types";
+import { IngredientInput, IngredientAnalysisResults } from "./types";
+import Ingredient from "@/models/Ingredient";
+import connectMongo from "@/lib/connectToDatabase";
 
-const prompt = ChatPromptTemplate.fromTemplate(`
-Analyze the given food ingredient and return:
-1. The correct name in English
-2. Nutritional values per 100g of the product
-
-Ingredient: {ingredient}
-
-Respond ONLY with a valid JSON string in this exact format (no other text):
-{{
-  "name": "[english name]",
-  "nutrition": {{
-    "calories": "[number] kcal",
-    "protein": "[number] g",
-    "carbs": "[number] g",
-    "fat": "[number] g"
-  }}
-}}
-`);
-
+// Initialize model first
 const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
   temperature: 0,
   openAIApiKey: process.env.OPENAI_API_KEY,
 });
 
+// Then define prompts and chains
+const prompt = ChatPromptTemplate.fromTemplate(`
+Analyze the given food ingredient(s) and return an array of ingredients.
+If multiple ingredients are provided, they are separated by commas.
+
+For each ingredient return:
+1. The correct name in English
+2. The unit of the ingredient (g, ml, or piece)
+3. Nutritional values per 100g, 100ml, or per piece of the product, depending on the unit. Include calories, protein, fats, carbs, fiber, sugar, and sodium.
+
+Ingredient(s): {ingredient}
+
+Respond ONLY with a valid JSON array string in this exact format (no other text):
+[
+  {{
+    "name": "[english name]",
+    "unit": "[g/ml/piece]",
+    "nutrition": {{
+      "calories": [number],
+      "protein": [number],
+      "fats": [number],
+      "carbs": [number],
+      "fiber": [number],
+      "sugar": [number],
+      "sodium": [number]
+    }}
+}},
+]
+`);
+
 const chain = prompt.pipe(model);
+
+export async function GET(req: NextRequest) {
+  try {
+    await connectMongo();
+    const ingredients = await Ingredient.find({});
+    return NextResponse.json(ingredients, { status: 200 });
+  } catch (error) {
+    console.error("Error:", error);
+    return NextResponse.json(
+      { error: "Server error occurred" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
     const body: IngredientInput = await req.json();
     const { ingredient } = body;
-    console.log("Ingredient:", ingredient);
 
     if (!ingredient) {
       return NextResponse.json(
@@ -43,12 +70,32 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await chain.invoke({ ingredient });
-    const parsedResult: IngredientAnalysisResult = JSON.parse(
-      result.content.toString()
-    );
+    await connectMongo();
+    const ingredients = ingredient.split(",").map((i) => i.trim());
+    const results: IngredientAnalysisResults = [];
 
-    return NextResponse.json(parsedResult, { status: 200 });
+    for (const ing of ingredients) {
+      const existingIngredient = await Ingredient.findOne({
+        name: { $regex: new RegExp(ing, "i") },
+      });
+
+      if (existingIngredient) {
+        results.push(existingIngredient);
+        continue;
+      }
+
+      const analysis = await chain.invoke({ ingredient: ing });
+      const parsedIngredients: IngredientAnalysisResults = JSON.parse(
+        analysis.content.toString()
+      );
+
+      for (const newIngredient of parsedIngredients) {
+        const savedIngredient = await Ingredient.create(newIngredient);
+        results.push(savedIngredient);
+      }
+    }
+
+    return NextResponse.json({ results }, { status: 200 });
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(
