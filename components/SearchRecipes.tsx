@@ -8,37 +8,75 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 
 export const SearchRecipes = () => {
   return (
     <div className="container mx-auto p-4">
       {/* Navigation Bar */}
-      <nav className="mb-8 flex items-center justify-between">
+      <nav className="mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="text-xl font-bold">Kanapka AI</div>
-        <div className="flex gap-4">
-          <Button variant="default">WYSZUKAJ RECEPTURY</Button>
-          <Button variant="outline">LOGOWANIE</Button>
-          <Button variant="outline">REJESTRACJA</Button>
-        </div>
+        <NavigationMenu className="w-full">
+          <NavigationMenuList className="flex flex-col md:flex-row gap-2 w-full">
+            <NavigationMenuItem className="w-full">
+              <NavigationMenuLink asChild>
+                <Button
+                  variant="default"
+                  className="bg-black text-white hover:bg-gray-800 w-full md:w-auto"
+                >
+                  WYSZUKAJ RECEPTURY
+                </Button>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem className="w-full">
+              <NavigationMenuLink asChild>
+                <Button
+                  variant="outline"
+                  className="bg-white text-black hover:bg-gray-100 w-full md:w-auto"
+                >
+                  LOGOWANIE
+                </Button>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem className="w-full">
+              <NavigationMenuLink asChild>
+                <Button
+                  variant="outline"
+                  className="bg-white text-black hover:bg-gray-100 w-full md:w-auto"
+                >
+                  REJESTRACJA
+                </Button>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
       </nav>
 
       {/* Main Content */}
-      <div className="flex gap-4">
+      <div className="flex flex-col md:flex-row gap-4">
         {/* Left Section - Textarea */}
-        <div className="w-2/5">
+        <div className="w-full md:w-2/5">
           <Textarea
-            className="min-h-[400px]"
+            className="min-h-[150px] md:min-h-[400px] w-full"
             placeholder="Wpisz składniki..."
           />
-          <div className="mt-4 flex justify-between">
-            <Button variant="outline">Wyczyść</Button>
-            <Button>Szukaj</Button>
+          <div className="mt-4 flex flex-col md:flex-row justify-between gap-2">
+            <Button variant="outline" className="w-full md:w-auto">
+              Wyczyść
+            </Button>
+            <Button className="w-full md:w-auto">Szukaj</Button>
           </div>
         </div>
 
         {/* Right Section - Table */}
-        <div className="w-3/5">
-          <Table>
+        <div className="w-full md:w-3/5 mt-4 md:mt-0">
+          <Table className="w-full">
             <TableHeader>
               <TableRow>
                 <TableHead>NAZWA RECEPTURY</TableHead>
