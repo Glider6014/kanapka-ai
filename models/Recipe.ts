@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 
 const RecipeSchema = new Schema({
   name: { type: String, required: true },
@@ -31,5 +31,11 @@ const RecipeSchema = new Schema({
   createdAt: { type: Date, default: Date.now, required: true },
 });
 
-const Recipe = models.Recipe || model("Recipe", RecipeSchema);
+type RecipeType = InferSchemaType<typeof RecipeSchema>;
+
+export type { RecipeType };
+
+const Recipe =
+  (models.Recipe as Model<RecipeType>) || model("Recipe", RecipeSchema);
+
 export default Recipe;

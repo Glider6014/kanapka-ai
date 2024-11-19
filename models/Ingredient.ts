@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 
 const IngredientSchema = new Schema({
   name: { type: String, required: true },
@@ -18,5 +18,12 @@ const IngredientSchema = new Schema({
   },
 });
 
-const Ingredient = models.Ingredient || model("Ingredient", IngredientSchema);
+type IngredientType = InferSchemaType<typeof IngredientSchema>;
+
+export type { IngredientType };
+
+const Ingredient =
+  (models.Ingredient as Model<IngredientType>) ||
+  model("Ingredient", IngredientSchema);
+
 export default Ingredient;
