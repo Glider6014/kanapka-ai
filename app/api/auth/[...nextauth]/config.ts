@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 
-export default NextAuth({
+const NextAuthConfig = NextAuth({
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -52,14 +52,17 @@ export default NextAuth({
         token.username = user.username;
         token.permissions = user.permissions;
       }
+
       return token;
     },
+
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id;
         session.user.username = token.username;
         session.user.permissions = token.permissions;
       }
+
       return session;
     },
   },
@@ -68,3 +71,5 @@ export default NextAuth({
     error: "/auth/error",
   },
 });
+
+export default NextAuthConfig;
