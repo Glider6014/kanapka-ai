@@ -1,7 +1,7 @@
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 
 // Add system user constant
-export const SYSTEM_USER_ID = "SYSTEM";
+export const SYSTEM_USER_ID = "673d91aca9cfa3a2e6ef2b23";
 
 const RecipeSchema = new Schema({
   name: { type: String, required: true },

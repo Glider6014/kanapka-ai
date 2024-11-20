@@ -1,15 +1,41 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export const SearchRecipes = () => {
+  const [ingredients, setIngredients] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSearch = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/recipes/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ingredients: ingredients.split(","), count: 5 }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        // Przekieruj lub odśwież listę przepisów po wyszukaniu
+        router.refresh();
+      } else {
+        console.error("Błąd podczas generowania przepisów");
+      }
+    } catch (error) {
+      console.error("Błąd:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClear = () => {
+    setIngredients("");
+  };
+
   return (
     <div className="container mx-auto p-4">
       {/* Navigation Bar */}
@@ -29,29 +55,21 @@ export const SearchRecipes = () => {
           <Textarea
             className="min-h-[400px]"
             placeholder="Wpisz składniki..."
+            value={ingredients}
+            onChange={(e) => setIngredients(e.target.value)}
           />
           <div className="mt-4 flex justify-between">
-            <Button variant="outline">Wyczyść</Button>
-            <Button>Szukaj</Button>
+            <Button variant="outline" onClick={handleClear}>
+              Wyczyść
+            </Button>
+            <Button onClick={handleSearch} disabled={isLoading}>
+              {isLoading ? "Szukam..." : "Szukaj"}
+            </Button>
           </div>
         </div>
 
-        {/* Right Section - Table */}
-        <div className="w-3/5">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>NAZWA RECEPTURY</TableHead>
-                <TableHead>TRUDNOŚĆ POTRAWY</TableHead>
-                <TableHead>ŁĄCZNY CZAS PRZYGOTOWANIA</TableHead>
-                <TableHead>SZCZEGÓŁY</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {/* Table content will be added dynamically */}
-            </TableBody>
-          </Table>
-        </div>
+        {/* Right Section */}
+        {/* Usuń tabelę wyników z tego komponentu */}
       </div>
     </div>
   );
