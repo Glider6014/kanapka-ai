@@ -2,8 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { RecipeType } from "@/models/Recipe";
 
-export const SearchRecipes = () => {
+type SearchRecipesProps = {
+  setRecipes: React.Dispatch<React.SetStateAction<RecipeType[]>>;
+};
+
+export const SearchRecipes = ({ setRecipes }: SearchRecipesProps) => {
   const [ingredients, setIngredients] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -20,7 +25,7 @@ export const SearchRecipes = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        // Przekieruj lub odśwież listę przepisów po wyszukaniu
+        setRecipes(data.recipes);
         router.refresh();
       } else {
         console.error("Błąd podczas generowania przepisów");
@@ -38,7 +43,6 @@ export const SearchRecipes = () => {
 
   return (
     <div className="container mx-auto p-4">
-      {/* Navigation Bar */}
       <nav className="mb-8 flex items-center justify-between">
         <div className="text-xl font-bold">Kanapka AI</div>
         <div className="flex gap-4">
@@ -47,10 +51,7 @@ export const SearchRecipes = () => {
           <Button variant="outline">REJESTRACJA</Button>
         </div>
       </nav>
-
-      {/* Main Content */}
       <div className="flex gap-4">
-        {/* Left Section - Textarea */}
         <div className="w-2/5">
           <Textarea
             className="min-h-[400px]"
@@ -67,9 +68,6 @@ export const SearchRecipes = () => {
             </Button>
           </div>
         </div>
-
-        {/* Right Section */}
-        {/* Usuń tabelę wyników z tego komponentu */}
       </div>
     </div>
   );
