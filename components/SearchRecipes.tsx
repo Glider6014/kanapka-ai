@@ -19,8 +19,13 @@ import { Navbar } from "@/components/ui/dropdown-menu";
 import { Logo } from "@/components/Logo";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { RecipeType } from "@/models/Recipe";
 
-export const SearchRecipes = () => {
+type SearchRecipesProps = {
+  setRecipes: React.Dispatch<React.SetStateAction<RecipeType[]>>;
+};
+
+export const SearchRecipes = ({ setRecipes }: SearchRecipesProps) => {
   const [ingredients, setIngredients] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -37,7 +42,7 @@ export const SearchRecipes = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        // Przekieruj lub odśwież listę przepisów po wyszukaniu
+        setRecipes(data.recipes);
         router.refresh();
       } else {
         console.error("Błąd podczas generowania przepisów");
@@ -55,7 +60,6 @@ export const SearchRecipes = () => {
 
   return (
     <div className="container mx-auto p-4">
-      {/* Navigation Bar */}
       <nav className="mb-4 mt-1 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex justify-between w-full md:w-auto">
           {/* Logo */}
