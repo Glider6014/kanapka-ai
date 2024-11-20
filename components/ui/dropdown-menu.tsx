@@ -62,7 +62,7 @@ export const Navbar = ({}: NavbarProps) => {
                 className="block py-2 px-3 text-white bg-gradient-to-r from-purple-700 to-orange-500 rounded dark:bg-blue-600"
                 aria-current="page"
               >
-                Home
+                Search recipes
               </a>
             </li>
             <li>
@@ -70,7 +70,7 @@ export const Navbar = ({}: NavbarProps) => {
                 href="#"
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
-                Services
+                Login
               </a>
             </li>
             <li>
@@ -78,15 +78,7 @@ export const Navbar = ({}: NavbarProps) => {
                 href="#"
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
-                Pricing
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                Contact
+                Register
               </a>
             </li>
           </ul>

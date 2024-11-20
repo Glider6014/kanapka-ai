@@ -42,7 +42,7 @@ export const SearchRecipes = () => {
                     variant="default"
                     className="text-white bg-gradient-to-r from-purple-700 to-orange-500 hover:opacity-90 transition-opacity duration-200 w-full md:w-auto"
                   >
-                    WYSZUKAJ RECEPTURY
+                    SEARCH RECIPES
                   </Button>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -52,7 +52,7 @@ export const SearchRecipes = () => {
                     variant="outline"
                     className="bg-white text-black hover:bg-gray-100 w-full md:w-auto"
                   >
-                    LOGOWANIE
+                    LOGIN
                   </Button>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -62,7 +62,7 @@ export const SearchRecipes = () => {
                     variant="outline"
                     className="bg-white text-black hover:bg-gray-100 w-full md:w-auto"
                   >
-                    REJESTRACJA
+                    REGISTER
                   </Button>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -77,13 +77,13 @@ export const SearchRecipes = () => {
         <div className="w-full md:w-2/5">
           <Textarea
             className="min-h-[150px] md:min-h-[400px] w-full"
-            placeholder="Wpisz składniki..."
+            placeholder="Enter your ingredients here..."
           />
           <div className="mt-4 flex flex-col md:flex-row justify-between gap-2">
             <Button variant="outline" className="w-full md:w-auto">
-              Wyczyść
+              Clear
             </Button>
-            <Button className="w-full md:w-auto">Szukaj</Button>
+            <Button className="w-full md:w-auto">Search</Button>
           </div>
         </div>
 
@@ -92,10 +92,10 @@ export const SearchRecipes = () => {
           <Table className="w-full">
             <TableHeader>
               <TableRow>
-                <TableHead>NAZWA RECEPTURY</TableHead>
-                <TableHead>TRUDNOŚĆ POTRAWY</TableHead>
-                <TableHead>ŁĄCZNY CZAS PRZYGOTOWANIA</TableHead>
-                <TableHead>SZCZEGÓŁY</TableHead>
+                <TableHead>RECIPE NAME</TableHead>
+                <TableHead>DIFFICULTY</TableHead>
+                <TableHead>PREPARATION TIME</TableHead>
+                <TableHead>DETAILS</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>{/* From database */}</TableBody>
