@@ -80,10 +80,10 @@ export const SearchRecipes = () => {
             placeholder="Enter your ingredients here..."
           />
           <div className="mt-4 flex flex-col md:flex-row justify-between gap-2">
-            <Button variant="outline" className="w-full md:w-auto">
+            <Button variant="outline" className="w-full md:w-1/2">
               Clear
             </Button>
-            <Button className="w-full md:w-auto">Search</Button>
+            <Button className="w-full md:w-1/2">Search</Button>
           </div>
         </div>
 
