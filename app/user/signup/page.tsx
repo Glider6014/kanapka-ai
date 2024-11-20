@@ -201,7 +201,7 @@ export default function Home() {
                   <p className="text-sm text-gray-700">
                     Already have an account?{" "}
                     <a
-                      href="#"
+                      href="/user/signin"
                       className="text-purple-700 font-bold hover:underline"
                     >
                       Log in

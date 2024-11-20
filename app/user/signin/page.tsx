@@ -136,13 +136,13 @@ export default function Home() {
                 {/* Link to registration form */}
                 <div className="w-full border-t border-gray-200 mt-6 pt-4 text-center">
                   <p className="text-sm text-gray-700">
-                    <a href="#" className="text-gray-500">
-                      New?{" "}
+                    New?{" "}
+                    <a href="/user/signup" className="text-gray-500">
                       <span className="text-purple-700 font-bold hover:underline">
                         Sign up
                       </span>{" "}
-                      - and make your sandwich!
                     </a>
+                    - and make your sandwich!
                   </p>
                 </div>
               </Form>
