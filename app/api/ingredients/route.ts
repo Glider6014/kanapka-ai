@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { IngredientInput, IngredientAnalysisResults } from "./types";
 import Ingredient from "@/models/Ingredient";
 import connectMongo from "@/lib/connectToDatabase";
+import { analyzeIngredients } from "@/lib/ingredients";
 
 // Initialize model first
 const model = new ChatOpenAI({
@@ -71,29 +72,7 @@ export async function POST(req: NextRequest) {
     }
 
     await connectMongo();
-    const ingredients = ingredient.split(",").map((i) => i.trim());
-    const results: IngredientAnalysisResults = [];
-
-    for (const ing of ingredients) {
-      const existingIngredient = await Ingredient.findOne({
-        name: { $regex: new RegExp(ing, "i") },
-      });
-
-      if (existingIngredient) {
-        results.push(existingIngredient);
-        continue;
-      }
-
-      const analysis = await chain.invoke({ ingredient: ing });
-      const parsedIngredients: IngredientAnalysisResults = JSON.parse(
-        analysis.content.toString()
-      );
-
-      for (const newIngredient of parsedIngredients) {
-        const savedIngredient = await Ingredient.create(newIngredient);
-        results.push(savedIngredient);
-      }
-    }
+    const results = await analyzeIngredients(ingredient);
 
     return NextResponse.json({ results }, { status: 200 });
   } catch (error) {
