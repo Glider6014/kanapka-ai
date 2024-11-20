@@ -1,5 +1,8 @@
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 
+// Add system user constant
+export const SYSTEM_USER_ID = "SYSTEM";
+
 const RecipeSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
@@ -24,9 +27,14 @@ const RecipeSchema = new Schema({
   },
   experience: { type: Number, required: true, default: 10 },
   createdBy: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
+    type: Schema.Types.Mixed,
     required: true,
+    validate: {
+      validator: function (v: any) {
+        return typeof v === "string" || v instanceof Schema.Types.ObjectId;
+      },
+      message: "Created by must be either string or ObjectId",
+    },
   },
   createdAt: { type: Date, default: Date.now, required: true },
 });
