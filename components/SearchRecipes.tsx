@@ -20,7 +20,6 @@ import { Logo } from "@/components/Logo";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-
 export const SearchRecipes = () => {
   const [ingredients, setIngredients] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -116,10 +115,18 @@ export const SearchRecipes = () => {
             onChange={(e) => setIngredients(e.target.value)}
           />
           <div className="mt-4 flex flex-col md:flex-row justify-between gap-2">
-            <Button variant="outline" onClick={handleClear}className="w-full md:w-1/2">
+            <Button
+              variant="outline"
+              onClick={handleClear}
+              className="w-full md:w-1/2"
+            >
               Search
             </Button>
-            <Button onClick={handleSearch} disabled={isLoading}>
+            <Button
+              onClick={handleSearch}
+              disabled={isLoading}
+              className="w-full md:w-1/2"
+            >
               {isLoading ? "Szukam..." : "Szukaj"}
             </Button>
           </div>
