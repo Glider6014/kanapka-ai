@@ -127,7 +127,7 @@ export const SearchRecipes = () => {
               disabled={isLoading}
               className="w-full md:w-1/2"
             >
-              {isLoading ? "Szukam..." : "Search"}
+              {isLoading ? "Searching..." : "Search"}
             </Button>
           </div>
         </div>
