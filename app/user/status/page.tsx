@@ -9,12 +9,8 @@ export default function Home() {
 
   const handleSignOut = async () => {
     setLoading(true);
-    await signOut({ callbackUrl: "/auth/status" });
+    await signOut({ callbackUrl: "/user/status" });
     setLoading(false);
-  };
-
-  const handleSignIn = () => {
-    signIn(undefined, { callbackUrl: "/auth/status" });
   };
 
   return (
@@ -48,12 +44,18 @@ export default function Home() {
             </button>
           ) : (
             <>
-              <button
-                onClick={handleSignIn}
+              <a
+                href="/user/signin"
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
                 Sign In
-              </button>
+              </a>
+              <a
+                href="/user/signup"
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Sign Up
+              </a>
             </>
           )}
         </div>
