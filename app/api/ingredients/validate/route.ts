@@ -1,72 +1,10 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { NextRequest, NextResponse } from "next/server";
 import {
   ValidationInput,
   ValidationItemResult,
   ValidationResponse,
 } from "./types";
-import Ingredient from "@/models/Ingredient";
-import connectDB from "@/lib/connectToDatabase";
-
-const model = new ChatOpenAI({
-  modelName: "gpt-4o-mini",
-  temperature: 0,
-  openAIApiKey: process.env.OPENAI_API_KEY,
-});
-
-const validationPrompt = ChatPromptTemplate.fromTemplate(`
-    Evaluate whether the given ingredient is an edible food product. Respond only with "true" or "false".
-    
-    Ingredient to evaluate: {ingredient}
-    
-    Evaluation rules:
-    - Respond "true" for:
-      * Fruits and vegetables (e.g., apple, carrot, banana)
-      * Food products (e.g., bread, pasta, rice)
-      * Spices and herbs (e.g., basil, oregano, cinnamon)
-      * Meat and fish (e.g., chicken, salmon, beef)
-      * Dairy products (e.g., cheese, milk, yogurt)
-      * Grains and processed foods (e.g., flour, groats, cereals)
-      * Culinary ingredients (e.g., salt, sugar, oil)
-      
-    - Respond "false" for:
-      * Non-food items (e.g., stone, paper)
-      * Random strings of characters (e.g., ABC123, XKCD)
-      * Inedible substances (e.g., mud, sand)
-      * Toxic substances (e.g., poison)
-      * Non-existent products
-    
-    Correct examples (true):
-    "banana"
-    "apple"
-    "salt"
-    "chicken"
-    "flour"
-    "pepper"
-    "egg"
-    
-    Incorrect examples (false):
-    "XKCD123"
-    "stone"
-    "dirt"
-    "poison"
-    "table"
-    
-    Respond only with "true" or "false".
-    `);
-
-const validationChain = validationPrompt.pipe(model);
-
-async function isValidFood(ingredient: string): Promise<boolean> {
-  const result = await validationChain.invoke({ ingredient });
-  return result.content.toString().toLowerCase().includes("true");
-}
-
-async function findExistingIngredient(name: string) {
-  await connectDB();
-  return await Ingredient.findOne({ name: { $regex: new RegExp(name, "i") } });
-}
+import { isValidFood, findExistingIngredient } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
   try {
