@@ -67,7 +67,7 @@ export const Navbar = ({}: NavbarProps) => {
             </li>
             <li>
               <a
-                href="#"
+                href="/user/signin"
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
                 Login
@@ -75,7 +75,7 @@ export const Navbar = ({}: NavbarProps) => {
             </li>
             <li>
               <a
-                href="#"
+                href="/user/signup"
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
                 Register
