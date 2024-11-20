@@ -9,23 +9,27 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "langchain": "^0.3.6",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-hover-card": "^1.1.2",
     "@radix-ui/react-navigation-menu": "^1.2.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tabs": "^1.1.1",
+    "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "langchain": "^0.3.6",
     "lucide-react": "^0.460.0",
+    "mongoose": "^8.8.2",
     "next": "14.2.18",
+    "next-auth": "^4.24.10",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
-    "mongoose": "^8.8.2"
+    "tailwindcss-motion": "^0.4.3-beta"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
