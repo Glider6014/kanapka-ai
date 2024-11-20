@@ -1,4 +1,8 @@
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
+import "./Ingredient"; //use for populate
+
+// Add system user constant
+export const SYSTEM_USER_ID = "673d93565e6334f13eadbd4c";
 
 const RecipeSchema = new Schema({
   name: { type: String, required: true },
