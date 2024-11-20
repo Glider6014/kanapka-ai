@@ -40,7 +40,7 @@ export const SearchRecipes = () => {
                 <NavigationMenuLink asChild>
                   <Button
                     variant="default"
-                    className="bg-black text-white hover:bg-gray-800 w-full md:w-auto"
+                    className="text-white bg-gradient-to-r from-purple-700 to-orange-500 hover:opacity-90 transition-opacity duration-200 w-full md:w-auto"
                   >
                     WYSZUKAJ RECEPTURY
                   </Button>
