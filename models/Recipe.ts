@@ -5,6 +5,7 @@ import "./Ingredient"; //use for populate
 export const SYSTEM_USER_ID = "673d93565e6334f13eadbd4c";
 
 const RecipeSchema = new Schema({
+  _id: { type: Schema.Types.ObjectId, auto: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
   ingredients: [
