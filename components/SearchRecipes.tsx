@@ -120,14 +120,14 @@ export const SearchRecipes = () => {
               onClick={handleClear}
               className="w-full md:w-1/2"
             >
-              Search
+              Clear
             </Button>
             <Button
               onClick={handleSearch}
               disabled={isLoading}
               className="w-full md:w-1/2"
             >
-              {isLoading ? "Szukam..." : "Szukaj"}
+              {isLoading ? "Szukam..." : "Search"}
             </Button>
           </div>
         </div>
