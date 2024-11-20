@@ -16,6 +16,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Navbar } from "@/components/ui/dropdown-menu";
+import { Logo } from "@/components/Logo";
 
 export const SearchRecipes = () => {
   return (
@@ -23,16 +24,14 @@ export const SearchRecipes = () => {
       {/* Navigation Bar */}
       <nav className="mb-4 mt-1 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex justify-between w-full md:w-auto">
-          <a
-            href="/"
-            className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-700 to-orange-500 bg-clip-text text-transparent"
-          >
-            Kanapka AI
-          </a>
+          {/* Logo */}
+          <Logo mobileFontSize="text-2xl" desktopFontSize="text-3xl" />
+          {/* Mobile version */}
           <div className="md:hidden">
             <Navbar />
           </div>
         </div>
+        {/* Desktop version */}
         <div className="md:block hidden">
           <NavigationMenu className="w-full">
             <NavigationMenuList className="flex flex-col md:flex-row gap-2 w-full">
