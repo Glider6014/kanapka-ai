@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { FC } from "react";
 import Link from "next/link";
 import {
   Table,
@@ -9,50 +9,32 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { RecipeType } from "@/models/Recipe";
 
-export const RecipesList = () => {
-  const [recipes, setRecipes] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+type RecipesListProps = {
+  recipes: RecipeType[];
+};
 
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const response = await fetch("/api/recipes");
-        if (response.ok) {
-          const data = await response.json();
-          setRecipes(data.recipes);
-        } else {
-          console.error("Błąd podczas pobierania przepisów");
-        }
-      } catch (error) {
-        console.error("Błąd:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecipes();
-  }, []);
-
-  if (isLoading) {
-    return <div>Ładowanie przepisów...</div>;
+export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
+  if (!recipes.length) {
+    return <div>No recipes to display</div>;
   }
 
   return (
     <div className="mt-8">
-      <h2 className="text-2xl font-bold mb-4">Lista przepisów</h2>
+      <h2 className="text-2xl font-bold mb-4">Recipes List</h2>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>NAZWA RECEPTURY</TableHead>
-            <TableHead>TRUDNOŚĆ POTRAWY</TableHead>
-            <TableHead>ŁĄCZNY CZAS PRZYGOTOWANIA</TableHead>
-            <TableHead>SZCZEGÓŁY</TableHead>
+            <TableHead>RECIPE NAME</TableHead>
+            <TableHead>DIFFICULTY</TableHead>
+            <TableHead>TOTAL PREPARATION TIME</TableHead>
+            <TableHead>DETAILS</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {recipes.map((recipe) => (
-            <TableRow key={recipe._id}>
+            <TableRow key={recipe._id?.toString()}>
               <TableCell>{recipe.name}</TableCell>
               <TableCell>{recipe.difficulty}</TableCell>
               <TableCell>{recipe.prepTime + recipe.cookTime} min</TableCell>
