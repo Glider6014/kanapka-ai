@@ -20,8 +20,13 @@ export const SearchRecipes = () => {
   return (
     <div className="container mx-auto p-4">
       {/* Navigation Bar */}
-      <nav className="mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="text-xl font-bold">Kanapka AI</div>
+      <nav className="mb-4 mt-1 flex flex-col md:flex-row items-center justify-between gap-4">
+        <a
+          href="/"
+          className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-700 to-orange-500 bg-clip-text text-transparent"
+        >
+          Kanapka AI
+        </a>
         <NavigationMenu className="w-full">
           <NavigationMenuList className="flex flex-col md:flex-row gap-2 w-full">
             <NavigationMenuItem className="w-full">
@@ -85,9 +90,7 @@ export const SearchRecipes = () => {
                 <TableHead>SZCZEGÓŁY</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {/* Table content will be added dynamically */}
-            </TableBody>
+            <TableBody>{/* From database */}</TableBody>
           </Table>
         </div>
       </div>
