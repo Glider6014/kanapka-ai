@@ -101,7 +101,10 @@ export default function Home() {
   };
 
   // Deleting preferences
-  const removePreference = (type: PreferenceCategory, value: string | string[]) => {
+  const removePreference = (
+    type: PreferenceCategory,
+    value: string | string[]
+  ) => {
     if (type === "diets") setDiet(null);
     if (type === "religions") setReligion(null);
     if (type === "allergies" && typeof value === "string")
@@ -212,8 +215,8 @@ export default function Home() {
           <h1 className="font-bold text-3xl">Dietary preferences</h1>
           {/* Diet Preferences */}
           <div>
-            <div className="flex items-center justify-between">
-              <p className="text-2xl font-bold mb-2">Diets</p>
+            <div className="flex items-center gap-2 justify-between">
+              <p className="text-2xl font-bold">Diets</p>
               {renderModal("diets")}
             </div>
             {renderPreferences(diet, "diets")}
@@ -221,8 +224,8 @@ export default function Home() {
 
           {/* Religion Preferences */}
           <div>
-            <div className="flex items-center justify-between">
-              <p className="text-2xl font-bold mb-2">Religions</p>
+            <div className="flex items-center gap-2  justify-between">
+              <p className="text-2xl font-bold">Religions</p>
               {renderModal("religions")}
             </div>
             {renderPreferences(religion, "religions")}
@@ -230,8 +233,8 @@ export default function Home() {
 
           {/* Allergies Preferences */}
           <div>
-            <div className="flex items-center justify-between">
-              <p className="text-2xl font-bold mb-2">Allergies</p>
+            <div className="flex items-center gap-2 justify-between">
+              <p className="text-2xl font-bold">Allergies</p>
               {renderModal("allergies")}
             </div>
             <div className="flex flex-wrap gap-2">
