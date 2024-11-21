@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -38,8 +39,16 @@ export default function Home() {
   });
 
   //Define a submit handler
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const result = await signIn("credentials", {
+      redirect: false,
+      email: values.email,
+      password: values.password,
+    });
+
+    if (result?.error) {
+      console.error(result.error);
+    }
   }
 
   return (

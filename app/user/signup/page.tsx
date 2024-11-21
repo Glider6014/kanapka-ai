@@ -65,8 +65,30 @@ export default function Home() {
   });
 
   //Define a submit handler
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Form submitted:", values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: values.username,
+          email: values.email,
+          password: values.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Signup successful:", data);
+      } else {
+        console.error("Signup error:", data.message);
+      }
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
+    }
   }
 
   return (
