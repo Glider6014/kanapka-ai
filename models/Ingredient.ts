@@ -13,9 +13,9 @@ const IngredientSchema = new Schema({
     protein: { type: Number, required: true },
     fats: { type: Number, required: true },
     carbs: { type: Number, required: true },
-    fiber: { type: Number },
-    sugar: { type: Number },
-    sodium: { type: Number },
+    fiber: { type: Number, required: true },
+    sugar: { type: Number, required: true },
+    sodium: { type: Number, required: true },
   },
 });
 

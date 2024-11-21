@@ -1,7 +1,9 @@
 "use client";
 
+import { Logo } from "@/components/Logo";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -15,6 +17,9 @@ export default function Home() {
 
   return (
     <main className="min-h-screen p-8">
+      <div className="flex justify-center mb-6">
+        <Logo mobileFontSize="text-4xl" desktopFontSize="text-6xl" />
+      </div>
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Session Status */}
         <div className="p-4 bg-gray-100 rounded-lg">
@@ -35,27 +40,21 @@ export default function Home() {
         {/* Auth Buttons */}
         <div className="flex gap-4">
           {session ? (
-            <button
+            <Button
               onClick={handleSignOut}
               disabled={loading}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+              variant="destructive"
             >
               {loading ? "Signing out..." : "Sign Out"}
-            </button>
+            </Button>
           ) : (
             <>
-              <a
-                href="/user/signin"
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Sign In
-              </a>
-              <a
-                href="/user/signup"
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Sign Up
-              </a>
+              <Button asChild variant="default">
+                <a href="/user/signin">Sign In</a>
+              </Button>
+              <Button asChild variant="default">
+                <a href="/user/signup">Sign Up</a>
+              </Button>
             </>
           )}
         </div>

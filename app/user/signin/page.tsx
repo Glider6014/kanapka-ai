@@ -16,15 +16,12 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { Logo } from "@/components/Logo";
 
 //Form validation scheme
 const formSchema = z.object({
-  email: z
-    .string()
-    .email("Invalid email address."),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters."),
+  email: z.string().email("Invalid email address."),
+  password: z.string().min(6, "Password must be at least 6 characters."),
 });
 
 export default function Home() {
@@ -50,9 +47,7 @@ export default function Home() {
       <div className="flex w-full max-w-6xl items-center justify-between flex-col md:flex-row">
         {/* Title and description section */}
         <div className="w-full md:w-1/2 pr-8 mb-8 md:mb-0">
-          <p className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-700 to-orange-500 bg-clip-text text-transparent text-center md:text-left">
-            Kanapka AI
-          </p>
+          <Logo mobileFontSize="text-4xl" desktopFontSize="text-6xl" />
           <p className="text-xl mt-4 text-gray-600 leading-relaxed hidden md:block">
             Welcome to Kanapka AI - your intelligent assistant. Sign in, to
             start using our unique features.

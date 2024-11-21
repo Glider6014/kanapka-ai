@@ -14,15 +14,25 @@ import {
 
 export default function RecipePage({ params }: { params: { id: string } }) {
   const [recipe, setRecipe] = useState<any>(null);
+  const [nutrition, setNutrition] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRecipe = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch(`/api/recipes/${params.id}`);
-        if (!res.ok) throw new Error("Failed to fetch recipe");
-        const data = await res.json();
-        setRecipe(data);
+        const [recipeRes, nutritionRes] = await Promise.all([
+          fetch(`/api/recipes/${params.id}`),
+          fetch(`/api/recipes/${params.id}/nutrition`),
+        ]);
+
+        if (!recipeRes.ok) throw new Error("Failed to fetch recipe");
+        const recipeData = await recipeRes.json();
+        setRecipe(recipeData);
+
+        if (nutritionRes.ok) {
+          const nutritionData = await nutritionRes.json();
+          setNutrition(nutritionData);
+        }
       } catch (error) {
         console.error("Error:", error);
       } finally {
@@ -30,7 +40,7 @@ export default function RecipePage({ params }: { params: { id: string } }) {
       }
     };
 
-    fetchRecipe();
+    fetchData();
   }, [params.id]);
 
   if (isLoading) {
@@ -104,6 +114,46 @@ export default function RecipePage({ params }: { params: { id: string } }) {
                 ))}
               </ol>
             </div>
+
+            {nutrition && (
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Nutrition Facts</h3>
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Calories</TableCell>
+                      <TableCell>
+                        {nutrition.calories.toFixed(1)} kcal
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Protein</TableCell>
+                      <TableCell>{nutrition.protein.toFixed(1)} g</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Carbs</TableCell>
+                      <TableCell>{nutrition.carbs.toFixed(1)} g</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Fats</TableCell>
+                      <TableCell>{nutrition.fats.toFixed(1)} g</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Fiber</TableCell>
+                      <TableCell>{nutrition.fiber.toFixed(1)} g</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Sugar</TableCell>
+                      <TableCell>{nutrition.sugar.toFixed(1)} g</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Sodium</TableCell>
+                      <TableCell>{nutrition.sodium.toFixed(1)} mg</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

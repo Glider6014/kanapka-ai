@@ -20,7 +20,6 @@ export async function GET(
     await connectDB();
 
     const recipe = await Recipe.findById(id).populate("ingredients.ingredient");
-    console.log(recipe);
 
     if (!recipe) {
       return NextResponse.json({ error: "Recipe not found" }, { status: 404 });

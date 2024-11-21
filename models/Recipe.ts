@@ -1,5 +1,12 @@
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
-import "./Ingredient"; // Required for population
+import Ingredient from "./Ingredient";
+import { NutritionTotals } from "../types/NutritionTotals";
+import calculateFactor from "@/lib/Ingredients/calculateFactor";
+
+type RecipeIngredient = {
+  ingredient: Schema.Types.ObjectId;
+  amount: number;
+};
 
 const RecipeSchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true },
@@ -33,9 +40,61 @@ const RecipeSchema = new Schema({
   createdAt: { type: Date, default: Date.now, required: true },
 });
 
-export type RecipeType = InferSchemaType<typeof RecipeSchema>;
+RecipeSchema.methods.calculateNutrition =
+  async function calculateNutrition(): Promise<NutritionTotals> {
+    const ingredientIds = this.ingredients.map(
+      (i: RecipeIngredient) => i.ingredient
+    );
+    const ingredients = await Ingredient.find({ _id: { $in: ingredientIds } });
+
+    const nutritionTotals: NutritionTotals = {
+      calories: 0,
+      protein: 0,
+      fats: 0,
+      carbs: 0,
+      fiber: 0,
+      sugar: 0,
+      sodium: 0,
+    };
+
+    this.ingredients.forEach((recipeIngredient: RecipeIngredient) => {
+      const ingredient = ingredients.find((i) =>
+        i._id.equals(recipeIngredient.ingredient.toString())
+      );
+      if (ingredient) {
+        const factor = calculateFactor(
+          ingredient.unit,
+          recipeIngredient.amount
+        );
+        if (ingredient.nutrition) {
+          updateNutritionTotals(nutritionTotals, ingredient.nutrition, factor);
+        }
+      }
+    });
+
+    return nutritionTotals;
+  };
+
+function updateNutritionTotals(
+  nutritionTotals: NutritionTotals,
+  nutrition: NutritionTotals,
+  factor: number
+): void {
+  Object.keys(nutritionTotals).forEach((key) => {
+    if (nutrition) {
+      nutritionTotals[key as keyof NutritionTotals] +=
+        nutrition[key as keyof NutritionTotals] * factor;
+    }
+  });
+}
+
+// Update the RecipeType to use the method interface
+export type RecipeType = InferSchemaType<typeof RecipeSchema> & {
+  calculateNutrition(): Promise<NutritionTotals>;
+};
 
 const Recipe =
-  (models.Recipe as Model<RecipeType>) || model("Recipe", RecipeSchema);
+  (models.Recipe as Model<RecipeType>) ||
+  model<RecipeType>("Recipe", RecipeSchema);
 
 export default Recipe;
