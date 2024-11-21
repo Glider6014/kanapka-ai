@@ -1,8 +1,5 @@
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
-import "./Ingredient"; //use for populate
-
-// Add system user constant
-export const SYSTEM_USER_ID = "673d93565e6334f13eadbd4c";
+import "./Ingredient"; // Required for population
 
 const RecipeSchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true },
@@ -36,9 +33,7 @@ const RecipeSchema = new Schema({
   createdAt: { type: Date, default: Date.now, required: true },
 });
 
-type RecipeType = InferSchemaType<typeof RecipeSchema>;
-
-export type { RecipeType };
+export type RecipeType = InferSchemaType<typeof RecipeSchema>;
 
 const Recipe =
   (models.Recipe as Model<RecipeType>) || model("Recipe", RecipeSchema);
