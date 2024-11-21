@@ -3,6 +3,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RecipeType } from "@/models/Recipe";
+import { IngredientInput } from "@/app/api/ingredients/types";
+import InputIngredinet from "./InputIngredient";
 
 type SearchRecipesProps = {
   setRecipes: React.Dispatch<React.SetStateAction<RecipeType[]>>;
@@ -43,6 +45,7 @@ export const SearchRecipes = ({ setRecipes }: SearchRecipesProps) => {
 
   return (
     <div className="w-full md:w-2/5">
+      <InputIngredinet />
       <Textarea
         className="min-h-[150px] md:min-h-[400px] w-full"
         placeholder="Enter your ingredients here..."
