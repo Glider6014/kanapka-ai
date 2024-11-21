@@ -2,6 +2,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import Ingredient, { IngredientType } from "@/models/Ingredient";
 import { isValidFood } from "./validateIngredient";
+import connectDB from "../connectToDatabase";
 
 const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
@@ -89,11 +90,34 @@ Respond ONLY with a valid JSON array string in this exact format (no other text)
 
 const chain = prompt.pipe(model);
 
-export async function analyzeIngredients(
+async function checkAndSaveIngredient(
+  ing: IngredientType
+): Promise<IngredientType | null> {
+  await connectDB();
+
+  // Check if ingredient already exists
+  const existingIngredient = await Ingredient.findOne({
+    name: { $regex: new RegExp(ing.name, "i") },
+  });
+  if (existingIngredient) return existingIngredient;
+
+  // Validate new ingredient before saving
+  const isValid = await isValidFood(ing.name);
+  if (!isValid) return null;
+
+  await connectDB();
+  const savedIngredient = await Ingredient.create({
+    name: ing.name,
+    unit: ing.unit,
+    nutrition: ing.nutrition,
+  });
+
+  return savedIngredient;
+}
+
+export async function extractAndSaveIngredients(
   input: string
 ): Promise<IngredientType[]> {
-  const results: IngredientType[] = [];
-
   try {
     const analysis = await chain.invoke({ ingredient: input });
     let parsedIngredients;
@@ -108,47 +132,13 @@ export async function analyzeIngredients(
       }
     }
 
-    for (const newIngredient of parsedIngredients) {
-      try {
-        // Check if ingredient already exists
-        const existingIngredient = await Ingredient.findOne({
-          name: { $regex: new RegExp(newIngredient.name, "i") },
-        });
+    const ingredientsPromises = parsedIngredients.map(checkAndSaveIngredient);
 
-        if (existingIngredient) {
-          results.push({
-            _id: existingIngredient._id,
-            name: existingIngredient.name,
-            unit: existingIngredient.unit,
-            nutrition: existingIngredient.nutrition,
-          });
+    const ingredients = (await Promise.all(ingredientsPromises)).filter(
+      Boolean
+    );
 
-          continue;
-        }
-
-        // Validate new ingredient before saving
-        const isValid = await isValidFood(newIngredient.name);
-
-        if (!isValid) continue;
-
-        const savedIngredient = await Ingredient.create({
-          name: newIngredient.name,
-          unit: newIngredient.unit,
-          nutrition: newIngredient.nutrition,
-        });
-
-        results.push(savedIngredient);
-      } catch (error) {
-        console.error(
-          `Error processing ingredient "${newIngredient.name}":`,
-          error
-        );
-        // Continue with next ingredient instead of failing completely
-        continue;
-      }
-    }
-
-    return results;
+    return ingredients;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Ingredient analysis failed: ${error.message}`);
