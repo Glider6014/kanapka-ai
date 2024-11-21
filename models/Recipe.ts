@@ -9,7 +9,7 @@ type RecipeIngredient = {
 };
 
 const RecipeSchema = new Schema({
-  _id: { type: Schema.Types.ObjectId, auto: true },
+  _id: { type: Schema.Types.ObjectId, auto: true, required: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
   ingredients: [
