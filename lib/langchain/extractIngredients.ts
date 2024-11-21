@@ -29,10 +29,10 @@ Example inputs:
 
 Example output:
 [
-  {
+  {{
     "name": "tomato",
     "unit": "piece",
-    "nutrition": {
+    "nutrition": {{
       "calories": 22,
       "protein": 1.1,
       "fats": 0.2,
@@ -40,12 +40,12 @@ Example output:
       "fiber": 1.5,
       "sugar": 3.2,
       "sodium": 6
-    }
-  },
-  {
+    }}
+  }},
+  {{
     "name": "milk",
     "unit": "ml",
-    "nutrition": {
+    "nutrition": {{
       "calories": 42,
       "protein": 3.4,
       "fats": 1.0,
@@ -53,12 +53,12 @@ Example output:
       "fiber": 0,
       "sugar": 5.0,
       "sodium": 44
-    }
-  },
-  {
+    }}
+  }},
+  {{
     "name": "egg",
     "unit": "piece",
-    "nutrition": {
+    "nutrition": {{
       "calories": 68,
       "protein": 5.5,
       "fats": 4.8,
@@ -66,8 +66,8 @@ Example output:
       "fiber": 0,
       "sugar": 0.6,
       "sodium": 62
-    }
-  }
+    }}
+  }}
 ]
 
 Respond ONLY with a valid JSON array string in this exact format (no other text):
@@ -90,9 +90,7 @@ Respond ONLY with a valid JSON array string in this exact format (no other text)
 
 const chain = prompt.pipe(model);
 
-async function checkAndSaveIngredient(
-  ing: IngredientType
-): Promise<IngredientType | null> {
+async function validateIngredients(ing: IngredientType) {
   await connectDB();
 
   // Check if ingredient already exists
@@ -105,19 +103,16 @@ async function checkAndSaveIngredient(
   const isValid = await isValidFood(ing.name);
   if (!isValid) return null;
 
-  await connectDB();
-  const savedIngredient = await Ingredient.create({
+  const ingredient = new Ingredient({
     name: ing.name,
     unit: ing.unit,
     nutrition: ing.nutrition,
   });
 
-  return savedIngredient;
+  return ingredient;
 }
 
-export async function extractAndSaveIngredients(
-  input: string
-): Promise<IngredientType[]> {
+export async function extractIngredients(input: string) {
   try {
     const analysis = await chain.invoke({ ingredient: input });
     let parsedIngredients;
@@ -132,7 +127,7 @@ export async function extractAndSaveIngredients(
       }
     }
 
-    const ingredientsPromises = parsedIngredients.map(checkAndSaveIngredient);
+    const ingredientsPromises = parsedIngredients.map(validateIngredients);
 
     const ingredients = (await Promise.all(ingredientsPromises)).filter(
       Boolean
