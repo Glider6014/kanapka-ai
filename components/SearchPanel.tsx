@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { RecipeType } from "@/models/Recipe";
 import InputIngredient from "./InputIngredient";
 
@@ -12,6 +12,7 @@ export const SearchRecipes = ({ setRecipes }: SearchRecipesProps) => {
   const [ingredients, setIngredients] = useState<string[]>([""]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleSearch = async () => {
     setIsLoading(true);
@@ -39,6 +40,7 @@ export const SearchRecipes = ({ setRecipes }: SearchRecipesProps) => {
 
   const handleClear = () => {
     setIngredients([""]);
+    inputRefs.current = [];
   };
 
   const handleIngredientChange = (index: number, value: string) => {
@@ -48,7 +50,13 @@ export const SearchRecipes = ({ setRecipes }: SearchRecipesProps) => {
   };
 
   const handleAddIngredient = () => {
+    if (ingredients.some((ingredient) => ingredient.trim() === "")) {
+      return;
+    }
     setIngredients([...ingredients, ""]);
+    setTimeout(() => {
+      inputRefs.current[ingredients.length]?.focus();
+    }, 0);
   };
 
   const handleRemoveIngredient = (index: number) => {
@@ -68,6 +76,7 @@ export const SearchRecipes = ({ setRecipes }: SearchRecipesProps) => {
           onChange={(e) => handleIngredientChange(index, e.target.value)}
           onRemove={() => handleRemoveIngredient(index)}
           onAdd={handleAddIngredient}
+          inputRef={(el) => (inputRefs.current[index] = el)}
         />
       ))}
       <div className="mt-4 flex flex-col md:flex-row justify-between gap-2">
