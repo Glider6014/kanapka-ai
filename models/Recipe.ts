@@ -44,7 +44,7 @@ const RecipeSchema = new Schema({
 });
 
 RecipeSchema.methods.calculateNutrition =
-  async function (): Promise<NutritionTotals> {
+  async function calculateNutrition(): Promise<NutritionTotals> {
     const ingredientIds = this.ingredients.map(
       (i: RecipeIngredient) => i.ingredient
     );
@@ -91,6 +91,7 @@ function updateNutritionTotals(
   });
 }
 
+// Update the RecipeType to use the method interface
 type RecipeType = InferSchemaType<typeof RecipeSchema> & {
   calculateNutrition(): Promise<NutritionTotals>;
 };
