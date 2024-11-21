@@ -53,7 +53,9 @@ export async function POST(req: NextRequest) {
       )
     );
 
-    return NextResponse.json(populatedRecipes);
+    return NextResponse.json({
+      recipes: populatedRecipes,
+    });
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(

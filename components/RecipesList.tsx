@@ -38,7 +38,7 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
               <TableCell>{recipe.difficulty}</TableCell>
               <TableCell>{recipe.prepTime + recipe.cookTime} min</TableCell>
               <TableCell>
-                <Link href={`/recipes/${recipe._id}`}>
+                <Link href={`/recipes/${recipe._id}`} target="_blank">
                   <Button variant="link">Zobacz</Button>
                 </Link>
               </TableCell>

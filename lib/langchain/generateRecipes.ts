@@ -3,6 +3,7 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
 import Ingredient, { IngredientType } from "@/models/Ingredient";
+import { extractIngredients } from "./extractIngredients";
 
 const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
@@ -10,15 +11,24 @@ const model = new ChatOpenAI({
   openAIApiKey: process.env.OPENAI_API_KEY,
 });
 
-const prompt = ChatPromptTemplate.fromTemplate(`
-Create {count} recipe(s) using the following ingredients as much as possible.
-
-Ingredients the user has: {ingredients}
+const prompt = ChatPromptTemplate.fromMessages([
+  [
+    "system",
+    `
+Create {count} recipe(s) using the provided ingredients as much as possible.
 
 Each recipe should:
 - Use as many of the provided ingredients as possible.
 - Require as few additional ingredients as possible.
 - Conform to the Recipe model.
+
+Must conform with provided ingredients units.
+
+Notes for unknown ingredients:
+- Things like fruits, vegetables should be in their natural unit, which is usually piece
+- Things like bread, which are usually in slices should be named as "slice" like "bread slice" and piece unit
+- Naming should be in english
+- Names should be singular
 
 Respond ONLY with a valid JSON array string in this exact format (no other text):
 [
@@ -38,9 +48,22 @@ Respond ONLY with a valid JSON array string in this exact format (no other text)
     "experience": [number]
   }}
 ]
-`);
+`,
+  ],
+  ["user", "{ingredients}"],
+]);
 
 const chain = prompt.pipe(model);
+
+async function translateUnit(unit: string) {
+  const units: { [key: string]: string } = {
+    g: "gram",
+    ml: "milliliter",
+    piece: "piece",
+  };
+
+  return units[unit] || unit;
+}
 
 async function validateGeneratedIngredient(genIng: any) {
   console.log(genIng);
@@ -54,9 +77,9 @@ async function validateGeneratedIngredient(genIng: any) {
     name: genIng.name.toLowerCase(),
   });
 
-  if (!ingredient) return;
+  if (ingredient) return ingredient;
 
-  return ingredient;
+  return (await extractIngredients(genIng.name))[0];
 }
 
 async function validateRecipe(recipeData: any) {
@@ -116,8 +139,8 @@ export async function generateRecipes(
 
   try {
     const ingredientsAsString = ingredients
-      .map((i) => `${i.name} in ${i.unit}s`)
-      .join(", ");
+      .map((ing) => `- ${ing.name}, provided in ${translateUnit(ing.unit)}s`)
+      .join("\n");
 
     const response = await chain.invoke({
       ingredients: ingredientsAsString,

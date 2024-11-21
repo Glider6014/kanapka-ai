@@ -11,7 +11,10 @@ const model = new ChatOpenAI({
   stop: ["\n\n"], // Prevent extra text after JSON
 });
 
-const prompt = ChatPromptTemplate.fromTemplate(`
+const prompt = ChatPromptTemplate.fromMessages([
+  [
+    "system",
+    `
 Analyze the given food ingredient(s) with their quantities. Multiple ingredients may be provided in a single string.
 First split the input into individual ingredients and their amounts, then analyze each one.
 
@@ -20,8 +23,6 @@ For each valid ingredient return:
 2. The original amount and unit from input (if provided)
 3. The standard unit for this ingredient (g, ml, or piece)
 4. Nutritional values per 100g, 100ml, or per piece of the product
-
-Input: {ingredient}
 
 Example inputs:
 "2 tomatoes, 500ml milk, 3 eggs"
@@ -70,6 +71,12 @@ Example output:
   }}
 ]
 
+Notes:
+- Things like fruits, vegetables should be in their natural unit, which is usually piece
+- Things like bread, which are usually in slices should be named as "slice" like "bread slice" and piece unit
+- Naming should be in english
+- Names should be singular
+
 Respond ONLY with a valid JSON array string in this exact format (no other text):
 [
   {{
@@ -86,7 +93,12 @@ Respond ONLY with a valid JSON array string in this exact format (no other text)
     }}
   }}
 ]
-`);
+
+You can not use markdown or HTML in your response, ONLY JSON.
+`,
+  ],
+  ["user", "{ingredient}"],
+]);
 
 const chain = prompt.pipe(model);
 
