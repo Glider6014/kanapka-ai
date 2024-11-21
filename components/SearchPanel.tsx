@@ -1,9 +1,14 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { RecipeType } from "@/models/Recipe";
 
-export const SearchPanel = () => {
+type SearchRecipesProps = {
+  setRecipes: React.Dispatch<React.SetStateAction<RecipeType[]>>;
+};
+
+export const SearchRecipes = ({ setRecipes }: SearchRecipesProps) => {
   const [ingredients, setIngredients] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -20,6 +25,7 @@ export const SearchPanel = () => {
       });
       if (response.ok) {
         const data = await response.json();
+        setRecipes(data.recipes);
         router.refresh();
       } else {
         console.error("Błąd podczas generowania przepisów");
@@ -62,3 +68,5 @@ export const SearchPanel = () => {
     </div>
   );
 };
+
+export default SearchRecipes;

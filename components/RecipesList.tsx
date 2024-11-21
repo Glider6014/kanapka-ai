@@ -22,7 +22,6 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
 
   return (
     <div className="mt-8">
-      <h2 className="text-2xl font-bold mb-4">Recipes List</h2>
       <Table>
         <TableHeader>
           <TableRow>

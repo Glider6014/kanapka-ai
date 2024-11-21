@@ -14,6 +14,7 @@ const RecipesPage = async () => {
 
   return (
     <div>
+      <h2 className="text-2xl font-bold mb-4">Recipes List</h2>
       <RecipesList recipes={JSON.parse(JSON.stringify(recipes))} />
     </div>
   );
