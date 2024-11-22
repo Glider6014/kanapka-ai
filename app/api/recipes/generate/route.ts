@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const ingredients = await extractIngredients(ingredientsInput);
+    const ingredients = await extractIngredients(ingredientsInput.toString());
 
     if (!ingredients.length) {
       return NextResponse.json(
