@@ -7,6 +7,12 @@ import connectDB from "@/lib/connectToDatabase";
 import { extractIngredients } from "@/lib/langchain/extractIngredients";
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await req.json().catch(() => null);
 
   if (!body) {
