@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -9,7 +8,6 @@ import { Eye, EyeOff } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -27,8 +25,6 @@ const formSchema = z.object({
 });
 
 export default function Home() {
-  const router = useRouter();
-
   //Use state to toggle password visibility
   const [showPassword, setShowPassword] = useState(false);
 
@@ -42,19 +38,8 @@ export default function Home() {
   });
 
   //Define a submit handler
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const result = await signIn("credentials", {
-      redirect: false,
-      email: values.email,
-      password: values.password,
-    });
-
-    if (result?.error) {
-      console.error(result.error);
-    }
-
-    router.push("/");
-    router.refresh();
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
   }
 
   return (

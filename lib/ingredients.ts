@@ -1,14 +1,17 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import Ingredient from "@/models/Ingredient";
+import { isValidFood } from "./validation";
 import { Types } from "mongoose";
 
+// Initialize the language model
 const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
   temperature: 0,
   openAIApiKey: process.env.OPENAI_API_KEY,
 });
 
+// Update the prompt template
 const prompt = ChatPromptTemplate.fromTemplate(`
 Analyze the given food ingredient(s) with their quantities. Multiple ingredients may be provided in a single string.
 First split the input into individual ingredients and their amounts, then analyze each one.
@@ -45,7 +48,7 @@ Respond ONLY with a valid JSON array string in this exact format (no other text)
 ]
 `);
 
-export type IngredientData = {
+export type AnalyzedIngredient = {
   _id?: Types.ObjectId;
   name: string;
   originalAmount: number;
@@ -62,15 +65,15 @@ export type IngredientData = {
   };
 };
 
-const chain = prompt.pipe(model);
-
+// Update the analyzeIngredients function
 export async function analyzeIngredients(
-  input: string
-): Promise<IngredientData[]> {
+  ingredientInput: string
+): Promise<AnalyzedIngredient[]> {
+  const chain = prompt.pipe(model);
   const results = [];
 
   try {
-    const analysis = await chain.invoke({ ingredient: input });
+    const analysis = await chain.invoke({ ingredient: ingredientInput });
     let parsedIngredients;
 
     try {
