@@ -16,7 +16,7 @@ export const Navbar = () => {
   return (
     <nav className="mb-4 mt-1 flex flex-col md:flex-row items-center justify-between gap-4">
       <div className="flex justify-between w-full md:w-auto">
-        <Logo mobileFontSize="text-2xl" desktopFontSize="text-3xl" />
+        <Logo mobileFontSize="text-4xl" desktopFontSize="text-5xl" />
         <div className="md:hidden">
           <DropdownMenu />
         </div>
