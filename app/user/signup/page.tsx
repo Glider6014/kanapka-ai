@@ -19,20 +19,34 @@ import {
 import { Logo } from "@/components/Logo";
 import { signIn } from "next-auth/react";
 import {
-  SignUpFormData,
-  signUpFormSchema,
+  usernameSchema,
+  emailSchema,
+  passwordSchema,
 } from "@/lib/formSchemas/authFormSchemas";
+import { z } from "zod";
+
+const signUpFormSchemaWithConfirmPassword = z
+  .object({
+    username: usernameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+type SignUpFormWithConfirmPasswordData = z.infer<
+  typeof signUpFormSchemaWithConfirmPassword
+>;
 
 export default function Home() {
-  const router = useRouter();
-
-  //Use state to toggle password visibility
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  //Define form
-  const form = useForm<SignUpFormData>({
-    resolver: zodResolver(signUpFormSchema),
+  const form = useForm<SignUpFormWithConfirmPasswordData>({
+    resolver: zodResolver(signUpFormSchemaWithConfirmPassword),
     defaultValues: {
       username: "",
       email: "",
@@ -42,7 +56,7 @@ export default function Home() {
   });
 
   //Define a submit handler
-  async function onSubmit(values: SignUpFormData) {
+  async function onSubmit(values: SignUpFormWithConfirmPasswordData) {
     try {
       const response = await fetch("/api/auth/signup", {
         method: "POST",
