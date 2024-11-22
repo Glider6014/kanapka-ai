@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Navbar } from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -61,6 +62,7 @@ export default function RecipePage({ params }: { params: { id: string } }) {
 
   return (
     <div className="container mx-auto py-8">
+      <Navbar />
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-bold">{recipe.name}</CardTitle>
