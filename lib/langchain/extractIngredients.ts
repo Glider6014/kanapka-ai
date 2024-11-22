@@ -1,118 +1,74 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import Ingredient, { IngredientType } from "@/models/Ingredient";
+import { JsonOutputParser } from "@langchain/core/output_parsers";
+import Ingredient from "@/models/Ingredient";
 import { isValidFood } from "./validateIngredient";
 import connectDB from "../connectToDatabase";
+
+// Pydantic-like schema for the JSON output
+type Ingredient = {
+  name: string;
+  unit: string;
+  nutrition: {
+    calories: number;
+    protein: number;
+    fats: number;
+    carbs: number;
+    fiber: number;
+    sugar: number;
+    sodium: number;
+  };
+};
+
+const parser = new JsonOutputParser<Ingredient[]>();
 
 const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
   temperature: 0,
   openAIApiKey: process.env.OPENAI_API_KEY,
-  stop: ["\n\n"], // Prevent extra text after JSON
 });
 
-const prompt = ChatPromptTemplate.fromMessages([
-  [
-    "system",
-    `
-Analyze the given food ingredient(s) with their quantities. Multiple ingredients may be provided in a single string.
-First split the input into individual ingredients and their amounts, then analyze each one.
+const chatPrompt = ChatPromptTemplate.fromTemplate(`
+  You are a JSON-only response bot. Your task is to analyze ingredients and return a JSON array.
+  Format your entire response as a valid JSON array containing ingredient objects.
 
-For each valid ingredient return:
-1. The correct name in English
-2. The original amount and unit from input (if provided)
-3. The standard unit for this ingredient (g, ml, or piece)
-4. Nutritional values per 100g, 100ml, or per piece of the product
+  For each ingredient, include:
+  1. name (string): English name in singular form
+  2. unit (string): Standard unit (g, ml, or piece)
+  3. nutrition (object): Nutritional values
 
-Example inputs:
-"2 tomatoes, 500ml milk, 3 eggs"
-"pomidor 2 szt, mleko 500ml, 3 jajka"
+  Rules for units:
+  - Fruits and vegetables: "piece"
+  - Liquids: "ml"
+  - Bakery and grain products: "g"
+  - Meats and seafood: "g"
+  - Dairy products: "g" or "ml"
+  - Eggs: "piece"
+  - Spices and condiments: "g"
+  - Nuts and seeds: "g"
+  - Packaged snacks: "g"
+  - Legumes: "g"
 
-Example output:
-[
-  {{
-    "name": "tomato",
-    "unit": "piece",
-    "nutrition": {{
-      "calories": 22,
-      "protein": 1.1,
-      "fats": 0.2,
-      "carbs": 4.8,
-      "fiber": 1.5,
-      "sugar": 3.2,
-      "sodium": 6
-    }}
-  }},
-  {{
-    "name": "milk",
-    "unit": "ml",
-    "nutrition": {{
-      "calories": 42,
-      "protein": 3.4,
-      "fats": 1.0,
-      "carbs": 5.0,
-      "fiber": 0,
-      "sugar": 5.0,
-      "sodium": 44
-    }}
-  }},
-  {{
-    "name": "egg",
-    "unit": "piece",
-    "nutrition": {{
-      "calories": 68,
-      "protein": 5.5,
-      "fats": 4.8,
-      "carbs": 0.6,
-      "fiber": 0,
-      "sugar": 0.6,
-      "sodium": 62
-    }}
-  }}
-]
+  IMPORTANT: Respond ONLY with the JSON array. No other text or explanation.
 
-Notes:
-- Things like fruits, vegetables should be in their natural unit, which is usually piece
-- Things like bread, which are usually in slices should be named as "slice" like "bread slice" and piece unit
-- Naming should be in english
-- Names should be singular
+  {format_instructions}
+  
+  Ingredients: {ingredients}
+`);
 
-Respond ONLY with a valid JSON array string in this exact format (no other text):
-[
-  {{
-    "name": "[english name]",
-    "unit": "[g/ml/piece]",
-    "nutrition": {{
-      "calories": [number],
-      "protein": [number],
-      "fats": [number],
-      "carbs": [number],
-      "fiber": [number],
-      "sugar": [number],
-      "sodium": [number]
-    }}
-  }}
-]
-
-You can not use markdown or HTML in your response, ONLY JSON.
-`,
-  ],
-  ["user", "{ingredient}"],
-]);
-
-const chain = prompt.pipe(model);
-
-async function validateIngredients(ing: IngredientType) {
+async function validateIngredients(ing: {
+  name: string | RegExp;
+  unit: any;
+  nutrition: any;
+}) {
   await connectDB();
 
-  // Check if ingredient already exists
   const existingIngredient = await Ingredient.findOne({
     name: { $regex: new RegExp(ing.name, "i") },
   });
   if (existingIngredient) return existingIngredient;
 
-  // Validate new ingredient before saving
-  const isValid = await isValidFood(ing.name);
+  const isValid = await isValidFood(ing.name.toString());
   if (!isValid) return null;
 
   const ingredient = new Ingredient({
@@ -124,31 +80,32 @@ async function validateIngredients(ing: IngredientType) {
   return ingredient;
 }
 
-export async function extractIngredients(input: string) {
+export async function extractIngredients(input: any) {
   try {
-    const analysis = await chain.invoke({ ingredient: input });
-    let parsedIngredients;
+    const formatInstructions = parser.getFormatInstructions();
+    const prompt = await chatPrompt.format({
+      format_instructions: formatInstructions,
+      ingredients: input,
+    });
 
-    try {
-      parsedIngredients = JSON.parse(analysis.content.toString());
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Failed to parse AI response: ${error.message}`);
-      } else {
-        throw new Error(`Failed to parse AI response: Unknown error`);
-      }
-    }
+    const messages = [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ];
 
-    const ingredients = (
-      await Promise.all(parsedIngredients.map(validateIngredients))
-    ).filter(Boolean);
+    const rawResponse = await model.call(messages);
+    const parsedResponse = await parser.parse(rawResponse.content.toString());
 
-    return ingredients;
+    const validatedIngredients = await Promise.all(
+      parsedResponse.map((ing) => validateIngredients(ing))
+    );
+
+    return validatedIngredients.filter((ing) => ing !== null);
+    // reszta kodu pozostaje bez zmian
   } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Ingredient analysis failed: ${error.message}`);
-    } else {
-      throw new Error("Ingredient analysis failed: Unknown error");
-    }
+    console.error("extractIngredients error:", error);
+    throw error;
   }
 }

@@ -1,5 +1,8 @@
 import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
+import {
+  ChatPromptTemplate,
+  FewShotChatMessagePromptTemplate,
+} from "@langchain/core/prompts";
 
 const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
@@ -8,39 +11,83 @@ const model = new ChatOpenAI({
   stop: ["\n", " "],
 });
 
-const prompt = ChatPromptTemplate.fromTemplate(`
-Evaluate if the given ingredient is an edible food product. Answer only "true" or "false".
+const examples = [
+  {
+    input: "banana",
+    output: "true",
+  },
+  {
+    input: "apple",
+    output: "true",
+  },
+  {
+    input: "salt",
+    output: "true",
+  },
+  {
+    input: "chicken",
+    output: "true",
+  },
+  {
+    input: "milk",
+    output: "true",
+  },
+  {
+    input: "bread",
+    output: "true",
+  },
+  {
+    input: "stone",
+    output: "false",
+  },
+  {
+    input: "dirt",
+    output: "false",
+  },
+  {
+    input: "poison",
+    output: "false",
+  },
+  {
+    input: "XKCD123",
+    output: "false",
+  },
+];
 
+const examplePrompt = ChatPromptTemplate.fromMessages([
+  ["user", "Ingredient to evaluate: {input}"],
+  ["assistant", "{output}"],
+]);
+
+const prompt = new FewShotChatMessagePromptTemplate({
+  examplePrompt,
+  examples,
+  prefix: `
+Evaluate if the given ingredient is an edible food product. Respond only with "true" or "false".
+
+### Evaluation Rules:
+Answer "true" if the ingredient is:
+- A fruit or vegetable (e.g., apple, carrot)
+- A food product available in stores (e.g., bread, pasta)
+- A spice or herb (e.g., cinnamon, basil)
+- Meat or fish (e.g., chicken, salmon)
+- A dairy product (e.g., milk, cheese)
+- A grain or its derivative (e.g., rice, flour)
+- An ingredient commonly used in cooking (e.g., oil, sugar)
+
+Answer "false" if the ingredient is:
+- Inedible or toxic (e.g., poison, dirt)
+- A random string of characters (e.g., "XKCD123")
+- A non-food item (e.g., stone, plastic)
+- Something that does not exist as a food product
+`,
+  suffix: `
 Ingredient to evaluate: {ingredient}
 
-Evaluation rules:
-- Answer "true" if the ingredient is:
-  * A fruit or vegetable
-  * A food product available in stores
-  * A spice or herb
-  * Meat or fish
-  * Dairy
-  * Grain or its derivative
-  * An ingredient used in cooking
-  
-- Answer "false" if the ingredient is:
-  * Inedible or toxic
-  * A random string of characters
-  * A non-food item
-  * Does not exist as a food product
-
-Examples:
-"banana": true
-"apple": true
-"salt": true
-"chicken": true
-"XKCD123": false
-"stone": false
-"dirt": false
-"poison": false
-
-Answer only "true" or "false".
-`);
+Answer ONLY "true" or "false".
+`,
+  inputVariables: ["ingredient"],
+});
 
 const chain = prompt.pipe(model);
 
