@@ -7,6 +7,12 @@ import connectDB from "@/lib/connectToDatabase";
 import { extractIngredients } from "@/lib/langchain/extractIngredients";
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await req.json().catch(() => null);
 
   if (!body) {
@@ -38,7 +44,7 @@ export async function POST(req: NextRequest) {
     const recipes = await generateRecipes(ingredients, count);
 
     recipes.forEach((recipe) => {
-      recipe.createdBy = "673d93b45e6334f13eadbd4f";
+      recipe.createdBy = session.user.id;
     });
 
     await connectDB();

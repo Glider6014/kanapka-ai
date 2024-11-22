@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Logo } from "@/components/Logo";
+import { signIn } from "next-auth/react";
 
 //Form validation scheme
 const formSchema = z
@@ -88,8 +89,11 @@ export default function Home() {
         console.error("Signup error:", data.message);
       }
 
-      router.push("/");
-      router.refresh();
+      await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        callbackUrl: "/",
+      });
     } catch (error) {
       console.error("An unexpected error occurred:", error);
     }
