@@ -66,8 +66,6 @@ async function translateUnit(unit: string) {
 }
 
 async function validateGeneratedIngredient(genIng: any) {
-  console.log(genIng);
-
   if (!genIng.name || !genIng.amount) return;
 
   if (genIng.amount <= 0) return;
@@ -79,7 +77,10 @@ async function validateGeneratedIngredient(genIng: any) {
 
   if (ingredient) return ingredient;
 
-  return (await extractIngredients(genIng.name))[0];
+  const newIngredient = (await extractIngredients(genIng.name))[0];
+  await newIngredient.save();
+
+  return newIngredient;
 }
 
 async function validateRecipe(recipeData: any) {

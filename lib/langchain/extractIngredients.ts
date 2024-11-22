@@ -139,11 +139,9 @@ export async function extractIngredients(input: string) {
       }
     }
 
-    const ingredientsPromises = parsedIngredients.map(validateIngredients);
-
-    const ingredients = (await Promise.all(ingredientsPromises)).filter(
-      Boolean
-    );
+    const ingredients = (
+      await Promise.all(parsedIngredients.map(validateIngredients))
+    ).filter(Boolean);
 
     return ingredients;
   } catch (error) {
