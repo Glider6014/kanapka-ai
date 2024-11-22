@@ -35,14 +35,16 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
   }
 
   return (
-    <div className="mt-8">
+    <div className="mt-8 transform -translate-y-[30px]">
       <Table>
         <TableHeader>
-          <TableRow>
+          <TableRow className="bg-gray-100 hover:bg-gray-100">
             <TableHead className="w-16">FAVORITE</TableHead>
             <TableHead>RECIPE NAME</TableHead>
             <TableHead>DIFFICULTY</TableHead>
-            <TableHead>TOTAL PREPARATION TIME</TableHead>
+            <TableHead className="md:max-w-16">
+              TOTAL PREPARATION TIME
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

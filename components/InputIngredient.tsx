@@ -20,11 +20,11 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
     };
 
     return (
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-4 w-full">
         <Input
           type="text"
           placeholder="Enter ingredient..."
-          className="w-11/12"
+          className="w-full"
           value={value}
           onChange={onChange}
           onKeyPress={handleKeyPress}
@@ -41,7 +41,7 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
         />
         <Button
           variant="destructive"
-          className="p-2 rounded-md h-10 w-10"
+          className="p-2 rounded-md h-9 w-11"
           onClick={onRemove}
         >
           <Trash2 size={24} />
