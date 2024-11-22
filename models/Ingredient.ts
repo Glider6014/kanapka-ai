@@ -1,7 +1,6 @@
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 
 const IngredientSchema = new Schema({
-  _id: { type: Schema.Types.ObjectId, auto: true, required: true },
   name: { type: String, required: true },
   unit: {
     type: String,
@@ -19,7 +18,9 @@ const IngredientSchema = new Schema({
   },
 });
 
-export type IngredientType = InferSchemaType<typeof IngredientSchema>;
+type IngredientType = InferSchemaType<typeof IngredientSchema>;
+
+export type { IngredientType };
 
 const Ingredient =
   (models.Ingredient as Model<IngredientType>) ||

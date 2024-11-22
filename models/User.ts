@@ -1,7 +1,6 @@
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 
 const UserSchema = new Schema({
-  _id: { type: Schema.Types.ObjectId, auto: true, required: true },
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -15,7 +14,9 @@ const UserSchema = new Schema({
   createdAt: { type: Date, default: Date.now, required: true },
 });
 
-export type UserType = InferSchemaType<typeof UserSchema>;
+type UserType = InferSchemaType<typeof UserSchema>;
+
+export type { UserType };
 
 const User = (models.User as Model<UserType>) || model("User", UserSchema);
 

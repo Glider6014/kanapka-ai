@@ -1,4 +1,3 @@
-"use client";
 import { Navbar as DropdownMenu } from "@/components/ui/dropdown-menu";
 import {
   NavigationMenu,

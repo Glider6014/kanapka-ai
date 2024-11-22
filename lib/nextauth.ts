@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
-import { getServerSession } from "next-auth";
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -71,11 +70,6 @@ const authOptions: NextAuthOptions = {
     signIn: "/user/signin",
     error: "/user/error",
   },
-  secret: process.env.NEXTAUTH_SECRET,
 };
 
 export default authOptions;
-
-export async function getServerSessionAuth() {
-  return getServerSession(authOptions);
-}
