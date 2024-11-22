@@ -63,7 +63,7 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
                 </button>
               </TableCell>
               <TableCell>
-                <Link href={`/recipes/${recipe._id}`}>
+                <Link href={`/recipes/${recipe._id}`} target="_blank">
                   <Button variant="link">{recipe.name}</Button>
                 </Link>
               </TableCell>
