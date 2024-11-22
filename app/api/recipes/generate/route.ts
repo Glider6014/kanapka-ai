@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     const recipes = await generateRecipes(ingredients, count);
 
     recipes.forEach((recipe) => {
-      recipe.createdBy = "673d93b45e6334f13eadbd4f";
+      recipe.createdBy = session.user.id;
     });
 
     await connectDB();
