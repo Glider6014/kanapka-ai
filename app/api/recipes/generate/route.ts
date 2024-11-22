@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import Recipe from "@/models/Recipe";
-import { getServerSession } from "next-auth";
-import authOptions from "@/lib/nextauth";
+import { getServerSessionAuth } from "@/lib/nextauth";
 import { generateRecipes } from "@/lib/langchain/generateRecipes";
 import connectDB from "@/lib/connectToDatabase";
 import { extractIngredients } from "@/lib/langchain/extractIngredients";
 
-export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+export async function POST(req: NextRequest, res: NextResponse) {
+  const session = await getServerSessionAuth();
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
