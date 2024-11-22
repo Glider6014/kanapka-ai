@@ -9,6 +9,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -26,6 +27,8 @@ const formSchema = z.object({
 });
 
 export default function Home() {
+  const router = useRouter();
+
   //Use state to toggle password visibility
   const [showPassword, setShowPassword] = useState(false);
 
@@ -49,6 +52,9 @@ export default function Home() {
     if (result?.error) {
       console.error(result.error);
     }
+
+    router.push("/");
+    router.refresh();
   }
 
   return (
