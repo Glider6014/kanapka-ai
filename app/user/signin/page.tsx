@@ -19,12 +19,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Logo } from "@/components/Logo";
-
-//Form validation scheme
-const formSchema = z.object({
-  email: z.string().email("Invalid email address."),
-  password: z.string().min(6, "Password must be at least 6 characters."),
-});
+import {
+  SignInFormData,
+  signInFormSchema,
+} from "@/lib/formSchemas/authFormSchemas";
 
 export default function Home() {
   const router = useRouter();
@@ -33,8 +31,8 @@ export default function Home() {
   const [showPassword, setShowPassword] = useState(false);
 
   //Define form
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SignInFormData>({
+    resolver: zodResolver(signInFormSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -42,7 +40,7 @@ export default function Home() {
   });
 
   //Define a submit handler
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: SignInFormData) {
     const result = await signIn("credentials", {
       redirect: false,
       email: values.email,

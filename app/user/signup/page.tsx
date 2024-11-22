@@ -8,7 +8,6 @@ import { Eye, EyeOff } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -19,36 +18,10 @@ import {
 } from "@/components/ui/form";
 import { Logo } from "@/components/Logo";
 import { signIn } from "next-auth/react";
-
-//Form validation scheme
-const formSchema = z
-  .object({
-    username: z
-      .string()
-      .min(3, "Username must be at least 3 characters.")
-      .max(20, "Username cannot exceed 20 characters.")
-      .regex(
-        /^[a-zA-Z0-9_-]+$/,
-        "Username can only contain letters, numbers, dashes, and underscores."
-      ),
-    email: z.string().email("Invalid email address."),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters.")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
-      .regex(
-        /[^a-zA-Z0-9]/,
-        "Password must contain at least one special character."
-      ),
-    confirmPassword: z
-      .string()
-      .min(8, "Password confirmation must be at least 8 characters."),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Passwords do not match.",
-  });
+import {
+  SignUpFormData,
+  signUpFormSchema,
+} from "@/lib/formSchemas/authFormSchemas";
 
 export default function Home() {
   const router = useRouter();
@@ -58,8 +31,8 @@ export default function Home() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   //Define form
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpFormSchema),
     defaultValues: {
       username: "",
       email: "",
@@ -69,7 +42,7 @@ export default function Home() {
   });
 
   //Define a submit handler
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: SignUpFormData) {
     try {
       const response = await fetch("/api/auth/signup", {
         method: "POST",
