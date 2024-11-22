@@ -1,0 +1,43 @@
+import { z } from "zod";
+
+const usernameSchema = z
+  .string()
+  .min(3, "Username must be at least 3 characters.")
+  .max(20, "Username cannot exceed 20 characters.")
+  .regex(
+    /^[a-zA-Z0-9_-]+$/,
+    "Username can only contain letters, numbers, dashes, and underscores."
+  );
+const emailSchema = z.string().email("Invalid email address.");
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters.")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
+  .regex(
+    /[^a-zA-Z0-9]/,
+    "Password must contain at least one special character."
+  );
+
+// Sign In
+export const signInFormSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+});
+
+// Sign Up
+export const signUpFormSchema = z
+  .object({
+    username: usernameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match.",
+  });
+
+// Types for form data
+export type SignInFormData = z.infer<typeof signInFormSchema>;
+export type SignUpFormData = z.infer<typeof signUpFormSchema>;
