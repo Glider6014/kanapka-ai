@@ -7,6 +7,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Eye, EyeOff } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 import {
   Form,
@@ -49,6 +50,8 @@ const formSchema = z
   });
 
 export default function Home() {
+  const router = useRouter();
+
   //Use state to toggle password visibility
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -65,8 +68,31 @@ export default function Home() {
   });
 
   //Define a submit handler
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Form submitted:", values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: values.username,
+          email: values.email,
+          password: values.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Signup error:", data.message);
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
+    }
   }
 
   return (
