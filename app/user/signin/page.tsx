@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -51,6 +50,18 @@ export default function Home() {
 
     if (result?.error) {
       console.error(result.error);
+
+      form.setError("email", {
+        type: "manual",
+        message: "Invalid email or password",
+      });
+
+      form.setError("password", {
+        type: "manual",
+        message: "Invalid email or password",
+      });
+
+      return;
     }
 
     router.push("/");
