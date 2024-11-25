@@ -1,4 +1,3 @@
-// route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import connectDB from "@/lib/connectToDatabase";
@@ -27,11 +26,14 @@ export async function GET() {
   }
 }
 
+export type POSTParams = {
+  params: {
+    recipeId: string;
+  };
+};
+
 // Add to favorites
-export async function POST(
-  request: Request,
-  { params }: { params: { recipeId: string } }
-) {
+export async function POST({ params }: POSTParams) {
   try {
     const session = await getServerSession(authOptions);
 
