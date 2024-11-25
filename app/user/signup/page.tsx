@@ -104,7 +104,7 @@ export default function Home() {
       <div className="flex flex-col w-full max-w-6xl items-center justify-center">
         {/* Title - Kanapka AI */}
         <div className="mb-8">
-          <Logo mobileFontSize="text-4xl" desktopFontSize="text-6xl" />
+          <Logo className="text-4xl md:text-6xl" />
         </div>
 
         {/* Form */}

@@ -62,7 +62,7 @@ export default function Home() {
       <div className="flex w-full max-w-6xl items-center justify-between flex-col md:flex-row">
         {/* Title and description section */}
         <div className="w-full md:w-1/2 pr-8 mb-8 md:mb-0">
-          <Logo mobileFontSize="text-4xl" desktopFontSize="text-6xl" />
+          <Logo className="text-4xl md:text-6xl" />
           <p className="text-xl mt-4 text-gray-600 leading-relaxed hidden md:block">
             Welcome to Kanapka AI - your intelligent assistant. Sign in, to
             start using our unique features.

@@ -57,7 +57,7 @@ export default function RecipePage({ params }: { params: { id: string } }) {
     return (
       <div className="container mx-auto py-8 flex justify-center">
         <div className="text-center pt-10">
-          <Logo mobileFontSize={"text-5xl"} desktopFontSize={"text-10xl"} />
+          <Logo className="text-5xl md:text-9xl" />
           <p className="mt-4 text-2xl font-bold text-black">Recipe not found</p>
         </div>
       </div>
