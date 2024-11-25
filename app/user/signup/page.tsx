@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Logo } from "@/components/Logo";
+import { signIn } from "next-auth/react";
 
 //Form validation scheme
 const formSchema = z
@@ -88,8 +89,11 @@ export default function Home() {
         console.error("Signup error:", data.message);
       }
 
-      router.push("/");
-      router.refresh();
+      await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        callbackUrl: "/",
+      });
     } catch (error) {
       console.error("An unexpected error occurred:", error);
     }
@@ -100,7 +104,7 @@ export default function Home() {
       <div className="flex flex-col w-full max-w-6xl items-center justify-center">
         {/* Title - Kanapka AI */}
         <div className="mb-8">
-          <Logo mobileFontSize="text-4xl" desktopFontSize="text-6xl" />
+          <Logo className="text-4xl md:text-6xl" />
         </div>
 
         {/* Form */}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Navbar } from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -11,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Logo } from "@/components/Logo";
 
 export default function RecipePage({ params }: { params: { id: string } }) {
   const [recipe, setRecipe] = useState<any>(null);
@@ -54,13 +56,17 @@ export default function RecipePage({ params }: { params: { id: string } }) {
   if (!recipe) {
     return (
       <div className="container mx-auto py-8 flex justify-center">
-        <p>Recipe not found</p>
+        <div className="text-center pt-10">
+          <Logo className="text-5xl md:text-9xl" />
+          <p className="mt-4 text-2xl font-bold text-black">Recipe not found</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto pt-3 pb-5">
+      <Navbar />
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-bold">{recipe.name}</CardTitle>

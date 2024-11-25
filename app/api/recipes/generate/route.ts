@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import Recipe from "@/models/Recipe";
-import { getServerSession } from "next-auth";
-import authOptions from "@/lib/nextauth";
+import { getServerSessionAuth } from "@/lib/nextauth";
 import { generateRecipes } from "@/lib/langchain/generateRecipes";
 import connectDB from "@/lib/connectToDatabase";
 import { extractIngredients } from "@/lib/langchain/extractIngredients";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest, res: NextResponse) {
+  const session = await getServerSessionAuth();
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await req.json().catch(() => null);
 
   if (!body) {
@@ -38,7 +42,7 @@ export async function POST(req: NextRequest) {
     const recipes = await generateRecipes(ingredients, count);
 
     recipes.forEach((recipe) => {
-      recipe.createdBy = "673d93b45e6334f13eadbd4f";
+      recipe.createdBy = session.user.id;
     });
 
     await connectDB();
