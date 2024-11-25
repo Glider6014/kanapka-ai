@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { isValidObjectId } from "mongoose";
 import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
@@ -9,7 +9,7 @@ export type GETParams = {
   };
 };
 
-export async function GET({ params }: GETParams) {
+export async function GET(req: NextRequest, { params }: GETParams) {
   try {
     const { id } = params;
 
