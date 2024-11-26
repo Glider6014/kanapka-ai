@@ -1,68 +1,76 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSessionAuth } from "@/lib/nextauth";
-import { generateRecipes } from "@/lib/langchain/generateRecipes";
+import { generateRecipes } from "@/lib/Recipe/generateRecipes";
 import connectDB from "@/lib/connectToDatabase";
-import { extractIngredients } from "@/lib/langchain/extractIngredients";
+import { generateIngredient } from "@/lib/Ingredients/generateIngredeints";
+import mongoose from "mongoose";
+import RecipeModel from "@/models/Recipe";
+import {
+  getServerSessionOrCauseUnathorizedError,
+  withApiErrorHandling,
+} from "@/lib/apiUtils";
 
-export async function POST(req: NextRequest, res: NextResponse) {
-  const session = await getServerSessionAuth();
+export const POST = withApiErrorHandling(async (req: NextRequest) => {
+  await connectDB();
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const session = await getServerSessionOrCauseUnathorizedError();
 
   const body = await req.json().catch(() => null);
-  const result = requestSchema.safeParse(body);
 
-  if (!result.success) {
+  if (!body) {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const { ingredients: ingredientsInput, count } = body;
+
+  if (!ingredientsInput || !count) {
     return NextResponse.json(
-      {
-        error: "Validation error",
-        issues: result.error.issues,
-      },
+      { error: "'ingredients' and 'count' are required" },
       { status: 400 }
     );
   }
 
-  try {
-    const ingredients = await extractIngredients(ingredientsInput.toString());
+  // Split ingredients string into array and process each ingredient
+  const ingredientsList = ingredientsInput
+    .toString()
+    .split(",")
+    .map((i: string) => i.trim());
+  const generatedIngredients = await Promise.all(
+    ingredientsList.map(async (ingredientName: string) => {
+      const ingredient = await generateIngredient(ingredientName);
+      if (!ingredient) {
+        throw new Error(`Failed to generate ingredient: ${ingredientName}`);
+      }
+      return ingredient;
+    })
+  );
 
-    if (!ingredients.length) {
-      return NextResponse.json(
-        { error: "No ingredients found" },
-        { status: 400 }
-      );
-    }
-
-    await connectDB();
-    await Promise.all(ingredients.map((ing) => ing.save()));
-
-    const recipes = await generateRecipes(ingredients, count);
-
-    recipes.forEach((recipe) => {
-      recipe.createdBy = session.user.id;
-    });
-
-    await connectDB();
-    const savedRecipes = await Promise.all(
-      recipes.map((recipe) => recipe.save())
-    );
-
-    await connectDB();
-    const populatedRecipes = await Promise.all(
-      savedRecipes.map((savedRecipe) =>
-        savedRecipe.populate("ingredients.ingredient")
-      )
-    );
-
-    return NextResponse.json({
-      recipes: populatedRecipes,
-    });
-  } catch (error) {
-    console.error("Error:", error);
+  if (!generatedIngredients.length) {
     return NextResponse.json(
-      { error: "Server error occurred" },
+      { error: "No ingredients could be generated" },
+      { status: 400 }
+    );
+  }
+
+  const recipes = await generateRecipes(generatedIngredients, count);
+
+  if (!recipes || !recipes.length) {
+    return NextResponse.json(
+      { error: "Failed to generate recipes" },
       { status: 500 }
     );
   }
-}
+
+  const savedRecipes = await Promise.all(
+    recipes.map(async (recipeData) => {
+      const recipe = new RecipeModel(recipeData);
+      recipe.createdBy = new mongoose.Types.ObjectId(session.user.id);
+      await recipe.save();
+      await recipe.populate("ingredients.ingredient");
+      return recipe;
+    })
+  );
+
+  return NextResponse.json({
+    recipes: savedRecipes,
+  });
+});
