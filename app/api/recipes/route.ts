@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectMongo from "@/lib/connectToDatabase";
+import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
 
 export async function GET(req: NextRequest) {
   try {
-    await connectMongo();
+    await connectDB();
 
     const recipes = await Recipe.find({}).populate("ingredients.ingredient");
 
