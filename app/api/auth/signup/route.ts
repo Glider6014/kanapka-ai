@@ -2,23 +2,23 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
+import { signUpFormSchema } from "@/lib/formSchemas/authFormSchemas";
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const { username, email, password } = await request.json();
+    const body = await req.json();
 
-    // Validate input
-    if (!username || !email || !password) {
+    const result = signUpFormSchema.safeParse(body);
+    if (!result.success) {
       return NextResponse.json(
-        { message: "Missing required fields" },
+        { message: "Invalid data", errors: result.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
 
-    // Connect to database
-    await connectDB();
+    const { username, email, password } = result.data;
 
-    // Check if user already exists
+    await connectDB();
     const existingUser = await User.findOne({
       $or: [{ email }, { username }],
     });
@@ -30,10 +30,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
     const user = await User.create({
       username,
       email,
@@ -42,7 +40,6 @@ export async function POST(request: Request) {
 
     // Remove password from response
     const { password: _, ...userWithoutPassword } = user.toObject();
-
 
     return NextResponse.json(
       { message: "User created successfully", user: userWithoutPassword },

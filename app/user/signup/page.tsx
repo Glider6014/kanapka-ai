@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +6,6 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Eye, EyeOff } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -19,47 +16,35 @@ import {
 } from "@/components/ui/form";
 import { Logo } from "@/components/Logo";
 import { signIn } from "next-auth/react";
+import {
+  usernameSchema,
+  emailSchema,
+  passwordSchema,
+} from "@/lib/formSchemas/authFormSchemas";
+import { z } from "zod";
 
-//Form validation scheme
-const formSchema = z
+const signUpFormSchemaWithConfirmPassword = z
   .object({
-    username: z
-      .string()
-      .min(3, "Username must be at least 3 characters.")
-      .max(20, "Username cannot exceed 20 characters.")
-      .regex(
-        /^[a-zA-Z0-9_-]+$/,
-        "Username can only contain letters, numbers, dashes, and underscores."
-      ),
-    email: z.string().email("Invalid email address."),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters.")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
-      .regex(
-        /[^a-zA-Z0-9]/,
-        "Password must contain at least one special character."
-      ),
-    confirmPassword: z
-      .string()
-      .min(8, "Password confirmation must be at least 8 characters."),
+    username: usernameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
     path: ["confirmPassword"],
-    message: "Passwords do not match.",
   });
 
-export default function Home() {
-  const router = useRouter();
+type SignUpFormWithConfirmPasswordData = z.infer<
+  typeof signUpFormSchemaWithConfirmPassword
+>;
 
-  //Use state to toggle password visibility
+export default function Home() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  //Define form
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SignUpFormWithConfirmPasswordData>({
+    resolver: zodResolver(signUpFormSchemaWithConfirmPassword),
     defaultValues: {
       username: "",
       email: "",
@@ -69,7 +54,7 @@ export default function Home() {
   });
 
   //Define a submit handler
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: SignUpFormWithConfirmPasswordData) {
     try {
       const response = await fetch("/api/auth/signup", {
         method: "POST",
