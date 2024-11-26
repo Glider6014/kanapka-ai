@@ -121,17 +121,11 @@ export async function generateIngredient(
       return existingIngredient;
     }
 
-    console.log("Generating nutrition info for:", ingredientName);
-
     const result = await chain.invoke({
       ingredient: ingredientName,
     });
 
-    console.log("AI Response:", result);
-
     const parsedResult = JSON.parse(result);
-    console.log("Parsed Result:", JSON.stringify(parsedResult, null, 2));
-
     const validation = ingredientSchema.safeParse(parsedResult);
 
     if (!validation.success) {
