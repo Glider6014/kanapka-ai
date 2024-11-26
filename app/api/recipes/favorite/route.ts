@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
+import authOptions from "@/lib/nextauth";
 import Recipe from "@/models/Recipe";
 import {
   getServerSessionOrCauseUnathorizedError,
