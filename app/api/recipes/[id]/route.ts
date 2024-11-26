@@ -10,30 +10,22 @@ export type GETParams = {
 };
 
 export async function GET(req: NextRequest, { params }: GETParams) {
-  try {
-    const { id } = params;
+  await connectDB();
 
-    if (!isValidObjectId(id)) {
-      return NextResponse.json(
-        { error: "Invalid recipe ID format" },
-        { status: 400 }
-      );
-    }
+  const { id } = params;
 
-    await connectDB();
-
-    const recipe = await Recipe.findById(id).populate("ingredients.ingredient");
-
-    if (!recipe) {
-      return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
-    }
-
-    return NextResponse.json(recipe);
-  } catch (error) {
-    console.error("Error fetching recipe:", error);
+  if (!isValidObjectId(id)) {
     return NextResponse.json(
-      { error: "Server error occurred" },
-      { status: 500 }
+      { error: "Invalid recipe ID format" },
+      { status: 400 }
     );
   }
+
+  const recipe = await Recipe.findById(id).populate("ingredients.ingredient");
+
+  if (!recipe) {
+    return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
+  }
+
+  return NextResponse.json(recipe);
 }
