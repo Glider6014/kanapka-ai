@@ -12,7 +12,6 @@ export type POSTParams = {
   };
 };
 
-// Add to favorites
 export async function POST(req: NextApiRequest, { params }: POSTParams) {
   try {
     console.log("POST request received with params:", params);
@@ -28,14 +27,12 @@ export async function POST(req: NextApiRequest, { params }: POSTParams) {
     await connectDB();
     console.log("Connected to database");
 
-    // Verify recipe exists
     const recipe = await Recipe.findById(recipeId);
     if (!recipe) {
       console.log("Recipe not found:", recipeId);
       return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
     }
 
-    // Add to favorites if not already added
     const user = await User.findByIdAndUpdate(
       session.user.id,
       { $addToSet: { favorites: recipeId } },
@@ -56,7 +53,6 @@ export async function POST(req: NextApiRequest, { params }: POSTParams) {
   }
 }
 
-// Remove from favorites
 export async function DELETE(
   request: Request,
   { params }: { params: { recipeId: string } }

@@ -102,7 +102,9 @@ export default function RecipePage({ params }: { params: { id: string } }) {
                   {recipe.ingredients.map((ing: any, index: number) => (
                     <TableRow key={index}>
                       <TableCell>{ing.ingredient.name}</TableCell>
-                      <TableCell>{ing.amount}</TableCell>
+                      <TableCell>
+                        {ing.amount} {ing.ingredient.unit}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
