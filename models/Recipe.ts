@@ -3,16 +3,13 @@ import Ingredient from "./Ingredient";
 import { NutritionTotals } from "../types/NutritionTotals";
 import calculateFactor from "@/lib/Ingredients/calculateFactor";
 
-// Add system user constant
-export const SYSTEM_USER_ID = "673d93565e6334f13eadbd4c";
-
 type RecipeIngredient = {
   ingredient: Schema.Types.ObjectId;
   amount: number;
 };
 
 const RecipeSchema = new Schema({
-  _id: { type: Schema.Types.ObjectId, auto: true },
+  _id: { type: Schema.Types.ObjectId, auto: true, required: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
   ingredients: [
@@ -92,11 +89,9 @@ function updateNutritionTotals(
 }
 
 // Update the RecipeType to use the method interface
-type RecipeType = InferSchemaType<typeof RecipeSchema> & {
+export type RecipeType = InferSchemaType<typeof RecipeSchema> & {
   calculateNutrition(): Promise<NutritionTotals>;
 };
-
-export type { RecipeType };
 
 const Recipe =
   (models.Recipe as Model<RecipeType>) ||

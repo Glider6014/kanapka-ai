@@ -1,5 +1,4 @@
 "use client";
-
 import { Logo } from "@/components/Logo";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState } from "react";
@@ -18,7 +17,7 @@ export default function Home() {
   return (
     <main className="min-h-screen p-8">
       <div className="flex justify-center mb-6">
-        <Logo mobileFontSize="text-4xl" desktopFontSize="text-6xl" />
+        <Logo className="text-4xl md:text-6xl" />
       </div>
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Session Status */}

@@ -1,12 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { isValidObjectId } from "mongoose";
 import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export type GETParams = {
+  params: {
+    id: string;
+  };
+};
+
+export async function GET(req: NextRequest, { params }: GETParams) {
   try {
     const { id } = params;
 
@@ -29,7 +32,7 @@ export async function GET(
   } catch (error) {
     console.error("Error fetching recipe:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Server error occurred" },
       { status: 500 }
     );
   }
