@@ -124,17 +124,10 @@ export async function generateRecipes(
       .map((ing) => `- ${ing.name} (unit: ${ing.unit})`)
       .join("\n");
 
-    console.log("Generating recipes with prompt:", {
-      ingredients: ingredientsString,
-      count,
-    });
-
     const results = await chain.invoke({
       ingredients: ingredientsString,
       count,
     });
-
-    console.log("AI Response:", results);
 
     const parsedResults = JSON.parse(results);
     console.log("Parsed Results:", JSON.stringify(parsedResults, null, 2));

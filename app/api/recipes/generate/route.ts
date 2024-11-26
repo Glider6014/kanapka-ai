@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSessionAuth } from "@/lib/nextauth";
 import { generateRecipes } from "@/lib/Recipe/generateRecipes";
 import connectDB from "@/lib/connectToDatabase";
-import { extractIngredients } from "@/lib/langchain/extractIngredients";
+import { generateIngredient } from "@/lib/Ingredients/generateIngredeints";
 import mongoose from "mongoose";
 import RecipeModel from "@/models/Recipe";
+
 export async function POST(req: NextRequest) {
   const session = await getServerSessionAuth();
 
@@ -28,19 +29,31 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const ingredients = await extractIngredients(ingredientsInput.toString());
+    await connectDB();
 
-    if (!ingredients.length) {
+    // Split ingredients string into array and process each ingredient
+    const ingredientsList = ingredientsInput
+      .toString()
+      .split(",")
+      .map((i: string) => i.trim());
+    const generatedIngredients = await Promise.all(
+      ingredientsList.map(async (ingredientName: string) => {
+        const ingredient = await generateIngredient(ingredientName);
+        if (!ingredient) {
+          throw new Error(`Failed to generate ingredient: ${ingredientName}`);
+        }
+        return ingredient;
+      })
+    );
+
+    if (!generatedIngredients.length) {
       return NextResponse.json(
-        { error: "No ingredients found" },
+        { error: "No ingredients could be generated" },
         { status: 400 }
       );
     }
 
-    await connectDB();
-    await Promise.all(ingredients.map((ing) => ing.save()));
-
-    const recipes = await generateRecipes(ingredients, count);
+    const recipes = await generateRecipes(generatedIngredients, count);
 
     if (!recipes || !recipes.length) {
       return NextResponse.json(
@@ -65,7 +78,9 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(
-      { error: "Server error occurred" },
+      {
+        error: error instanceof Error ? error.message : "Server error occurred",
+      },
       { status: 500 }
     );
   }
