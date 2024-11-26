@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSessionAuth } from "@/lib/nextauth";
-import { generateRecipes } from "@/lib/langchain/generateRecipes";
+import { generateRecipes } from "@/lib/Recipe/generateRecipes";
 import connectDB from "@/lib/connectToDatabase";
 import { extractIngredients } from "@/lib/langchain/extractIngredients";
-
-export async function POST(req: NextRequest, res: NextResponse) {
+import mongoose from "mongoose";
+import RecipeModel from "@/models/Recipe";
+export async function POST(req: NextRequest) {
   const session = await getServerSessionAuth();
 
   if (!session?.user?.id) {
@@ -41,24 +42,25 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     const recipes = await generateRecipes(ingredients, count);
 
-    recipes.forEach((recipe) => {
-      recipe.createdBy = session.user.id;
-    });
+    if (!recipes || !recipes.length) {
+      return NextResponse.json(
+        { error: "Failed to generate recipes" },
+        { status: 500 }
+      );
+    }
 
-    await connectDB();
     const savedRecipes = await Promise.all(
-      recipes.map((recipe) => recipe.save())
-    );
-
-    await connectDB();
-    const populatedRecipes = await Promise.all(
-      savedRecipes.map((savedRecipe) =>
-        savedRecipe.populate("ingredients.ingredient")
-      )
+      recipes.map(async (recipeData) => {
+        const recipe = new RecipeModel(recipeData);
+        recipe.createdBy = new mongoose.Types.ObjectId(session.user.id);
+        await recipe.save();
+        await recipe.populate("ingredients.ingredient");
+        return recipe;
+      })
     );
 
     return NextResponse.json({
-      recipes: populatedRecipes,
+      recipes: savedRecipes,
     });
   } catch (error) {
     console.error("Error:", error);

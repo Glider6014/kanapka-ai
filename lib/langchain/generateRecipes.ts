@@ -32,21 +32,21 @@ Notes for unknown ingredients:
 
 Respond ONLY with a valid JSON array string in this exact format (no other text):
 [
-  {{
+  {
     "name": "[Recipe name]",
     "description": "[Description]",
     "ingredients": [
-      {{
+      {
         "name": "[Ingredient name]",
         "amount": [number]
-      }}
+      }
     ],
     "steps": ["[Step 1]", "[Step 2]", "..."],
     "prepTime": [number],
     "cookTime": [number],
     "difficulty": "[Easy/Medium/Hard]",
     "experience": [number]
-  }}
+  }
 ]
 `,
   ],
