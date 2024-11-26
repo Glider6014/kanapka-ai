@@ -1,22 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSessionAuth } from "@/lib/nextauth";
 import { generateRecipes } from "@/lib/langchain/generateRecipes";
 import connectDB from "@/lib/connectToDatabase";
 import { extractIngredients } from "@/lib/langchain/extractIngredients";
-import { z } from "zod";
-import {
-  getServerSessionOrCauseUnathorizedError,
-  withApiErrorHandling,
-} from "@/lib/apiUtils";
 
-const requestSchema = z.object({
-  ingredients: z.string(),
-  count: z.number().int().positive().max(10),
-});
+export async function POST(req: NextRequest, res: NextResponse) {
+  const session = await getServerSessionAuth();
 
-export const POST = withApiErrorHandling(async (req: NextRequest) => {
-  await connectDB();
-
-  const session = await getServerSessionOrCauseUnathorizedError();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const body = await req.json().catch(() => null);
   const result = requestSchema.safeParse(body);
@@ -31,36 +24,45 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
     );
   }
 
-  const ingredients = await extractIngredients(
-    result.data.ingredients.toString()
-  );
+  try {
+    const ingredients = await extractIngredients(ingredientsInput.toString());
 
-  if (!ingredients.length) {
+    if (!ingredients.length) {
+      return NextResponse.json(
+        { error: "No ingredients found" },
+        { status: 400 }
+      );
+    }
+
+    await connectDB();
+    await Promise.all(ingredients.map((ing) => ing.save()));
+
+    const recipes = await generateRecipes(ingredients, count);
+
+    recipes.forEach((recipe) => {
+      recipe.createdBy = session.user.id;
+    });
+
+    await connectDB();
+    const savedRecipes = await Promise.all(
+      recipes.map((recipe) => recipe.save())
+    );
+
+    await connectDB();
+    const populatedRecipes = await Promise.all(
+      savedRecipes.map((savedRecipe) =>
+        savedRecipe.populate("ingredients.ingredient")
+      )
+    );
+
+    return NextResponse.json({
+      recipes: populatedRecipes,
+    });
+  } catch (error) {
+    console.error("Error:", error);
     return NextResponse.json(
-      { error: "No ingredients found" },
-      { status: 400 }
+      { error: "Server error occurred" },
+      { status: 500 }
     );
   }
-
-  await Promise.all(ingredients.map((ing) => ing.save()));
-
-  const recipes = await generateRecipes(ingredients, result.data.count);
-
-  recipes.forEach((recipe) => {
-    recipe.createdBy = session.user.id;
-  });
-
-  const savedRecipes = await Promise.all(
-    recipes.map((recipe) => recipe.save())
-  );
-
-  const populatedRecipes = await Promise.all(
-    savedRecipes.map((savedRecipe) =>
-      savedRecipe.populate("ingredients.ingredient")
-    )
-  );
-
-  return NextResponse.json({
-    recipes: populatedRecipes,
-  });
-});
+}
