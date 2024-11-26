@@ -5,6 +5,12 @@ import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import { getServerSession } from "next-auth";
 
+const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
+
+if (!NEXTAUTH_SECRET) {
+  throw new Error("You must provide a NEXTAUTH_SECRET environment variable");
+}
+
 const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
