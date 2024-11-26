@@ -2,7 +2,7 @@
 
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { JsonOutputParser } from "langchain/output_parsers";
+import { StringOutputParser } from "@langchain/core/output_parsers";
 import { z } from "zod";
 import { IngredientType } from "@/models/Ingredient";
 import Recipe, { RecipeType } from "@/models/Recipe";
@@ -25,9 +25,7 @@ const recipeSchema = z.object({
 
 type RecipeResultType = z.infer<typeof recipeSchema>;
 
-const parser = new JsonOutputParser({
-  jsonSchema: recipeSchema,
-});
+const parser = new StringOutputParser();
 
 const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
@@ -42,7 +40,7 @@ Use as many ingredients from the list as possible while requiring minimal additi
 Available ingredients:
 {ingredients}
 
-${parser.getFormatInstructions()}
+{format_instructions}
 `);
 
 const chain = prompt.pipe(model).pipe(parser);
@@ -55,9 +53,12 @@ export async function generateRecipe(
       .map((ing) => `- ${ing.name} (unit: ${ing.unit})`)
       .join("\n");
 
-    const result = await chain.invoke({ ingredients: ingredientsString });
+    const result = await chain.invoke({
+      ingredients: ingredientsString,
+      format_instructions: parser.getFormatInstructions(),
+    });
 
-    const parsedResult = recipeSchema.parse(result);
+    const parsedResult = recipeSchema.parse(JSON.parse(result));
 
     const recipe = new Recipe({
       name: parsedResult.name,
