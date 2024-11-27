@@ -1,10 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import { UserType } from "@/models/User";
+import { useRouter } from "next/navigation";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserType[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
 
   useEffect(() => {
     fetchUsers();
@@ -14,11 +17,13 @@ export default function AdminUsersPage() {
     const res = await fetch("/api/admin/users");
 
     if (!res.ok) {
-      console.error(await res.json());
+      const { error } = await res.json();
+      alert(error);
+      router.push("/user/signin");
+      return;
     }
 
     setUsers(await res.json());
-
     setLoading(false);
   };
 
