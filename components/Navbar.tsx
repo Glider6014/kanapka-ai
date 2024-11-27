@@ -21,7 +21,7 @@ export const Navbar = () => {
   const navbarItems = NavbarData();
 
   return (
-    <nav className="mb-4 mt-1 flex flex-col md:flex-row items-center justify-between gap-4">
+    <nav className="mb-4 mt-1 flex flex-col md:flex-row items-center justify-between gap-4 z-50">
       <div className="flex justify-between w-full md:w-auto">
         <Logo className="text-4xl md:text-5xl" />
         <div className="md:hidden">
@@ -31,9 +31,7 @@ export const Navbar = () => {
                 <DropdownMenuItem key={index} className="w-full">
                   <DropdownMenuLink
                     href={item.href}
-                    className={`w-full ${buttonVariants({
-                      variant: item.label === "Home" ? "default" : "outline",
-                    })} ${item.className}`}
+                    className={`w-full ${item.className}`}
                     onClick={(e) => {
                       if (item.onClick) {
                         e.preventDefault();
@@ -60,9 +58,7 @@ export const Navbar = () => {
                 <NavigationMenuLink asChild>
                   <a
                     href={item.href}
-                    className={`w-full md:w-auto ${buttonVariants({
-                      variant: item.label === "Home" ? "default" : "outline",
-                    })} ${item.className}`}
+                    className={`w-full md:w-auto ${item.className}`}
                     onClick={(e) => {
                       if (item.onClick) {
                         e.preventDefault();

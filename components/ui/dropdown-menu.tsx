@@ -59,7 +59,7 @@ const DropdownMenu = React.forwardRef<
       </a>
       {isMenuOpen && (
         <div
-          className="absolute top-full mt-2 right-0 w-48 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 shadow-lg"
+          className="absolute z-50 top-full mt-2 right-0 w-48 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 shadow-lg"
           id="dropdown-menu"
         >
           {children}
