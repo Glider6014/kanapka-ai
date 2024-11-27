@@ -21,7 +21,7 @@ export const Navbar = () => {
   const navbarItems = NavbarData();
 
   return (
-    <nav className="mb-4 mt-1 flex flex-col md:flex-row items-center justify-between gap-4 z-50">
+    <nav className="m-4 flex flex-col md:flex-row items-center justify-between gap-4 z-50">
       <div className="flex justify-between w-full md:w-auto">
         <Logo className="text-4xl md:text-5xl" />
         <div className="md:hidden">
@@ -30,16 +30,13 @@ export const Navbar = () => {
               {navbarItems.map((item, index) => (
                 <DropdownMenuItem key={index} className="w-full">
                   <DropdownMenuLink
-                    href={item.href}
+                    href={item.href ?? "#"}
                     className={`w-full ${item.className}`}
                     onClick={(e) => {
-                      if (item.onClick) {
-                        e.preventDefault();
-                        item.onClick();
-                      } else if (item.href.startsWith("/")) {
-                        e.preventDefault();
-                        router.push(item.href);
-                      }
+                      e.preventDefault();
+
+                      if (item.href) router.push(item.href);
+                      item.onClick?.();
                     }}
                   >
                     {item.label.toUpperCase()}
@@ -60,13 +57,10 @@ export const Navbar = () => {
                     href={item.href}
                     className={`w-full md:w-auto ${item.className}`}
                     onClick={(e) => {
-                      if (item.onClick) {
-                        e.preventDefault();
-                        item.onClick();
-                      } else if (item.href.startsWith("/")) {
-                        e.preventDefault();
-                        router.push(item.href);
-                      }
+                      e.preventDefault();
+
+                      if (item.href) router.push(item.href);
+                      item.onClick?.();
                     }}
                   >
                     {item.label.toUpperCase()}

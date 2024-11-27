@@ -13,7 +13,7 @@ export const NavbarData = () => {
   return [
     {
       label: "Home",
-      href: "#",
+      href: "/",
       className: `text-white bg-gradient-to-r from-purple-700 to-orange-500 rounded dark:bg-blue-600 ${buttonVariants(
         { variant: "default" }
       )}`,
@@ -30,7 +30,6 @@ export const NavbarData = () => {
     },
     {
       label: "Logout",
-      href: "/",
       className: standardStyle,
       onClick: logout,
     },
