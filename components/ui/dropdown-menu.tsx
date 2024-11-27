@@ -1,9 +1,13 @@
 "use client";
+import * as React from "react";
 import { useState, useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
+import { signOut } from "next-auth/react";
 
-interface NavbarProps {}
-
-export const Navbar = ({}: NavbarProps) => {
+const DropdownMenu = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, children, ...props }, ref) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -25,12 +29,15 @@ export const Navbar = ({}: NavbarProps) => {
   }, []);
 
   return (
-    <div className="relative" ref={menuRef}>
-      <button
-        onClick={toggleMenu}
-        type="button"
+    <div ref={menuRef} className={cn("relative", className)} {...props}>
+      <a
+        onClick={(e) => {
+          e.preventDefault();
+          toggleMenu();
+        }}
+        href="#"
         className="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-gray-500 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:border-gray-600 dark:focus:ring-gray-600"
-        aria-controls="navbar-hamburger"
+        aria-controls="dropdown-menu"
         aria-expanded={isMenuOpen}
       >
         <span className="sr-only">Open main menu</span>
@@ -49,41 +56,56 @@ export const Navbar = ({}: NavbarProps) => {
             d="M1 1h15M1 7h15M1 13h15"
           />
         </svg>
-      </button>
+      </a>
       {isMenuOpen && (
         <div
-          className="absolute top-full mt-2 right-0 w-48 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 shadow-lg"
-          id="navbar-hamburger"
+          className="absolute z-50 top-full mt-2 right-0 w-48 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 shadow-lg"
+          id="dropdown-menu"
         >
-          <ul className="flex flex-col font-medium">
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-white bg-gradient-to-r from-purple-700 to-orange-500 rounded dark:bg-blue-600"
-                aria-current="page"
-              >
-                Search recipes
-              </a>
-            </li>
-            <li>
-              <a
-                href="/user/signin"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                Login
-              </a>
-            </li>
-            <li>
-              <a
-                href="/user/signup"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                Register
-              </a>
-            </li>
-          </ul>
+          {children}
         </div>
       )}
     </div>
   );
-};
+});
+DropdownMenu.displayName = "DropdownMenu";
+
+const DropdownMenuList = React.forwardRef<
+  HTMLUListElement,
+  React.HTMLAttributes<HTMLUListElement>
+>(({ className, ...props }, ref) => (
+  <ul
+    ref={ref}
+    className={cn("flex flex-col font-medium", className)}
+    {...props}
+  />
+));
+DropdownMenuList.displayName = "DropdownMenuList";
+
+const DropdownMenuItem = React.forwardRef<
+  HTMLLIElement,
+  React.HTMLAttributes<HTMLLIElement>
+>(({ className, ...props }, ref) => (
+  <li ref={ref} className={cn("block py-2 px-3", className)} {...props} />
+));
+DropdownMenuItem.displayName = "DropdownMenuItem";
+
+const DropdownMenuLink = React.forwardRef<
+  HTMLAnchorElement,
+  React.AnchorHTMLAttributes<HTMLAnchorElement>
+>(({ className, onClick, ...props }, ref) => (
+  <a
+    ref={ref}
+    className={cn("block py-2 px-3", className)}
+    onClick={(e) => {
+      if (onClick) {
+        e.preventDefault();
+        onClick(e);
+      }
+    }}
+    {...props}
+  />
+));
+DropdownMenuLink.displayName = "DropdownMenuLink";
+
+export { DropdownMenu, DropdownMenuList, DropdownMenuItem, DropdownMenuLink };
