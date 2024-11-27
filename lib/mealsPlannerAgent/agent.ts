@@ -67,7 +67,7 @@ const workflow = new StateGraph(MessagesAnnotation)
 const app = workflow.compile();
 
 // Przykład użycia
-export const planMeals = async (preferences: string) => {
+export const planMeals = async (preferences: string, userId: string) => {
   if (!preferences?.trim()) {
     throw new Error("Meal preferences are required to generate a meal plan.");
   }
@@ -75,6 +75,7 @@ export const planMeals = async (preferences: string) => {
   try {
     const userPrompt = `Create a meal plan  by following these steps EXACTLY:
     User preferences - ${preferences}
+    User ID - ${userId}
 
 1. First, call ingredients_generator:
    - Input the ingredients as a comma-separated list: 
@@ -83,6 +84,7 @@ export const planMeals = async (preferences: string) => {
 2. Then, call recipe_generator for each recipe you want to create:
    - Provide a recipe name
    - Use the exact _id values from step 1 as ingredientIds
+   - Include the User ID "${userId}" in the userId parameter when calling recipe_generator
    - SAVE the recipe.id values from the response for step 3
 
 3. Finally, call meal_scheduler:

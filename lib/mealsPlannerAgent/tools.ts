@@ -94,9 +94,11 @@ export const recipeGenerator = tool(
   async ({
     recipeName,
     ingredientIds,
+    userId,
   }: {
     recipeName: string;
     ingredientIds: string;
+    userId: string;
   }): Promise<string | null> => {
     if (!recipeName?.trim()) {
       throw new Error("Recipe name is required.");
@@ -113,7 +115,7 @@ export const recipeGenerator = tool(
       throw new Error("No valid ingredient IDs provided.");
     }
 
-    const recipe = await generateRecipeFromIds(recipeName, idsList);
+    const recipe = await generateRecipeFromIds(recipeName, idsList, userId);
 
     if (!recipe) {
       return null;
@@ -153,6 +155,9 @@ IMPORTANT: Use the exact _id values returned by ingredients_generator!`,
         .describe(
           "Comma-separated list of ingredient _id values from ingredients_generator"
         ),
+      userId: z
+        .string()
+        .describe("User ID for whom the recipe is being generated"),
     }),
   }
 );

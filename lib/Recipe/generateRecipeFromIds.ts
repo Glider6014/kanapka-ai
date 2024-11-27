@@ -86,15 +86,10 @@ const chain = prompt.pipe(model).pipe(parser);
 
 export async function generateRecipeFromIds(
   recipeName: string,
-  ingredientIds: string[]
+  ingredientIds: string[],
+  userId: string
 ): Promise<RecipeType | null> {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.id) {
-      console.error("User session not found");
-      return null;
-    }
-
     await connectDB();
 
     const ingredients = await Ingredient.find({
@@ -133,7 +128,7 @@ export async function generateRecipeFromIds(
       cookTime: validation.data.cookTime,
       difficulty: validation.data.difficulty,
       experience: validation.data.experience,
-      createdBy: new Types.ObjectId(session.user.id),
+      createdBy: new Types.ObjectId(userId),
     });
     recipe.save();
     return recipe;
