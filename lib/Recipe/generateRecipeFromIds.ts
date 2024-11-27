@@ -6,6 +6,7 @@ import Recipe, { RecipeType } from "@/models/Recipe";
 import Ingredient from "@/models/Ingredient";
 import { Types } from "mongoose";
 import connectDB from "../connectToDatabase";
+import { getServerSession } from "next-auth";
 
 const singleRecipeSchema = z.object({
   name: z.string(),
@@ -24,7 +25,7 @@ const singleRecipeSchema = z.object({
 });
 
 const model = new ChatOpenAI({
-  modelName: "gpt-4-mini",
+  modelName: "gpt-4o-mini",
   temperature: 0,
   openAIApiKey: process.env.OPENAI_API_KEY,
 });
@@ -88,6 +89,12 @@ export async function generateRecipeFromIds(
   ingredientIds: string[]
 ): Promise<RecipeType | null> {
   try {
+    const session = await getServerSession();
+    if (!session?.user?.id) {
+      console.error("User session not found");
+      return null;
+    }
+
     await connectDB();
 
     const ingredients = await Ingredient.find({
@@ -114,8 +121,7 @@ export async function generateRecipeFromIds(
       console.error("Recipe validation failed:", validation.error);
       return null;
     }
-
-    return new Recipe({
+    const recipe = new Recipe({
       name: validation.data.name,
       description: validation.data.description,
       ingredients: validation.data.ingredients.map((ing) => ({
@@ -127,7 +133,10 @@ export async function generateRecipeFromIds(
       cookTime: validation.data.cookTime,
       difficulty: validation.data.difficulty,
       experience: validation.data.experience,
+      createdBy: new Types.ObjectId(session.user.id),
     });
+    recipe.save();
+    return recipe;
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error("Validation errors:", error.flatten().fieldErrors);

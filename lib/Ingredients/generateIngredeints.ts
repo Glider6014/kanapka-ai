@@ -6,7 +6,6 @@ import connectDB from "@/lib/connectToDatabase";
 import Ingredient, { IngredientType } from "@/models/Ingredient";
 
 const ingredientSchema = z.object({
-  _id: z.string().optional(), // Add _id field
   name: z.string({
     required_error: "Name is required",
   }),
@@ -107,8 +106,7 @@ const chain = prompt.pipe(model).pipe(parser);
 
 export async function generateIngredient(
   ingredientName: string
-): Promise<(IngredientType & { _id: string }) | null> {
-  // Ensure _id is included in return type
+): Promise<IngredientType | null> {
   try {
     await connectDB();
 
@@ -117,10 +115,7 @@ export async function generateIngredient(
     });
 
     if (existingIngredient) {
-      return {
-        ...existingIngredient.toObject(),
-        _id: existingIngredient._id.toString(),
-      };
+      return existingIngredient;
     }
 
     const result = await chain.invoke({
@@ -145,10 +140,7 @@ export async function generateIngredient(
     });
 
     await newIngredient.save();
-    return {
-      ...newIngredient.toObject(),
-      _id: newIngredient._id.toString(),
-    };
+    return newIngredient;
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error("Validation errors:", error.flatten().fieldErrors);

@@ -31,16 +31,14 @@ export interface Recipe {
 }
 
 export const ingredientsGenerator = tool(
-  async ({
-    ingredientNames,
-  }: {
-    ingredientNames: string;
-  }): Promise<Ingredient[]> => {
+  async ({ ingredientNames }: { ingredientNames: string }): Promise<string> => {
     if (!ingredientNames?.trim()) {
       throw new Error(
         "No ingredients provided. Please specify ingredient names."
       );
     }
+
+    console.log("Dodawanie składników do bazy...");
 
     const ingredientList = ingredientNames
       .split(",")
@@ -51,7 +49,7 @@ export const ingredientsGenerator = tool(
       throw new Error("No valid ingredients found in the provided input.");
     }
 
-    console.log("Ingredients Name" + ingredientList);
+    console.log("Ingredients Name " + ingredientList);
 
     const generatedIngredients = await Promise.all(
       ingredientList.map(async (name) => {
@@ -67,19 +65,27 @@ export const ingredientsGenerator = tool(
         return null;
       })
     );
+
     console.log("generatedIngredients", generatedIngredients);
-    return generatedIngredients.filter(
-      (ingredient): ingredient is Ingredient => ingredient !== null
+    return JSON.stringify(
+      generatedIngredients.filter(
+        (ingredient): ingredient is Ingredient => ingredient !== null
+      )
     );
   },
   {
     name: "ingredients_generator",
-    description:
-      "Generates list of available ingredients from comma-separated ingredient names",
+    description: `Adds ingredients to the database from comma-separated names. 
+Input format: "ingredient1, ingredient2, ingredient3"
+Example: "chicken, rice, tomato"
+Returns: Array of ingredients with their IDs (_id field) that you'll need for recipe generation.
+IMPORTANT: Save the _id values as you'll need them for recipe_generator!`,
     schema: z.object({
       ingredientNames: z
         .string()
-        .describe("Comma-separated list of ingredient names"),
+        .describe(
+          "Comma-separated list of ingredient names (e.g., 'chicken, rice, tomato')"
+        ),
     }),
   }
 );
@@ -91,10 +97,11 @@ export const recipeGenerator = tool(
   }: {
     recipeName: string;
     ingredientIds: string;
-  }): Promise<Recipe | null> => {
+  }): Promise<string | null> => {
     if (!recipeName?.trim()) {
       throw new Error("Recipe name is required.");
     }
+    console.log("Generowanie, przepisu...");
 
     if (!ingredientIds?.trim()) {
       throw new Error("Ingredient IDs are required.");
@@ -117,32 +124,48 @@ export const recipeGenerator = tool(
 
     const nutrition = await recipe.calculateNutrition();
 
-    return {
+    const recipeData = {
       id: recipe._id.toString(),
       name: recipe.name,
       nutrition,
     };
+
+    return JSON.stringify(recipeData); // Return recipe data as JSON string
   },
   {
     name: "recipe_generator",
-    description: "Creates a recipe from a name and list of ingredient IDs",
+    description: `Creates a recipe using ingredient IDs from ingredients_generator.
+Required parameters:
+1. recipeName: Name of the recipe you want to create
+2. ingredientIds: Comma-separated list of ingredient _id values from ingredients_generator
+
+Example:
+- recipeName: "Chicken Rice Bowl"
+- ingredientIds: "507f1f77bcf86cd799439011, 507f1f77bcf86cd799439012"
+
+IMPORTANT: Use the exact _id values returned by ingredients_generator!`,
     schema: z.object({
-      recipeName: z.string().describe("Name of the recipe to generate"),
+      recipeName: z
+        .string()
+        .describe("Name of the recipe to generate (e.g., 'Chicken Rice Bowl')"),
       ingredientIds: z
         .string()
-        .describe("Comma-separated list of ingredient IDs"),
+        .describe(
+          "Comma-separated list of ingredient _id values from ingredients_generator"
+        ),
     }),
   }
 );
 
 export const mealScheduler = tool(
-  async ({ meals }: { meals: string }): Promise<void> => {
+  async ({ meals }: { meals: string }): Promise<string> => {
     if (!meals?.trim()) {
       throw new Error(
         "No meals provided for scheduling. Format: recipeId@time, recipeId@time, ..."
       );
     }
 
+    console.log("Planowanie przepisów...");
     try {
       const schedules: MealSchedule[] = meals.split(",").map((meal) => {
         const [recipeId, time] = meal.trim().split("@");
@@ -165,7 +188,7 @@ export const mealScheduler = tool(
         console.log(`Recipe ID: ${recipeId} scheduled for: ${time}`);
       });
 
-      return Promise.resolve();
+      return "planned";
     } catch (error) {
       console.error("Error scheduling meals:", error);
       throw error;
@@ -173,13 +196,19 @@ export const mealScheduler = tool(
   },
   {
     name: "meal_scheduler",
-    description:
-      "Schedules meals throughout the day. Format: 'recipeId@time, recipeId@time, ...'",
+    description: `Schedules meals throughout the day using recipe IDs.
+Input format: "recipeId@time, recipeId@time"
+Example: "507f1f77bcf86cd799439011@8:00, 507f1f77bcf86cd799439012@12:00"
+
+IMPORTANT: 
+- Use the recipe.id values returned by recipe_generator
+- Time should be in HH:MM format
+- Separate multiple meals with commas`,
     schema: z.object({
       meals: z
         .string()
         .describe(
-          "Comma-separated list of recipe IDs with times (format: recipeId@time)"
+          "Comma-separated list of 'recipeId@time' pairs (e.g., 'recipeId@8:00, recipeId@12:00')"
         ),
     }),
   }
