@@ -16,7 +16,6 @@ function shouldContinue({ messages }: typeof MessagesAnnotation.State) {
   return lastMessage?.additional_kwargs?.tool_calls ? "tools" : "__end__";
 }
 
-// Modyfikacja funkcji callModel
 async function callModel(state: typeof MessagesAnnotation.State) {
   try {
     const formattedMessages = state.messages.map((msg) => {
@@ -55,7 +54,6 @@ async function callModel(state: typeof MessagesAnnotation.State) {
   }
 }
 
-// Definicja grafu
 const workflow = new StateGraph(MessagesAnnotation)
   .addNode("agent", callModel)
   .addEdge("__start__", "agent")
@@ -63,10 +61,8 @@ const workflow = new StateGraph(MessagesAnnotation)
   .addEdge("tools", "agent")
   .addConditionalEdges("agent", shouldContinue);
 
-// Kompilacja grafu
 const app = workflow.compile();
 
-// Przykład użycia
 export const planMeals = async (preferences: string, userId: string) => {
   if (!preferences?.trim()) {
     throw new Error("Meal preferences are required to generate a meal plan.");

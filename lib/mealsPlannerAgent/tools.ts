@@ -5,7 +5,7 @@ import { generateRecipeFromIds } from "@/lib/Recipe/generateRecipeFromIds";
 import { NutritionTotals } from "@/types/NutritionTotals";
 
 export interface Ingredient {
-  _id: string; // Add _id field
+  _id: string;
   name: string;
   unit: "g" | "ml" | "piece";
   nutrition: {
@@ -56,7 +56,7 @@ export const ingredientsGenerator = tool(
         const ingredient = await generateIngredient(name);
         if (ingredient && ingredient.nutrition) {
           return {
-            _id: ingredient._id.toString(), // Include the ID
+            _id: ingredient._id.toString(),
             name: ingredient.name,
             unit: ingredient.unit,
             nutrition: ingredient.nutrition,
@@ -132,7 +132,7 @@ export const recipeGenerator = tool(
       nutrition,
     };
 
-    return JSON.stringify(recipeData); // Return recipe data as JSON string
+    return JSON.stringify(recipeData);
   },
   {
     name: "recipe_generator",

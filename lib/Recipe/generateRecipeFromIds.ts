@@ -6,7 +6,6 @@ import Recipe, { RecipeType } from "@/models/Recipe";
 import Ingredient from "@/models/Ingredient";
 import { Types } from "mongoose";
 import connectDB from "../connectToDatabase";
-import { getServerSession } from "next-auth";
 
 const singleRecipeSchema = z.object({
   name: z.string(),
@@ -100,7 +99,6 @@ export async function generateRecipeFromIds(
       console.error("No ingredients found for the given IDs");
       return null;
     }
-
     const ingredientsText = ingredients
       .map((ing) => `${ing._id}: ${ing.name} (${ing.unit})`)
       .join("\n");
