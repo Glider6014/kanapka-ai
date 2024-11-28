@@ -18,8 +18,10 @@ export class UnauthorizedError extends ApiError {
   }
 }
 
-export function withApiErrorHandling(handler: any) {
-  return async (...args: any[]) => {
+// @ts-expect-error parameter 'handler' implicitly has an 'any' type
+export function withApiErrorHandling(handler) {
+  // @ts-expect-error parameter 'args' implicitly has an 'any' type
+  return async (...args) => {
     try {
       return await handler(...args);
     } catch (error) {

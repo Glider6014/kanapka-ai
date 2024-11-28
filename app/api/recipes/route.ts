@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   await connectDB();
 
   const recipes = await Recipe.find({}).populate("ingredients.ingredient");

@@ -1,9 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 
-interface NavbarProps {}
-
-export const Navbar = ({}: NavbarProps) => {
+export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 

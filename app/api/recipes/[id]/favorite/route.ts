@@ -1,10 +1,11 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import Recipe from "@/models/Recipe";
-import authOptions from "@/lib/nextauth";
-import { NextApiRequest } from "next";
+import {
+  getServerSessionOrCauseUnathorizedError,
+  withApiErrorHandling,
+} from "@/lib/apiUtils";
 
 export type POSTParams = {
   params: {
@@ -12,24 +13,15 @@ export type POSTParams = {
   };
 };
 
-export async function POST(req: NextApiRequest, { params }: POSTParams) {
-  try {
-    console.log("POST request received with params:", params);
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.id) {
-      console.log("Unauthorized access attempt");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+export const POST = withApiErrorHandling(
+  async (req: NextRequest, { params }: POSTParams) => {
+    const session = await getServerSessionOrCauseUnathorizedError();
 
     const { id: recipeId } = params;
 
     await connectDB();
-    console.log("Connected to database");
 
-    const recipe = await Recipe.findById(recipeId);
-    if (!recipe) {
-      console.log("Recipe not found:", recipeId);
+    if (!(await Recipe.exists({ _id: recipeId }))) {
       return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
     }
 
@@ -39,30 +31,16 @@ export async function POST(req: NextApiRequest, { params }: POSTParams) {
       { new: true }
     );
 
-    if (user) {
-      console.log("Recipe added to favorites:", recipeId);
-      user.save();
-    } else {
-      console.log("User not found:", session.user.id);
-    }
-
     return NextResponse.json({ success: true, favorites: user?.favorites });
-  } catch (error) {
-    console.error("Server error:", error);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
-}
+);
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { recipeId: string } }
-) {
-  try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+export const DELETE = withApiErrorHandling(
+  async (
+    request: NextRequest,
+    { params }: { params: { recipeId: string } }
+  ) => {
+    const session = await getServerSessionOrCauseUnathorizedError();
 
     const { recipeId } = params;
 
@@ -75,7 +53,5 @@ export async function DELETE(
     );
 
     return NextResponse.json({ success: true, favorites: user?.favorites });
-  } catch (error) {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
-}
+);
