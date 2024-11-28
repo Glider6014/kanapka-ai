@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/Navbar";
 import ListIngredientsAndListRecipesSection from "@/components/sections/ListIngredientsAndListRecipesSection";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";

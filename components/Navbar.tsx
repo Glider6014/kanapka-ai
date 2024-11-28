@@ -14,7 +14,6 @@ import {
 import { Logo } from "@/components/Logo";
 import { useRouter } from "next/navigation";
 import { NavbarData } from "@/components/data/navbarData";
-import { buttonVariants } from "@/components/ui/button";
 
 export const Navbar = () => {
   const router = useRouter();

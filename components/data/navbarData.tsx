@@ -1,7 +1,7 @@
 import { signOut } from "next-auth/react";
 import { buttonVariants } from "../ui/button";
 
-let standardStyle = `text-gray-900 rounded hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${buttonVariants(
+const standardStyle = `text-gray-900 rounded hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${buttonVariants(
   { variant: "outline" }
 )}`;
 

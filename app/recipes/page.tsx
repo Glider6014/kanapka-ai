@@ -1,7 +1,6 @@
 import { RecipesList } from "@/components/RecipesList";
 import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
-import { Navbar } from "@/components/Navbar";
 
 const RecipesPage = async () => {
   await connectDB();

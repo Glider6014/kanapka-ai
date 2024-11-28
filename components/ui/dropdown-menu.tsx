@@ -2,12 +2,11 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { signOut } from "next-auth/react";
 
 const DropdownMenu = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, children, ...props }, ref) => {
+>(({ className, children, ...props }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
