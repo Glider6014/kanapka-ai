@@ -36,7 +36,7 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="w-full bg-[#f8ffe5] px-4 py-12 flex justify-center">
+    <div className="w-full  bg-gradient-to-t from-[#f8ffe5] to-[rgb(255,255,255)] px-4 py-12 flex justify-center">
       <div className="w-full max-w-6xl">
         <div className="flex items-start gap-12">
           <div className="w-1/3">

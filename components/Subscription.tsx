@@ -5,7 +5,7 @@ const plans = [
   {
     title: "Kanapka Basic",
     price: "Free",
-    description: "Perfect for beginner cooks who want to try basic recipes.",
+    description: "",
     features: [
       "Access to basic recipe generator",
       "Save up to 10 recipes",
@@ -17,9 +17,9 @@ const plans = [
   },
   {
     title: "Kanapka Plus",
-    price: "$15",
+    price: "$5/month",
     description:
-      "Save 20% when billed annually. Ideal for those who want to create and save more recipes.",
+      "",
     features: [
       "Unlimited recipe generations",
       "Save unlimited recipes",
@@ -33,9 +33,9 @@ const plans = [
   },
   {
     title: "Kanapka Gold",
-    price: "$45",
+    price: "$10/month",
     description:
-      "or $25/month for Recipe Mode only. For advanced cooks needing more options.",
+      "",
     features: [
       "Advanced recipe customization",
       "Exclusive seasonal ingredients",
@@ -51,9 +51,9 @@ const plans = [
   },
   {
     title: "Kanapka Premium",
-    price: "$75",
+    price: "$15/month",
     description:
-      "or $35/month for Recipe Mode only. Best choice for professional chefs and cooking enthusiasts.",
+      "",
     features: [
       "Personalized diet plans",
       "One-on-one sessions with nutritionists",
@@ -70,9 +70,10 @@ const plans = [
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="mb-20 mt-20 font-bold text-6xl">
+      <h1 className="mb-20 mt-20 font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
         Choose the right plan for your fridge
       </h1>
+
       <div className="flex flex-col md:flex-row gap-4">
         {plans.map((plan, index) => (
           <div
@@ -88,8 +89,8 @@ const plans = [
             <button
               className={`mt-4 w-full py-2 px-4 rounded-lg hover:rounded-none ${
                 plan.isPopular
-                  ? "bg-black text-white hover:bg-gradient-to-r from-purple-700 to-orange-500 transition-transform transform hover:scale-105 duration-200"
-                  : "bg-gray-100 hover:bg-gradient-to-r from-purple-700 to-orange-500 hover:text-white transition-transform transform hover:scale-105 duration-200"
+                  ? "bg-black text-white hover:bg-gradient-to-r from-purple-700 to-orange-500"
+                  : "bg-gray-100 hover:bg-gradient-to-r from-purple-700 to-orange-500 hover:text-white"
               }`}
             >
               {plan.button}

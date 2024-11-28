@@ -2,23 +2,23 @@ export default function SubscriptionTable() {
   const plans = [
     {
       title: "Basic",
-      price: "$5/month",
-      button: "Choose Basic",
+      price: "Free",
+      button: "Select Plan",
     },
     {
       title: "Plus",
-      price: "$10/month",
-      button: "Choose Plus",
+      price: "$5/month",
+      button: "Select Plan",
     },
     {
       title: "Gold",
-      price: "$20/month",
-      button: "Choose Gold",
+      price: "$10/month",
+      button: "Select Plan",
     },
     {
       title: "Premium",
-      price: "$30/month",
-      button: "Choose Premium",
+      price: "$15/month",
+      button: "Select Plan",
     },
   ];
 
@@ -51,7 +51,7 @@ export default function SubscriptionTable() {
                 >
                   <h3 className="text-lg font-medium">{plan.title}</h3>
                   <p className="text-2xl font-bold mt-2">{plan.price}</p>
-                  <button className="mt-4 py-2 px-4 border border-black rounded-md hover:bg-black hover:text-white transition">
+                  <button className="mt-4 py-2 px-4 border border-black rounded-md hover:bg-black hover:text-white hover:rounded-none hover:border">
                     {plan.button}
                   </button>
                 </th>
@@ -60,7 +60,7 @@ export default function SubscriptionTable() {
           </thead>
           <tbody>
             {features.map((feature, index) => (
-              <tr key={index} className="border-t">
+              <tr key={index} className="border-t hover:bg-slate-50">
                 <td className="p-4 border-r border-gray-300 text-left">
                   {feature.name}
                 </td>
