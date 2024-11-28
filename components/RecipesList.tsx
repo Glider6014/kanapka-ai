@@ -64,7 +64,7 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
   }
 
   return (
-    <div className="mt-8 transform -translate-y-[30px]">
+    <div className="mt-8 transform -translate-y-[30px] z-40">
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-100 hover:bg-gray-100">

@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/Navbar";
 import ListIngredientsAndListRecipesSection from "@/components/sections/ListIngredientsAndListRecipesSection";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -13,7 +12,6 @@ export default async function Home() {
 
   return (
     <div className="container mx-auto p-4">
-      <Navbar />
       <ListIngredientsAndListRecipesSection />
     </div>
   );
