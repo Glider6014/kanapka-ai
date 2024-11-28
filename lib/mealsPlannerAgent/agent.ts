@@ -63,15 +63,20 @@ const workflow = new StateGraph(MessagesAnnotation)
 
 const app = workflow.compile();
 
-export const planMeals = async (preferences: string, userId: string) => {
+export const planMeals = async (
+  preferences: string,
+  userId: string,
+  targetDate: string
+) => {
   if (!preferences?.trim()) {
     throw new Error("Meal preferences are required to generate a meal plan.");
   }
 
   try {
-    const userPrompt = `Create a meal plan  by following these steps EXACTLY:
+    const userPrompt = `Create a meal plan for ${targetDate} by following these steps EXACTLY:
     User preferences - ${preferences}
     User ID - ${userId}
+    Target Date - ${targetDate}
 
 1. First, call ingredients_generator:
    - Input the ingredients as a comma-separated list: 
@@ -87,6 +92,7 @@ export const planMeals = async (preferences: string, userId: string) => {
    - Format: "recipeId@time, recipeId@time"
    - Use the recipe.id values from step 2
    - Include times in HH:MM format
+   - The plan will be for date: ${targetDate}
 
 Example flow:
 1. ingredients_generator -> returns ingredients with _ids

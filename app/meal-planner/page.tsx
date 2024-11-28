@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { DateTime } from "luxon";
 import GenerateMealsModal from "@/components/meal-planner/GenerateMealsModal";
@@ -7,31 +7,57 @@ import { CustomEvent } from "@/types/calendar";
 
 const Calendar = dynamic(
   () => import("@/components/meal-planner/BigCalendar"),
-  {
-    ssr: false,
-  }
+  { ssr: false }
 );
 
 export default function Home() {
-  const [events, setEvents] = useState<CustomEvent[]>([
-    {
-      id: 1,
-      title: "Breakfast",
-      start: DateTime.now().set({ hour: 6 }).toJSDate(),
-      end: DateTime.now().set({ hour: 7 }).toJSDate(),
-    },
-    {
-      id: 2,
-      title: "Flight to Paris",
-      start: DateTime.now().set({ hour: 7, minute: 30 }).toJSDate(),
-      end: DateTime.now().set({ hour: 10 }).toJSDate(),
-    },
-  ]);
+  const [events, setEvents] = useState<CustomEvent[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchMealSchedules = async () => {
+    try {
+      const response = await fetch("/api/meal-schedules");
+      if (!response.ok) {
+        throw new Error("Failed to fetch meal schedules");
+      }
+      const data = await response.json();
+      setEvents(data.events);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMealSchedules();
+  }, []);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  const handleMealPlanSuccess = () => {
+    fetchMealSchedules();
+  };
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen flex items-center justify-center text-red-500">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen">
@@ -46,7 +72,12 @@ export default function Home() {
       </header>
       <main className="h-full">
         <Calendar events={events} setEvents={setEvents} />
-        {isModalOpen && <GenerateMealsModal onClose={handleCloseModal} />}
+        {isModalOpen && (
+          <GenerateMealsModal
+            onClose={handleCloseModal}
+            onSuccess={handleMealPlanSuccess}
+          />
+        )}
       </main>
     </div>
   );

@@ -1,8 +1,7 @@
-import { Event } from "react-big-calendar";
-
-export interface CustomEvent extends Event {
-  id: number;
+export interface CustomEvent {
+  id: string | number;
   title: string;
-  start: Date;
-  end: Date;
+  start: string | Date;
+  end: string | Date;
+  allDay?: boolean;
 }

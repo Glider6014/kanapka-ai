@@ -3,6 +3,9 @@ import { z } from "zod";
 import { generateIngredient } from "@/lib/Ingredients/generateIngredeints";
 import { generateRecipeFromIds } from "@/lib/Recipe/generateRecipeFromIds";
 import { NutritionTotals } from "@/types/NutritionTotals";
+import connectDB from "../connectToDatabase";
+import { MealSchedule } from "../models/MealSchedule";
+import { Types } from "mongoose";
 
 export interface Ingredient {
   _id: string;
@@ -163,7 +166,15 @@ IMPORTANT: Use the exact _id values returned by ingredients_generator!`,
 );
 
 export const mealScheduler = tool(
-  async ({ meals }: { meals: string }): Promise<string> => {
+  async ({
+    meals,
+    userId,
+    targetDate,
+  }: {
+    meals: string;
+    userId: string;
+    targetDate: string;
+  }): Promise<string> => {
     if (!meals?.trim()) {
       throw new Error(
         "No meals provided for scheduling. Format: recipeId@time, recipeId@time, ..."
@@ -172,6 +183,9 @@ export const mealScheduler = tool(
 
     console.log("Planowanie przepisów...");
     try {
+      await connectDB();
+      const baseDate = new Date(targetDate);
+
       const schedules: MealSchedule[] = meals.split(",").map((meal) => {
         const [recipeId, time] = meal.trim().split("@");
 
@@ -188,12 +202,24 @@ export const mealScheduler = tool(
         throw new Error("No valid meal schedules provided.");
       }
 
-      console.log("Scheduled meals:");
-      schedules.forEach(({ recipeId, time }) => {
-        console.log(`Recipe ID: ${recipeId} scheduled for: ${time}`);
-      });
+      const savedSchedules = await Promise.all(
+        schedules.map((schedule) => {
+          const [hours, minutes] = schedule.time.split(":").map(Number);
+          const scheduledDate = new Date(baseDate);
+          scheduledDate.setHours(hours, minutes, 0, 0);
 
-      return "planned";
+          return MealSchedule.create({
+            userId: new Types.ObjectId(userId),
+            recipeId: new Types.ObjectId(schedule.recipeId),
+            date: scheduledDate,
+          });
+        })
+      );
+
+      return JSON.stringify({
+        message: "Successfully scheduled meals",
+        schedules: savedSchedules,
+      });
     } catch (error) {
       console.error("Error scheduling meals:", error);
       throw error;
@@ -208,13 +234,18 @@ Example: "507f1f77bcf86cd799439011@8:00, 507f1f77bcf86cd799439012@12:00"
 IMPORTANT: 
 - Use the recipe.id values returned by recipe_generator
 - Time should be in HH:MM format
-- Separate multiple meals with commas`,
+- Separate multiple meals with commas
+- Date should be in YYYY-MM-DD format`,
     schema: z.object({
       meals: z
         .string()
         .describe(
           "Comma-separated list of 'recipeId@time' pairs (e.g., 'recipeId@8:00, recipeId@12:00')"
         ),
+      userId: z
+        .string()
+        .describe("User ID for whom the meals are being scheduled"),
+      targetDate: z.string().describe("Target date in YYYY-MM-DD format"),
     }),
   }
 );

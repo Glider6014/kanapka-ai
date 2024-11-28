@@ -1,23 +1,33 @@
 import {
-  Calendar,
-  momentLocalizer,
+  Calendar as BigCalendar,
+  dateFnsLocalizer,
   ToolbarProps,
   SlotInfo,
 } from "react-big-calendar";
-import moment from "moment";
+import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CustomToolbar from "./CustomToolbar";
 import { CustomEvent } from "@/types/calendar";
 import { useState } from "react";
 
-interface BigCalendarProps {
+const locales = {
+  "en-US": require("date-fns/locale/en-US"),
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
+
+interface CalendarProps {
   events: CustomEvent[];
   setEvents: (events: CustomEvent[]) => void;
 }
 
-const localizer = momentLocalizer(moment);
-
-const BigCalendar: React.FC<BigCalendarProps> = ({ events, setEvents }) => {
+const Calendar: React.FC<CalendarProps> = ({ events, setEvents }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const handleNavigate = (newDate: Date) => {
@@ -43,29 +53,47 @@ const BigCalendar: React.FC<BigCalendarProps> = ({ events, setEvents }) => {
     }
   };
 
+  const eventPropGetter = () => ({
+    className: "bg-blue-500 text-white rounded px-2",
+  });
+
   return (
     <div className="h-full">
-      <Calendar
+      <BigCalendar
         localizer={localizer}
-        events={events}
+        events={events.map((event) => ({
+          ...event,
+          start: new Date(event.start),
+          end: new Date(event.end),
+        }))}
         defaultView="week"
         selectable
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
-        style={{ height: "100%" }}
+        style={{ height: "calc(100vh - 80px)" }}
         step={30}
         timeslots={2}
         date={currentDate}
         onNavigate={handleNavigate}
         components={{
           toolbar: CustomToolbar as React.ComponentType<
-            ToolbarProps<CustomEvent, object>
+            ToolbarProps<
+              {
+                start: Date;
+                end: Date;
+                id: string | number;
+                title: string;
+                allDay?: boolean | undefined;
+              },
+              object
+            >
           >,
         }}
         views={["week"]}
+        eventPropGetter={eventPropGetter}
       />
     </div>
   );
 };
 
-export default BigCalendar;
+export default Calendar;
