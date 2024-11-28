@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <>
       <div className="bg-black text-white py-8">
-        <div className="container mx-auto grid grid-cols-2 md:grid-cols-5 gap-8">
+        <div className="container mx-auto grid grid-cols-2 md:grid-cols-5 gap-8 px-4 sm:px-6 lg:px-8">
           <div>
             <h3 className="font-bold text-sm uppercase mb-4">Features</h3>
             <ul className="space-y-2 text-sm">
@@ -60,15 +60,15 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-700 mt-8 pt-4">
-          <div className="container mx-auto flex flex-col md:flex-row justify-between items-center text-sm">
-            <div className="flex gap-4">
+          <div className="container mx-auto flex flex-col md:flex-row justify-between items-center text-sm px-4 sm:px-6 lg:px-8">
+            <div className="flex gap-4 justify-center md:justify-start">
               <Facebook />
               <Twitter />
               <Linkedin />
               <Youtube />
               <Instagram />
             </div>
-            <div className="text-gray-500 flex gap-4 mt-4 md:mt-0">
+            <div className="text-gray-500 flex gap-4 mt-4 md:mt-0 justify-center md:justify-start">
               <span>Privacy & Security</span>
               <span>Privacy Notice</span>
               <span>Terms of Use</span>
