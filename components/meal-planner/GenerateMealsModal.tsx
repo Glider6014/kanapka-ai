@@ -1,17 +1,48 @@
 import { FC, useState } from "react";
+import { format } from "date-fns";
 
 interface GenerateMealsModalProps {
   onClose: () => void;
 }
 
+interface SelectedDayInfo {
+  name: string;
+  date: Date;
+}
+
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+const getNextDayDate = (dayName: string): Date => {
+  const today = new Date();
+  const dayIndex = days.indexOf(dayName);
+  const todayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
+  const daysUntilNext = dayIndex - todayIndex;
+
+  const nextDate = new Date();
+  nextDate.setDate(
+    today.getDate() + (daysUntilNext <= 0 ? daysUntilNext + 7 : daysUntilNext)
+  );
+  return nextDate;
+};
+
 const GenerateMealsModal: FC<GenerateMealsModalProps> = ({ onClose }) => {
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [selectedDay, setSelectedDay] = useState<SelectedDayInfo | null>(null);
+
+  const handleDaySelect = (day: string) => {
+    const nextDate = getNextDayDate(day);
+    setSelectedDay({ name: day, date: nextDate });
+  };
 
   const handleGenerate = () => {
-    alert(`Meals generated for ${selectedDay}`);
-    onClose();
+    if (selectedDay) {
+      alert(
+        `Meals will be generated for ${selectedDay.name}, ${format(
+          selectedDay.date,
+          "MMMM do, yyyy"
+        )}`
+      );
+      onClose();
+    }
   };
 
   return (
@@ -23,13 +54,18 @@ const GenerateMealsModal: FC<GenerateMealsModalProps> = ({ onClose }) => {
             <li key={day}>
               <button
                 className={`w-full px-4 py-2 rounded text-left ${
-                  selectedDay === day
+                  selectedDay?.name === day
                     ? "bg-blue-500 text-white"
                     : "bg-gray-100 hover:bg-gray-200"
                 }`}
-                onClick={() => setSelectedDay(day)}
+                onClick={() => handleDaySelect(day)}
               >
                 {day}
+                {selectedDay?.name === day && (
+                  <span className="ml-2 text-sm">
+                    ({format(selectedDay.date, "MMM do")})
+                  </span>
+                )}
               </button>
             </li>
           ))}

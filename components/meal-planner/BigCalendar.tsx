@@ -1,13 +1,14 @@
-import { Calendar, momentLocalizer, ToolbarProps } from "react-big-calendar";
+import {
+  Calendar,
+  momentLocalizer,
+  ToolbarProps,
+  SlotInfo,
+} from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CustomToolbar from "./CustomToolbar";
 import { CustomEvent } from "@/types/calendar";
-
-interface BigCalendarProps {
-  events: CustomEvent[];
-  setEvents: (events: CustomEvent[]) => void;
-}
+import { useState } from "react";
 
 interface BigCalendarProps {
   events: CustomEvent[];
@@ -17,14 +18,20 @@ interface BigCalendarProps {
 const localizer = momentLocalizer(moment);
 
 const BigCalendar: React.FC<BigCalendarProps> = ({ events, setEvents }) => {
-  const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
-    const title = prompt("Enter event title");
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const handleNavigate = (newDate: Date) => {
+    setCurrentDate(newDate);
+  };
+
+  const handleSelectSlot = (slotInfo: SlotInfo) => {
+    const title = window.prompt("New event name");
     if (title) {
       const newEvent: CustomEvent = {
-        id: events.length + 1,
+        id: Date.now(),
         title,
-        start,
-        end,
+        start: slotInfo.start,
+        end: slotInfo.end,
       };
       setEvents([...events, newEvent]);
     }
@@ -48,6 +55,8 @@ const BigCalendar: React.FC<BigCalendarProps> = ({ events, setEvents }) => {
         style={{ height: "100%" }}
         step={30}
         timeslots={2}
+        date={currentDate}
+        onNavigate={handleNavigate}
         components={{
           toolbar: CustomToolbar as React.ComponentType<
             ToolbarProps<CustomEvent, object>
