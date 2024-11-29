@@ -61,6 +61,8 @@ export const PATCH = withApiErrorHandling(
     const ingredients = [];
 
     for (const ingredientInput of result.data.ingredients) {
+      if (ingredientInput.length === 0) continue;
+
       const ingredient = await generateIngredient(ingredientInput);
       if (!ingredient) continue;
 
