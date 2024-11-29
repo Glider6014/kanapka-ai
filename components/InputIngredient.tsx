@@ -7,15 +7,17 @@ type InputIngredientProps = {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemove: () => void;
-  onAdd: () => void;
+  onAdd?: () => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
   inputRef?: (el: HTMLInputElement | null) => void;
 };
 
 const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
-  ({ value, onChange, onRemove, onAdd, inputRef }, ref) => {
+  ({ value, onChange, onRemove, onAdd, onFocus, onBlur, inputRef }, ref) => {
     const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
-        onAdd();
+        onAdd?.();
       }
     };
 
@@ -27,6 +29,8 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
           className="w-full"
           value={value}
           onChange={onChange}
+          onFocus={onFocus}
+          onBlur={onBlur}
           onKeyPress={handleKeyPress}
           ref={(el) => {
             if (ref) {
@@ -39,13 +43,15 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
             if (inputRef) inputRef(el);
           }}
         />
-        <Button
-          variant="destructive"
-          className="p-2 rounded-md h-9 w-11"
-          onClick={onRemove}
-        >
-          <Trash2 size={24} />
-        </Button>
+        {value.trim() !== "" && (
+          <Button
+            variant="destructive"
+            className="p-2 rounded-md h-9 w-11"
+            onClick={onRemove}
+          >
+            <Trash2 size={24} />
+          </Button>
+        )}
       </div>
     );
   }

@@ -3,12 +3,13 @@
 import { RecipeType } from "@/models/Recipe";
 import { useEffect, useState } from "react";
 import { FridgeType } from "@/models/Fridge";
+import { FridgePanel } from "./FridgePanel";
 
-type FrdigesPanelProps = {
-  setRecipes: React.Dispatch<React.SetStateAction<RecipeType[]>>;
+type FridgesPanelProps = {
+  setRecipes?: React.Dispatch<React.SetStateAction<RecipeType[]>>;
 };
 
-export const FridgesPanel = ({ setRecipes }: FrdigesPanelProps) => {
+export const FridgesPanel = ({ setRecipes }: FridgesPanelProps) => {
   const [fridges, setFridges] = useState<FridgeType[]>([]);
   const [activeTab, setActiveTab] = useState<number>(0);
 
@@ -22,7 +23,7 @@ export const FridgesPanel = ({ setRecipes }: FrdigesPanelProps) => {
       })
       .then((res) => res.json())
       .then((data) => {
-        setFridges(data.fridges);
+        setFridges(data);
       })
       .catch((err) => {
         console.error(err);
@@ -49,13 +50,13 @@ export const FridgesPanel = ({ setRecipes }: FrdigesPanelProps) => {
         ))}
       </div>
       <div className="p-4">
-        {fridges.length > 0 && (
-          <ul>
-            {fridges[activeTab].ingredients.map((ingredient, index) => (
-              <li key={index}>{ingredient}</li>
-            ))}
-          </ul>
-        )}
+        {fridges.map((fridge) => (
+          <FridgePanel
+            key={fridge._id.toString()}
+            fridge={fridge}
+            setRecipes={setRecipes}
+          />
+        ))}
       </div>
     </div>
   );
