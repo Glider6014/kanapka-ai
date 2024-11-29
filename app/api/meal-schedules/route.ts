@@ -29,6 +29,7 @@ export async function GET(request: Request) {
         end: endDate.toISOString(),
         allDay: false,
         duration: schedule.duration,
+        recipeId: schedule.recipeId._id.toString(),
       };
     });
 

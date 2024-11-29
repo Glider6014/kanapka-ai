@@ -5,6 +5,7 @@ import {
   SlotInfo,
   View,
   ResizeEvent,
+  Components,
 } from "react-big-calendar";
 import withDragAndDrop, {
   EventInteractionArgs as DragAndDropArgs,
@@ -13,6 +14,7 @@ import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import CustomToolbar from "./CustomToolbar";
+import EventWrapper from "./EventWrapper";
 import { CustomEvent } from "@/types/calendar";
 import { useState } from "react";
 
@@ -63,18 +65,14 @@ const Calendar: React.FC<CalendarProps> = ({
     }
   };
 
-  const handleSelectEvent = (
-    event: any,
-    e: React.SyntheticEvent<HTMLElement>
-  ) => {
-    const customEvent = event as CustomEvent;
-    if (confirm(`Delete the event "${customEvent.title}"?`)) {
-      setEvents(events.filter((e) => e.id !== customEvent.id));
-    }
-  };
-
   const eventPropGetter = () => ({
-    className: "bg-blue-500 text-white rounded px-2",
+    className: "event-wrapper",
+    style: {
+      backgroundColor: "#3b82f6",
+      border: "none",
+      borderRadius: "4px",
+      padding: 0,
+    },
   });
 
   const moveEvent = (args: DragAndDropArgs<object>) => {
@@ -88,33 +86,42 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   return (
-    <div className="h-full">
-      <DragAndDropCalendar
-        localizer={localizer}
-        events={events.map((event) => ({
-          ...event,
-          start: new Date(event.start),
-          end: new Date(event.end),
-        }))}
-        defaultView="week"
-        view={view}
-        onView={setView}
-        resizable
-        style={{ height: "calc(100vh - 80px)" }}
-        step={30}
-        timeslots={2}
-        date={currentDate}
-        onNavigate={handleNavigate}
-        components={{
-          toolbar: (props) => <CustomToolbar {...props} />,
-        }}
-        views={["week"]}
-        eventPropGetter={eventPropGetter}
-        draggableAccessor={() => true}
-        onEventDrop={moveEvent}
-        onEventResize={handleResize}
-      />
-    </div>
+    <>
+      <div className="h-full">
+        <DragAndDropCalendar
+          localizer={localizer}
+          events={events.map((event) => ({
+            ...event,
+            start: new Date(event.start),
+            end: new Date(event.end),
+          }))}
+          defaultView="week"
+          view={view}
+          onView={setView}
+          resizable
+          style={{ height: "calc(100vh - 80px)" }}
+          step={30}
+          timeslots={2}
+          date={currentDate}
+          onNavigate={handleNavigate}
+          components={{
+            toolbar: (props) => <CustomToolbar {...props} />,
+            event: EventWrapper,
+          }}
+          views={["week"]}
+          eventPropGetter={eventPropGetter}
+          draggableAccessor={() => true}
+          onEventDrop={moveEvent}
+          onEventResize={handleResize}
+          onSelectEvent={() => {}} // Empty function to prevent default behavior
+          formats={{
+            eventTimeRangeFormat: () => "",
+            timeRangeFormat: () => "",
+            eventTimeRangeEndFormat: () => "",
+          }}
+        />
+      </div>
+    </>
   );
 };
 
