@@ -2,57 +2,48 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
+import { signUpFormSchema } from "@/lib/formSchemas/authFormSchemas";
 
 export async function POST(request: Request) {
-  try {
-    const { username, email, password } = await request.json();
+  await connectDB();
 
-    // Validate input
-    if (!username || !email || !password) {
-      return NextResponse.json(
-        { message: "Missing required fields" },
-        { status: 400 }
-      );
-    }
+  const body = await request.json().catch(() => null);
 
-    // Connect to database
-    await connectDB();
+  const result = signUpFormSchema.safeParse(body);
 
-    // Check if user already exists
-    const existingUser = await User.findOne({
+  if (!result.success) {
+    return NextResponse.json({ error: result.error.message }, { status: 400 });
+  }
+
+  const { username, email, password } = result.data;
+
+  if (
+    await User.exists({
       $or: [{ email }, { username }],
-    });
-
-    if (existingUser) {
-      return NextResponse.json(
-        { message: "User with this email or username already exists" },
-        { status: 409 }
-      );
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Create user
-    const user = await User.create({
-      username,
-      email,
-      password: hashedPassword,
-    });
-
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user.toObject();
-
-
+    })
+  ) {
     return NextResponse.json(
-      { message: "User created successfully", user: userWithoutPassword },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error("Registration error:", error);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
+      { message: "User with this email or username already exists" },
+      { status: 409 }
     );
   }
+
+  const hashedPassword = await bcrypt.hash(password, 12);
+
+  const user = await User.create({
+    username,
+    email,
+    password: hashedPassword,
+  });
+
+  // Remove password from response
+  const userWithoutPassword = {
+    ...user,
+    password: undefined,
+  };
+
+  return NextResponse.json(
+    { message: "User created successfully", user: userWithoutPassword },
+    { status: 201 }
+  );
 }

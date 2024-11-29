@@ -3,9 +3,7 @@ import mongoose, { ConnectOptions } from "mongoose";
 const MONGODB_URI = process.env.MONGODB_URI as string;
 
 if (!MONGODB_URI) {
-  throw new Error(
-    "Please define the MONGODB_URI environment variable inside .env.local"
-  );
+  throw new Error("You must provide a MONGODB_URI environment variable");
 }
 
 // Global cache to store the connection
@@ -14,7 +12,7 @@ type MongooseCache = {
   promise: Promise<mongoose.Mongoose> | null;
 };
 
-let cached: MongooseCache = (global as any).mongoose || {
+const cached: MongooseCache = {
   conn: null,
   promise: null,
 };

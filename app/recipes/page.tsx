@@ -1,10 +1,6 @@
 import { RecipesList } from "@/components/RecipesList";
 import connectDB from "@/lib/connectToDatabase";
-import Recipe, { RecipeType } from "@/models/Recipe";
-
-type RecipesPageProps = {
-  recipes: RecipeType[];
-};
+import Recipe from "@/models/Recipe";
 
 const RecipesPage = async () => {
   await connectDB();
@@ -13,8 +9,10 @@ const RecipesPage = async () => {
     .lean();
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Recipes List</h2>
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4 text-center bg-gray-300 p-5 text-gray-700">
+        Recipes List
+      </h2>
       <RecipesList recipes={JSON.parse(JSON.stringify(recipes))} />
     </div>
   );

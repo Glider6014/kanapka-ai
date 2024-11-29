@@ -1,7 +1,7 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Navbar } from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -11,10 +11,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Logo } from "@/components/Logo";
+import { RecipeType } from "@/models/Recipe";
+import { IngredientType } from "@/models/Ingredient";
+
+type NutrutionType = {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fats: number;
+  fiber: number;
+  sugar: number;
+  sodium: number;
+};
+
+type PopulatedRecipeType = {
+  ingredients: {
+    ingredient: IngredientType;
+    amount: number;
+  }[];
+} & RecipeType;
 
 export default function RecipePage({ params }: { params: { id: string } }) {
-  const [recipe, setRecipe] = useState<any>(null);
-  const [nutrition, setNutrition] = useState<any>(null);
+  const [recipe, setRecipe] = useState<PopulatedRecipeType | null>(null);
+  const [nutrition, setNutrition] = useState<NutrutionType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -54,13 +74,17 @@ export default function RecipePage({ params }: { params: { id: string } }) {
   if (!recipe) {
     return (
       <div className="container mx-auto py-8 flex justify-center">
-        <p>Recipe not found</p>
+        <div className="text-center pt-10">
+          <Logo className="text-5xl md:text-9xl" />
+          <p className="mt-4 text-2xl font-bold text-black">Recipe not found</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto pt-3 pb-5">
+      <Navbar />
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-bold">{recipe.name}</CardTitle>
@@ -94,10 +118,12 @@ export default function RecipePage({ params }: { params: { id: string } }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recipe.ingredients.map((ing: any, index: number) => (
+                  {recipe.ingredients.map((ing, index: number) => (
                     <TableRow key={index}>
                       <TableCell>{ing.ingredient.name}</TableCell>
-                      <TableCell>{ing.amount}</TableCell>
+                      <TableCell>
+                        {ing.amount} {ing.ingredient.unit}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
