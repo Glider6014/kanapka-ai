@@ -1,0 +1,152 @@
+import { FC, useState } from "react";
+import { format } from "date-fns";
+
+interface GenerateMealsModalProps {
+  onClose: () => void;
+  onSuccess?: (result: string) => void;
+}
+
+interface SelectedDayInfo {
+  name: string;
+  date: Date;
+}
+
+const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const getNextDayDate = (dayName: string): Date => {
+  const today = new Date();
+  const dayIndex = days.indexOf(dayName);
+  const todayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
+  const daysUntilNext = dayIndex - todayIndex;
+
+  const nextDate = new Date();
+  nextDate.setDate(
+    today.getDate() + (daysUntilNext <= 0 ? daysUntilNext + 7 : daysUntilNext)
+  );
+  return nextDate;
+};
+
+const GenerateMealsModal: FC<GenerateMealsModalProps> = ({
+  onClose,
+  onSuccess,
+}) => {
+  const [selectedDay, setSelectedDay] = useState<SelectedDayInfo | null>(null);
+  const [preferences, setPreferences] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleDaySelect = (day: string) => {
+    const nextDate = getNextDayDate(day);
+    setSelectedDay({ name: day, date: nextDate });
+  };
+
+  const handleGenerate = async () => {
+    if (!selectedDay) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const targetDate = format(selectedDay.date, "yyyy-MM-dd");
+      const response = await fetch("/api/plan-meals", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          preferences,
+          targetDate,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to generate meal plan");
+      }
+
+      if (onSuccess) {
+        onSuccess(data.result);
+      }
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-[32rem] shadow-lg">
+        <h2 className="text-lg font-semibold mb-4">Generate Meal Plan</h2>
+
+        <div className="mb-4">
+          <label
+            htmlFor="preferences"
+            className="block text-sm font-medium mb-2"
+          >
+            Meal Preferences
+          </label>
+          <textarea
+            id="preferences"
+            value={preferences}
+            onChange={(e) => setPreferences(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md"
+            rows={3}
+            placeholder="E.g., vegetarian, high protein, low carb..."
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2">Select Day</label>
+          <div className="grid grid-cols-7 gap-2">
+            {days.map((day) => (
+              <button
+                key={day}
+                className={`p-2 text-center rounded ${
+                  selectedDay?.name === day
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+                onClick={() => handleDaySelect(day)}
+              >
+                {day}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {selectedDay && (
+          <p className="text-sm text-gray-600 mb-4">
+            Selected: {format(selectedDay.date, "MMMM do, yyyy")}
+          </p>
+        )}
+
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+
+        <div className="flex justify-end space-x-2">
+          <button
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            onClick={onClose}
+            disabled={loading}
+          >
+            Cancel
+          </button>
+          <button
+            className={`px-4 py-2 rounded ${
+              selectedDay && preferences
+                ? "bg-blue-500 text-white hover:bg-blue-600"
+                : "bg-gray-300 cursor-not-allowed"
+            }`}
+            onClick={handleGenerate}
+            disabled={loading || !selectedDay || !preferences}
+          >
+            {loading ? "Generating..." : "Generate Plan"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default GenerateMealsModal;
