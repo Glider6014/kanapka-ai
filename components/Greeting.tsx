@@ -1,6 +1,6 @@
 export default function Greeting() {
   return (
-    <div className="relative bg-gradient-to-r from-purple-700 to-orange-500 text-white py-32 px-8">
+    <div className="relative bg-gradient-to-r from-purple-700 to-orange-500 text-white py-12 md:pt-12 md:pb-48 px-8">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center">
         <div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -20,8 +20,7 @@ export default function Greeting() {
           </div>
         </div>
       </div>
-
-      <div className="wave-bottom absolute inset-x-0 bottom-0"></div>
+      <div className="hidden md:block wave-bottom absolute inset-x-0 bottom-0"></div>
     </div>
   );
 }
