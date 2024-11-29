@@ -37,7 +37,7 @@ const AboutApp = () => {
   };
 
   return (
-    <section className="bg-[rgb(178,212,255)] bg-gradient-to-t from-[rgb(230,252,255)] to-[rgb(255,255,255)] py-16 md:pt-2 md:pb-26 px-8">
+    <section className="bg-blue-100 bg-gradient-to-t from-blue-100 to-white py-16 md:pt-2 md:pb-26 px-8">
       <div className="max-w-6xl mx-auto flex flex-col gap-8">
         <div className="w-full flex flex-col items-start gap-4">
           <h1 className="text-3xl font-bold mb-6">Your Culinary Companion</h1>
