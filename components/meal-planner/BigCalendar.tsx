@@ -53,15 +53,18 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const handleSelectSlot = (slotInfo: SlotInfo) => {
-    const title = window.prompt("New event name");
-    if (title) {
-      const newEvent: CustomEvent = {
-        id: Date.now(),
-        title,
-        start: slotInfo.start,
-        end: slotInfo.end,
-      };
-      setEvents([...events, newEvent]);
+    // Prevent creation of all-day events
+    if (slotInfo.action === "select" && (slotInfo as any).bounds) {
+      const title = window.prompt("New event name");
+      if (title) {
+        const newEvent: CustomEvent = {
+          id: Date.now(),
+          title,
+          start: slotInfo.start,
+          end: slotInfo.end,
+        };
+        setEvents([...events, newEvent]);
+      }
     }
   };
 
@@ -86,42 +89,43 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   return (
-    <>
-      <div className="h-full">
-        <DragAndDropCalendar
-          localizer={localizer}
-          events={events.map((event) => ({
-            ...event,
-            start: new Date(event.start),
-            end: new Date(event.end),
-          }))}
-          defaultView="week"
-          view={view}
-          onView={setView}
-          resizable
-          style={{ height: "calc(100vh - 80px)" }}
-          step={30}
-          timeslots={2}
-          date={currentDate}
-          onNavigate={handleNavigate}
-          components={{
-            toolbar: (props) => <CustomToolbar {...props} />,
-            event: EventWrapper,
-          }}
-          views={["week"]}
-          eventPropGetter={eventPropGetter}
-          draggableAccessor={() => true}
-          onEventDrop={moveEvent}
-          onEventResize={handleResize}
-          onSelectEvent={() => {}} // Empty function to prevent default behavior
-          formats={{
-            eventTimeRangeFormat: () => "",
-            timeRangeFormat: () => "",
-            eventTimeRangeEndFormat: () => "",
-          }}
-        />
-      </div>
-    </>
+    <div className="h-full [&_.rbc-allday-cell]:hidden [&_.rbc-time-view_.rbc-header]:border-b [&_.rbc-time-view_.rbc-header]:border-gray-200">
+      <DragAndDropCalendar
+        localizer={localizer}
+        events={events.map((event) => ({
+          ...event,
+          start: new Date(event.start),
+          end: new Date(event.end),
+        }))}
+        defaultView="week"
+        view={view}
+        onView={setView}
+        resizable
+        style={{ height: "calc(100vh - 80px)" }}
+        step={30}
+        timeslots={2}
+        date={currentDate}
+        onNavigate={handleNavigate}
+        components={{
+          toolbar: (props) => <CustomToolbar {...props} />,
+          event: EventWrapper,
+        }}
+        views={["week"]}
+        eventPropGetter={eventPropGetter}
+        draggableAccessor={() => true}
+        onEventDrop={moveEvent}
+        onEventResize={handleResize}
+        onSelectEvent={() => {}} // Empty function to prevent default behavior
+        formats={{
+          eventTimeRangeFormat: () => "",
+          timeRangeFormat: () => "",
+          eventTimeRangeEndFormat: () => "",
+        }}
+        showAllEvents={false}
+        selectable
+        onSelectSlot={handleSelectSlot}
+      />
+    </div>
   );
 };
 
