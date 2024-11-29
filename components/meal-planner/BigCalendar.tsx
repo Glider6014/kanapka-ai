@@ -1,11 +1,8 @@
 import {
   Calendar as BigCalendar,
   dateFnsLocalizer,
-  ToolbarProps,
   SlotInfo,
   View,
-  ResizeEvent,
-  Components,
 } from "react-big-calendar";
 import withDragAndDrop, {
   EventInteractionArgs as DragAndDropArgs,
@@ -37,6 +34,7 @@ interface CalendarProps {
   setEvents: (events: CustomEvent[]) => void;
   onEventDrop?: (event: CustomEvent, start: Date, end: Date) => Promise<void>;
   onEventResize?: (event: CustomEvent, start: Date, end: Date) => Promise<void>;
+  onEventDelete?: (event: CustomEvent) => Promise<void>;
 }
 
 const Calendar: React.FC<CalendarProps> = ({
@@ -44,6 +42,7 @@ const Calendar: React.FC<CalendarProps> = ({
   setEvents,
   onEventDrop,
   onEventResize,
+  onEventDelete,
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<View>("week");
@@ -83,9 +82,26 @@ const Calendar: React.FC<CalendarProps> = ({
     onEventDrop?.(event, new Date(start), new Date(end));
   };
 
-  const handleResize = (args: ResizeEvent<CustomEvent>) => {
-    const { event, start, end } = args;
+  const handleResize = (args: DragAndDropArgs<object>) => {
+    const { event, start, end } = args as DragAndDropArgs<CustomEvent>;
     onEventResize?.(event, new Date(start), new Date(end));
+  };
+
+  const handleEventDelete = async (event: CustomEvent) => {
+    if (window.confirm("Are you sure you want to delete this meal?")) {
+      try {
+        const response = await fetch(`/api/meal-schedules/${event.id}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          setEvents(events.filter((e) => e.id !== event.id));
+        } else {
+          console.error("Failed to delete the event");
+        }
+      } catch (error) {
+        console.error("Error deleting the event:", error);
+      }
+    }
   };
 
   return (
@@ -108,17 +124,22 @@ const Calendar: React.FC<CalendarProps> = ({
         onNavigate={handleNavigate}
         components={{
           toolbar: (props) => <CustomToolbar {...props} />,
-          event: EventWrapper,
+          event: (props) => (
+            <EventWrapper
+              {...props}
+              event={props.event as CustomEvent}
+              onDelete={handleEventDelete}
+            />
+          ),
         }}
         views={["week"]}
         eventPropGetter={eventPropGetter}
         draggableAccessor={() => true}
         onEventDrop={moveEvent}
         onEventResize={handleResize}
-        onSelectEvent={() => {}} // Empty function to prevent default behavior
+        onSelectEvent={() => {}}
         formats={{
           eventTimeRangeFormat: () => "",
-          timeRangeFormat: () => "",
           eventTimeRangeEndFormat: () => "",
         }}
         showAllEvents={false}

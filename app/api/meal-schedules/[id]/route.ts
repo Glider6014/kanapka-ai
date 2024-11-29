@@ -61,3 +61,37 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await connectDB();
+
+    const schedule = await MealSchedule.findOneAndDelete({
+      _id: params.id,
+      userId: session.user.id,
+    });
+
+    if (!schedule) {
+      return NextResponse.json(
+        { error: "Schedule not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting meal schedule:", error);
+    return NextResponse.json(
+      { error: "Failed to delete meal schedule" },
+      { status: 500 }
+    );
+  }
+}
