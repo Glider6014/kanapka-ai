@@ -77,7 +77,7 @@ export default function Home() {
       await signIn("credentials", {
         email: values.email,
         password: values.password,
-        callbackUrl: "/",
+        callbackUrl: "/dashboard",
       });
     } catch (error) {
       console.error("An unexpected error occurred:", error);

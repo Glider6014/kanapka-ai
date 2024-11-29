@@ -51,7 +51,7 @@ export const MainNavbar = () => {
   return (
     <div className="relative flex items-center justify-between px-4 py-2">
       <div className="flex items-center space-x-4">
-        <Logo mobileFontSize="text-2xl" desktopFontSize="text-3xl" />
+        <Logo className="text-3xl md:text-4xl" />
         <NavigationMenu className="hidden lg:flex items-center space-x-4">
           <NavigationMenuList className="flex items-center space-x-4">
             <NavigationMenuItem>

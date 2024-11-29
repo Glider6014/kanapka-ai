@@ -37,7 +37,7 @@ export default function Home() {
     const result = await signIn("credentials", {
       email: values.email,
       password: values.password,
-      callbackUrl: "/",
+      callbackUrl: "/dashboard",
     });
 
     if (result?.error) {
