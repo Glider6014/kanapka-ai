@@ -19,7 +19,8 @@ export async function GET(request: Request) {
 
     const events = schedules.map((schedule) => {
       const startDate = new Date(schedule.date);
-      const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour duration
+      const endDate = new Date(startDate);
+      endDate.setMinutes(startDate.getMinutes() + (schedule.duration || 0));
 
       return {
         id: schedule._id.toString(),
@@ -27,6 +28,7 @@ export async function GET(request: Request) {
         start: startDate.toISOString(),
         end: endDate.toISOString(),
         allDay: false,
+        duration: schedule.duration,
       };
     });
 

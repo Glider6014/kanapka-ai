@@ -91,10 +91,7 @@ const Calendar: React.FC<CalendarProps> = ({
         defaultView="week"
         view={view}
         onView={setView}
-        selectable
         resizable
-        onSelectSlot={handleSelectSlot}
-        onSelectEvent={handleSelectEvent}
         style={{ height: "calc(100vh - 80px)" }}
         step={30}
         timeslots={2}

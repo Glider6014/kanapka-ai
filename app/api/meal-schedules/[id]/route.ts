@@ -34,7 +34,18 @@ export async function PUT(
       );
     }
 
-    return NextResponse.json({ schedule });
+    const startTime = new Date(schedule.date);
+    const endTime = new Date(startTime);
+    endTime.setMinutes(startTime.getMinutes() + schedule.duration);
+
+    return NextResponse.json({
+      schedule: {
+        ...schedule.toObject(),
+        start: startTime,
+        end: endTime,
+        duration: schedule.duration,
+      },
+    });
   } catch (error) {
     console.error("Error updating meal schedule:", error);
     return NextResponse.json(
