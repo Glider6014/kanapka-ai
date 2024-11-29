@@ -1,5 +1,6 @@
 "use client";
-import { FC, useState } from "react";
+
+import { FC, useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Table,
@@ -21,12 +22,41 @@ type RecipesListProps = {
 export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
   const [favorites, setFavorites] = useState<string[]>([]);
 
-  const toggleFavorite = (id: string) => {
-    setFavorites((prevFavorites) =>
-      prevFavorites.includes(id)
-        ? prevFavorites.filter((favId) => favId !== id)
-        : [...prevFavorites, id]
-    );
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const response = await fetch("/api/recipes/favorite");
+        const data = await response.json();
+        if (response.ok) {
+          setFavorites(data.favorites.map((fav: { _id: string }) => fav._id));
+        }
+      } catch (error) {
+        console.error("Failed to fetch favorites", error);
+      }
+    };
+
+    fetchFavorites();
+  }, []);
+
+  const toggleFavorite = async (id: string) => {
+    try {
+      const isFavorite = favorites.includes(id);
+      const response = await fetch(`/api/recipes/${id}/favorite`, {
+        method: isFavorite ? "DELETE" : "POST",
+      });
+
+      if (response.ok) {
+        setFavorites((prevFavorites) =>
+          isFavorite
+            ? prevFavorites.filter((favId) => favId !== id)
+            : [...prevFavorites, id]
+        );
+      } else {
+        console.error("Failed to update favorite status");
+      }
+    } catch (error) {
+      console.error("Failed to update favorite status", error);
+    }
   };
 
   if (!recipes.length) {
@@ -34,7 +64,7 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
   }
 
   return (
-    <div className="mt-8 transform -translate-y-[30px]">
+    <div className="mt-8 transform -translate-y-[30px] z-40">
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-100 hover:bg-gray-100">
@@ -52,9 +82,9 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
               <TableCell className="w-16">
                 <button
                   className="flex justify-center items-center w-full h-full"
-                  onClick={() => toggleFavorite(recipe._id?.toString()!)}
+                  onClick={() => toggleFavorite(recipe._id.toString()!)}
                 >
-                  {favorites.includes(recipe._id?.toString()!) ? (
+                  {favorites.includes(recipe._id.toString()!) ? (
                     <Heart />
                   ) : (
                     <HeartOff />

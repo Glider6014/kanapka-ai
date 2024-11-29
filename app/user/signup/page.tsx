@@ -86,14 +86,14 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="flex flex-col w-full max-w-6xl items-center justify-center">
+      <div className="flex flex-col w-[93%] max-w-6xl items-center justify-center">
         {/* Title - Kanapka AI */}
         <div className="mb-8">
-          <Logo className="text-4xl md:text-6xl" />
+          <Logo className="text-5xl md:text-6xl" />
         </div>
 
         {/* Form */}
-        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md mx-4 sm:mx-auto">
           <Tabs defaultValue="account">
             <TabsContent value="account">
               <Form {...form}>

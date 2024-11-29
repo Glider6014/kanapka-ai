@@ -1,3 +1,4 @@
+import { UserPermissions, userPermissionsList } from "@/lib/permissions";
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 
 const UserSchema = new Schema({
@@ -7,8 +8,9 @@ const UserSchema = new Schema({
   password: { type: String, required: true },
   permissions: {
     type: [String],
+    enum: userPermissionsList,
     required: true,
-    default: ["read:recipes"],
+    default: [UserPermissions.readRecipes],
   },
   favorites: [{ type: Schema.Types.ObjectId, ref: "Recipe", required: true }],
   experience: { type: Number, default: 0, required: true },

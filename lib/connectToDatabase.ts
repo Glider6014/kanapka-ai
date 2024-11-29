@@ -12,7 +12,7 @@ type MongooseCache = {
   promise: Promise<mongoose.Mongoose> | null;
 };
 
-let cached: MongooseCache = (global as any).mongoose || {
+const cached: MongooseCache = {
   conn: null,
   promise: null,
 };
