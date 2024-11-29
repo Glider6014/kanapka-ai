@@ -64,6 +64,24 @@ const Calendar: React.FC<CalendarProps> = ({
     };
   }, []);
 
+  const adjustToSecondColumn = (date: Date) => {
+    const newDate = new Date(date);
+    const dayOfWeek = newDate.getDay();
+
+    // If it's Sunday, move to next Monday
+    if (dayOfWeek === 0) {
+      newDate.setDate(newDate.getDate() + 1);
+    } else {
+      // For other days, move to the next Monday if we're not already there
+      const daysUntilMonday = (8 - dayOfWeek) % 7;
+      if (daysUntilMonday !== 0) {
+        newDate.setDate(newDate.getDate() + daysUntilMonday);
+      }
+    }
+
+    return newDate;
+  };
+
   const handleNavigate = (newDate: Date) => {
     setCurrentDate(newDate);
   };
@@ -100,14 +118,6 @@ const Calendar: React.FC<CalendarProps> = ({
     onEventResize?.(event, new Date(start), new Date(end));
   };
 
-  const adjustToSecondColumn = (date: Date) => {
-    const newDate = new Date(date);
-    const dayOfWeek = newDate.getDay();
-    const daysToAdjust = dayOfWeek === 0 ? -6 : 1 - dayOfWeek + 7;
-    newDate.setDate(newDate.getDate() + daysToAdjust);
-    return newDate;
-  };
-
   const handleEventDelete = async (event: CustomEvent) => {
     if (window.confirm("Are you sure you want to delete this meal?")) {
       try {
@@ -136,8 +146,9 @@ const Calendar: React.FC<CalendarProps> = ({
         }))}
         defaultView={Views.WEEK}
         dayPropGetter={dayPropGetter}
-        date={adjustToSecondColumn(currentDate)}
-        firstDayOfWeek={0}
+        date={
+          view === Views.WEEK ? adjustToSecondColumn(currentDate) : currentDate
+        }
         view={view}
         onView={setView}
         resizable
