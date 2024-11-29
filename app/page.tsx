@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import { MainNavbar } from "@/components/MainNavbar";
 import Greeting from "@/components/Greeting";
 import People from "@/components/People";
-import { people0, people1 } from "@/components/PeopleArr";
+// import { people0, people1 } from "@/components/PeopleArr";
 import About_app from "@/components/About_app";
 import Features from "@/components/Features";
 import PromoBanner from "@/components/PromoBanner";
