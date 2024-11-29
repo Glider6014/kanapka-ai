@@ -4,7 +4,7 @@ import { generateIngredient } from "@/lib/Ingredients/generateIngredeints";
 import { generateRecipeFromIds } from "@/lib/Recipe/generateRecipeFromIds";
 import { NutritionTotals } from "@/types/NutritionTotals";
 import connectDB from "../connectToDatabase";
-import { MealSchedule } from "../models/MealSchedule";
+import { MealSchedule } from "../../models/MealSchedule";
 import { Types } from "mongoose";
 
 export interface Ingredient {

@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-
+import "./Recipe";
 const mealScheduleSchema = new Schema(
   {
     userId: {
