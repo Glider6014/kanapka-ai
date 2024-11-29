@@ -1,5 +1,3 @@
-// 'quantity' and 'unit' are prepared for next version, not implemented yet
-
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 import { UserType } from "./User";
 import { Session } from "next-auth";
@@ -60,6 +58,6 @@ export type FridgeType = InferSchemaType<typeof FridgeSchema> & {
 };
 
 const Fridge =
-  (models.Ingredient as Model<FridgeType>) || model("Fridge", FridgeSchema);
+  (models.Fridge as Model<FridgeType>) || model("Fridge", FridgeSchema);
 
 export default Fridge;
