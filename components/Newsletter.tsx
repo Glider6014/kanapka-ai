@@ -65,7 +65,7 @@ export default function Newsletter() {
                                   ? "text-red-500 border-red-500"
                                   : "text-white"
                               }`}
-                              type="email"
+                              type="text"
                               placeholder="Email"
                               {...field}
                             />
