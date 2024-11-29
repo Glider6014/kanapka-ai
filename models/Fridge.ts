@@ -1,3 +1,5 @@
+// 'quantity' and 'unit' are prepared for next version, not implemented yet
+
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 import { UserType } from "./User";
 import { Session } from "next-auth";
@@ -14,11 +16,11 @@ const IngredientSubSchema = {
   required: true,
 };
 
-const UnitSubSchema = {
-  type: String,
-  enum: ["g", "ml", "piece"],
-  required: true,
-};
+// const UnitSubSchema = {
+//   type: String,
+//   enum: ["g", "ml", "piece"],
+//   required: true,
+// };
 
 const FridgeSchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true, required: true },
@@ -28,8 +30,8 @@ const FridgeSchema = new Schema({
   ingredients: [
     {
       ingredient: IngredientSubSchema,
-      quantity: Number,
-      unit: UnitSubSchema,
+      // quantity: Number,
+      // unit: UnitSubSchema,
       expiryDate: Date,
     },
   ],
