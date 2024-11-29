@@ -4,6 +4,16 @@ import authOptions from "@/lib/nextauth";
 import connectDB from "@/lib/connectToDatabase";
 import { MealSchedule } from "@/models/MealSchedule";
 
+interface Schedule {
+  _id: string;
+  date: string;
+  duration: number;
+  recipeId: {
+    name: string;
+    _id: string;
+  };
+}
+
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -13,11 +23,13 @@ export async function GET(request: Request) {
 
     await connectDB();
 
-    const schedules = await MealSchedule.find({ userId: session.user.id })
+    const schedules: Schedule[] = await MealSchedule.find({
+      userId: session.user.id,
+    })
       .populate("recipeId", "name")
-      .lean();
+      .lean<Schedule[]>();
 
-    const events = schedules.map((schedule) => {
+    const events = schedules.map((schedule: Schedule) => {
       const startDate = new Date(schedule.date);
       const endDate = new Date(startDate);
       endDate.setMinutes(startDate.getMinutes() + (schedule.duration || 0));

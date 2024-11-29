@@ -3,6 +3,7 @@ import {
   dateFnsLocalizer,
   SlotInfo,
   View,
+  Views,
 } from "react-big-calendar";
 import withDragAndDrop, {
   EventInteractionArgs as DragAndDropArgs,
@@ -13,7 +14,7 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import CustomToolbar from "./CustomToolbar";
 import EventWrapper from "./EventWrapper";
 import { CustomEvent } from "@/types/calendar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
@@ -46,6 +47,23 @@ const Calendar: React.FC<CalendarProps> = ({
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<View>("week");
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setView(Views.DAY);
+      } else {
+        setView(Views.WEEK);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const handleNavigate = (newDate: Date) => {
     setCurrentDate(newDate);
@@ -113,7 +131,7 @@ const Calendar: React.FC<CalendarProps> = ({
           start: new Date(event.start),
           end: new Date(event.end),
         }))}
-        defaultView="week"
+        defaultView={Views.WEEK}
         view={view}
         onView={setView}
         resizable
@@ -132,7 +150,7 @@ const Calendar: React.FC<CalendarProps> = ({
             />
           ),
         }}
-        views={["week"]}
+        views={[Views.WEEK, Views.DAY]}
         eventPropGetter={eventPropGetter}
         draggableAccessor={() => true}
         onEventDrop={moveEvent}
