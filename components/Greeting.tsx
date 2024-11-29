@@ -9,18 +9,14 @@ export default function Greeting() {
           <p className="text-lg md:text-3xl mb-8">For big or small.</p>
           <form className="flex flex-col md:flex-row gap-4">
             <button className="bg-black font-bold text-white px-6 py-2 rounded-md transition">
-              Sign up – it’s free!
+              Sign up – it's free!
             </button>
           </form>
         </div>
 
         <div className="relative flex justify-center items-center">
           <div className="flex justify-center items-center">
-            <img
-              className="w-100 h-100"
-              src="greeting.png"
-              alt="sandwich"
-            />
+            <img className="w-100 h-100" src="greeting.png" alt="sandwich" />
           </div>
         </div>
       </div>
