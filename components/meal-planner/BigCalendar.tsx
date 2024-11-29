@@ -3,9 +3,14 @@ import {
   dateFnsLocalizer,
   ToolbarProps,
   SlotInfo,
+  View,
 } from "react-big-calendar";
+import withDragAndDrop, {
+  EventInteractionArgs as DragAndDropArgs,
+} from "react-big-calendar/lib/addons/dragAndDrop";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import CustomToolbar from "./CustomToolbar";
 import { CustomEvent } from "@/types/calendar";
 import { useState } from "react";
@@ -22,13 +27,21 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
+const DragAndDropCalendar = withDragAndDrop(BigCalendar);
+
 interface CalendarProps {
   events: CustomEvent[];
   setEvents: (events: CustomEvent[]) => void;
+  onEventDrop?: (event: CustomEvent, start: Date, end: Date) => Promise<void>;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ events, setEvents }) => {
+const Calendar: React.FC<CalendarProps> = ({
+  events,
+  setEvents,
+  onEventDrop,
+}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [view, setView] = useState<View>("week");
 
   const handleNavigate = (newDate: Date) => {
     setCurrentDate(newDate);
@@ -47,9 +60,13 @@ const Calendar: React.FC<CalendarProps> = ({ events, setEvents }) => {
     }
   };
 
-  const handleSelectEvent = (event: CustomEvent) => {
-    if (confirm(`Delete the event "${event.title}"?`)) {
-      setEvents(events.filter((e) => e.id !== event.id));
+  const handleSelectEvent = (
+    event: any,
+    e: React.SyntheticEvent<HTMLElement>
+  ) => {
+    const customEvent = event as CustomEvent;
+    if (confirm(`Delete the event "${customEvent.title}"?`)) {
+      setEvents(events.filter((e) => e.id !== customEvent.id));
     }
   };
 
@@ -57,9 +74,14 @@ const Calendar: React.FC<CalendarProps> = ({ events, setEvents }) => {
     className: "bg-blue-500 text-white rounded px-2",
   });
 
+  const moveEvent = (args: DragAndDropArgs<object>) => {
+    const { event, start, end } = args as DragAndDropArgs<CustomEvent>;
+    onEventDrop?.(event, new Date(start), new Date(end));
+  };
+
   return (
     <div className="h-full">
-      <BigCalendar
+      <DragAndDropCalendar
         localizer={localizer}
         events={events.map((event) => ({
           ...event,
@@ -67,7 +89,10 @@ const Calendar: React.FC<CalendarProps> = ({ events, setEvents }) => {
           end: new Date(event.end),
         }))}
         defaultView="week"
+        view={view}
+        onView={setView}
         selectable
+        resizable
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
         style={{ height: "calc(100vh - 80px)" }}
@@ -76,21 +101,12 @@ const Calendar: React.FC<CalendarProps> = ({ events, setEvents }) => {
         date={currentDate}
         onNavigate={handleNavigate}
         components={{
-          toolbar: CustomToolbar as React.ComponentType<
-            ToolbarProps<
-              {
-                start: Date;
-                end: Date;
-                id: string | number;
-                title: string;
-                allDay?: boolean | undefined;
-              },
-              object
-            >
-          >,
+          toolbar: (props) => <CustomToolbar {...props} />,
         }}
         views={["week"]}
         eventPropGetter={eventPropGetter}
+        draggableAccessor={() => true}
+        onEventDrop={moveEvent}
       />
     </div>
   );

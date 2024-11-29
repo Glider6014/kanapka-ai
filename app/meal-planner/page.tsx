@@ -43,6 +43,35 @@ export default function Home() {
     fetchMealSchedules();
   };
 
+  const handleEventDrop = async (
+    event: CustomEvent,
+    start: Date,
+    end: Date
+  ) => {
+    try {
+      const response = await fetch(`/api/meal-schedules/${event.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ date: start }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update meal schedule");
+      }
+
+      // Update local state
+      setEvents((prevEvents) =>
+        prevEvents.map((e) => (e.id === event.id ? { ...e, start, end } : e))
+      );
+    } catch (error) {
+      console.error("Error updating event:", error);
+      // Optionally refresh the calendar to reset the state
+      fetchMealSchedules();
+    }
+  };
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -71,7 +100,11 @@ export default function Home() {
         </button>
       </header>
       <main className="h-full">
-        <Calendar events={events} setEvents={setEvents} />
+        <Calendar
+          events={events}
+          setEvents={setEvents}
+          onEventDrop={handleEventDrop}
+        />
         {isModalOpen && (
           <GenerateMealsModal
             onClose={handleCloseModal}
