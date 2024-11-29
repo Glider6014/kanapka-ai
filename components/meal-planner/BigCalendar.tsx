@@ -4,26 +4,26 @@ import {
   SlotInfo,
   View,
   Views,
-} from 'react-big-calendar';
+} from "react-big-calendar";
 import withDragAndDrop, {
   EventInteractionArgs as DragAndDropArgs,
-} from 'react-big-calendar/lib/addons/dragAndDrop';
-import { format, parse, startOfWeek, getDay } from 'date-fns';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import CustomToolbar from './CustomToolbar';
-import EventWrapper from './EventWrapper';
-import { CustomEvent } from '@/types/calendar';
-import { useEffect, useState } from 'react';
+} from "react-big-calendar/lib/addons/dragAndDrop";
+import { format, parse, startOfWeek, getDay } from "date-fns";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+import CustomToolbar from "./CustomToolbar";
+import EventWrapper from "./EventWrapper";
+import { CustomEvent } from "@/types/calendar";
+import { useEffect, useState } from "react";
 
 const locales = {
-  'en-US': () => import('date-fns/locale/en-US'),
+  "en-US": () => import("date-fns/locale/en-US"),
 };
 
 const localizer = dateFnsLocalizer({
   format,
   parse,
-  startOfWeek,
+  startOfWeek: () => 0,
   getDay,
   locales,
 });
@@ -45,7 +45,7 @@ const Calendar: React.FC<CalendarProps> = ({
   onEventResize,
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<View>('week');
+  const [view, setView] = useState<View>("week");
 
   useEffect(() => {
     const handleResize = () => {
@@ -56,11 +56,11 @@ const Calendar: React.FC<CalendarProps> = ({
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     handleResize();
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -68,28 +68,24 @@ const Calendar: React.FC<CalendarProps> = ({
     setCurrentDate(newDate);
   };
 
-  const handleSelectSlot = (slotInfo: SlotInfo) => {
-    // Prevent creation of all-day events
-    if (slotInfo.action === 'select' && slotInfo.bounds) {
-      const title = window.prompt('New event name');
-      if (title) {
-        const newEvent: CustomEvent = {
-          id: Date.now(),
-          title,
-          start: slotInfo.start,
-          end: slotInfo.end,
-        };
-        setEvents([...events, newEvent]);
-      }
+  const dayPropGetter = (date: Date) => {
+    const now = new Date();
+    if (date < now) {
+      return {
+        style: {
+          backgroundColor: "#f0f0f0",
+        },
+      };
     }
+    return {};
   };
 
   const eventPropGetter = () => ({
-    className: 'event-wrapper',
+    className: "event-wrapper",
     style: {
-      backgroundColor: '#3b82f6',
-      border: 'none',
-      borderRadius: '4px',
+      backgroundColor: "#3b82f6",
+      border: "none",
+      borderRadius: "4px",
       padding: 0,
     },
   });
@@ -104,25 +100,33 @@ const Calendar: React.FC<CalendarProps> = ({
     onEventResize?.(event, new Date(start), new Date(end));
   };
 
+  const adjustToSecondColumn = (date: Date) => {
+    const newDate = new Date(date);
+    const dayOfWeek = newDate.getDay();
+    const daysToAdjust = dayOfWeek === 0 ? -6 : 1 - dayOfWeek + 7;
+    newDate.setDate(newDate.getDate() + daysToAdjust);
+    return newDate;
+  };
+
   const handleEventDelete = async (event: CustomEvent) => {
-    if (window.confirm('Are you sure you want to delete this meal?')) {
+    if (window.confirm("Are you sure you want to delete this meal?")) {
       try {
         const response = await fetch(`/api/meal-schedules/${event.id}`, {
-          method: 'DELETE',
+          method: "DELETE",
         });
         if (response.ok) {
           setEvents(events.filter((e) => e.id !== event.id));
         } else {
-          console.error('Failed to delete the event');
+          console.error("Failed to delete the event");
         }
       } catch (error) {
-        console.error('Error deleting the event:', error);
+        console.error("Error deleting the event:", error);
       }
     }
   };
 
   return (
-    <div className='h-full [&_.rbc-allday-cell]:hidden [&_.rbc-time-view_.rbc-header]:border-b [&_.rbc-time-view_.rbc-header]:border-gray-200'>
+    <div className="h-full [&_.rbc-allday-cell]:hidden [&_.rbc-time-view_.rbc-header]:border-b [&_.rbc-time-view_.rbc-header]:border-gray-200">
       <DragAndDropCalendar
         localizer={localizer}
         events={events.map((event) => ({
@@ -131,13 +135,15 @@ const Calendar: React.FC<CalendarProps> = ({
           end: new Date(event.end),
         }))}
         defaultView={Views.WEEK}
+        dayPropGetter={dayPropGetter}
+        date={adjustToSecondColumn(currentDate)}
+        firstDayOfWeek={0}
         view={view}
         onView={setView}
         resizable
-        style={{ height: 'calc(100vh - 80px)' }}
+        style={{ height: "calc(100vh - 80px)" }}
         step={30}
         timeslots={2}
-        date={currentDate}
         onNavigate={handleNavigate}
         components={{
           toolbar: (props) => <CustomToolbar {...props} />,
@@ -156,12 +162,10 @@ const Calendar: React.FC<CalendarProps> = ({
         onEventResize={handleResize}
         onSelectEvent={() => {}}
         formats={{
-          eventTimeRangeFormat: () => '',
-          eventTimeRangeEndFormat: () => '',
+          eventTimeRangeFormat: () => "",
+          eventTimeRangeEndFormat: () => "",
         }}
         showAllEvents={false}
-        selectable
-        onSelectSlot={handleSelectSlot}
       />
     </div>
   );
