@@ -14,16 +14,23 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { date } = await request.json();
+    const { date, duration } = await request.json();
     if (!date) {
       return NextResponse.json({ error: "Date is required" }, { status: 400 });
+    }
+
+    const updateData: { date: Date; duration?: number } = {
+      date: new Date(date),
+    };
+    if (duration !== undefined) {
+      updateData.duration = duration;
     }
 
     await connectDB();
 
     const schedule = await MealSchedule.findOneAndUpdate(
       { _id: params.id, userId: session.user.id },
-      { date: new Date(date) },
+      updateData,
       { new: true }
     );
 

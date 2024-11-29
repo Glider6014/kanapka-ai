@@ -67,7 +67,45 @@ export default function Home() {
       );
     } catch (error) {
       console.error("Error updating event:", error);
-      // Optionally refresh the calendar to reset the state
+      fetchMealSchedules();
+    }
+  };
+
+  const handleEventResize = async (
+    event: CustomEvent,
+    start: Date,
+    end: Date
+  ) => {
+    const durationInMinutes = Math.round(
+      (end.getTime() - start.getTime()) / 60000
+    );
+
+    try {
+      const response = await fetch(`/api/meal-schedules/${event.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          date: start,
+          duration: durationInMinutes,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update meal schedule");
+      }
+
+      // Update local state
+      setEvents((prevEvents) =>
+        prevEvents.map((e) =>
+          e.id === event.id
+            ? { ...e, start, end, duration: durationInMinutes }
+            : e
+        )
+      );
+    } catch (error) {
+      console.error("Error updating event:", error);
       fetchMealSchedules();
     }
   };
@@ -104,6 +142,7 @@ export default function Home() {
           events={events}
           setEvents={setEvents}
           onEventDrop={handleEventDrop}
+          onEventResize={handleEventResize}
         />
         {isModalOpen && (
           <GenerateMealsModal

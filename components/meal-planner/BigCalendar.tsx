@@ -4,6 +4,7 @@ import {
   ToolbarProps,
   SlotInfo,
   View,
+  ResizeEvent,
 } from "react-big-calendar";
 import withDragAndDrop, {
   EventInteractionArgs as DragAndDropArgs,
@@ -33,12 +34,14 @@ interface CalendarProps {
   events: CustomEvent[];
   setEvents: (events: CustomEvent[]) => void;
   onEventDrop?: (event: CustomEvent, start: Date, end: Date) => Promise<void>;
+  onEventResize?: (event: CustomEvent, start: Date, end: Date) => Promise<void>;
 }
 
 const Calendar: React.FC<CalendarProps> = ({
   events,
   setEvents,
   onEventDrop,
+  onEventResize,
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<View>("week");
@@ -79,6 +82,11 @@ const Calendar: React.FC<CalendarProps> = ({
     onEventDrop?.(event, new Date(start), new Date(end));
   };
 
+  const handleResize = (args: ResizeEvent<CustomEvent>) => {
+    const { event, start, end } = args;
+    onEventResize?.(event, new Date(start), new Date(end));
+  };
+
   return (
     <div className="h-full">
       <DragAndDropCalendar
@@ -104,6 +112,7 @@ const Calendar: React.FC<CalendarProps> = ({
         eventPropGetter={eventPropGetter}
         draggableAccessor={() => true}
         onEventDrop={moveEvent}
+        onEventResize={handleResize}
       />
     </div>
   );
