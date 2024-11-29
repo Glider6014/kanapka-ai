@@ -14,15 +14,12 @@ import { Button } from "@/components/ui/button";
 import { RecipeType } from "@/models/Recipe";
 import { HeartOff } from "lucide-react";
 import { Heart } from "lucide-react";
-import { useSession } from "next-auth/react";
 
 type RecipesListProps = {
   recipes: RecipeType[];
 };
 
 export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
-  const { status } = useSession();
-
   const [favorites, setFavorites] = useState<string[]>([]);
 
   useEffect(() => {
@@ -67,7 +64,7 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
   }
 
   return (
-    <div className="mt-8 transform -translate-y-[30px]">
+    <div className="mt-8 transform -translate-y-[30px] z-40">
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-100 hover:bg-gray-100">
@@ -85,9 +82,9 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
               <TableCell className="w-16">
                 <button
                   className="flex justify-center items-center w-full h-full"
-                  onClick={() => toggleFavorite(recipe._id?.toString()!)}
+                  onClick={() => toggleFavorite(recipe._id.toString()!)}
                 >
-                  {favorites.includes(recipe._id?.toString()!) ? (
+                  {favorites.includes(recipe._id.toString()!) ? (
                     <Heart />
                   ) : (
                     <HeartOff />

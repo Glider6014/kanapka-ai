@@ -12,10 +12,29 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Logo } from "@/components/Logo";
+import { RecipeType } from "@/models/Recipe";
+import { IngredientType } from "@/models/Ingredient";
+
+type NutrutionType = {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fats: number;
+  fiber: number;
+  sugar: number;
+  sodium: number;
+};
+
+type PopulatedRecipeType = {
+  ingredients: {
+    ingredient: IngredientType;
+    amount: number;
+  }[];
+} & RecipeType;
 
 export default function RecipePage({ params }: { params: { id: string } }) {
-  const [recipe, setRecipe] = useState<any>(null);
-  const [nutrition, setNutrition] = useState<any>(null);
+  const [recipe, setRecipe] = useState<PopulatedRecipeType | null>(null);
+  const [nutrition, setNutrition] = useState<NutrutionType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -99,7 +118,7 @@ export default function RecipePage({ params }: { params: { id: string } }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recipe.ingredients.map((ing: any, index: number) => (
+                  {recipe.ingredients.map((ing, index: number) => (
                     <TableRow key={index}>
                       <TableCell>{ing.ingredient.name}</TableCell>
                       <TableCell>

@@ -11,6 +11,20 @@ if (!NEXTAUTH_SECRET) {
   throw new Error("You must provide a NEXTAUTH_SECRET environment variable");
 }
 
+async function getCurrentUser(userId: string) {
+  await connectDB();
+
+  const user = await User.findById(userId).select("-password");
+  if (!user) return null;
+
+  return {
+    id: user._id.toString(),
+    email: user.email,
+    username: user.username,
+    permissions: user.permissions,
+  };
+}
+
 const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -64,11 +78,13 @@ const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.username = token.username;
-        session.user.permissions = token.permissions;
+      const currentUser = await getCurrentUser(token.id);
+
+      if (!currentUser) {
+        throw new Error("User no longer exists");
       }
+
+      session.user = currentUser;
 
       return session;
     },
