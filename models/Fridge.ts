@@ -10,31 +10,16 @@ const UserSubSchema = {
   required: true,
 };
 
-const IngredientSubSchema = {
-  type: Schema.Types.ObjectId,
-  ref: "Ingredient",
-  required: true,
-};
-
-// const UnitSubSchema = {
-//   type: String,
-//   enum: ["g", "ml", "piece"],
-//   required: true,
-// };
-
 const FridgeSchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true, required: true },
   name: { type: String, required: true },
   owner: UserSubSchema,
   members: [UserSubSchema],
-  ingredients: [
-    {
-      ingredient: IngredientSubSchema,
-      // quantity: Number,
-      // unit: UnitSubSchema,
-      expiryDate: Date,
-    },
-  ],
+  ingredients: {
+    type: [String],
+    default: [],
+    required: true,
+  },
 });
 
 FridgeSchema.methods.isOwner = function (

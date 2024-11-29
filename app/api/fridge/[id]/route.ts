@@ -8,11 +8,6 @@ import connectDB from "@/lib/connectToDatabase";
 import { z } from "zod";
 import User from "@/models/User";
 
-const fridgeForm = z.object({
-  name: z.string().optional(),
-  members: z.array(z.string()).optional(), // MongoDB ObjectId as string
-});
-
 export const GET = withApiErrorHandling(
   async (req: NextRequest, { params }: { params: { id: string } }) => {
     await connectDB();
@@ -34,12 +29,16 @@ export const GET = withApiErrorHandling(
   }
 );
 
+const fridgePostForm = z.object({
+  name: z.string(),
+});
+
 export const POST = withApiErrorHandling(async (req: NextRequest) => {
   await connectDB();
 
   const session = await getServerSessionOrCauseUnathorizedError();
   const body = await req.json().catch(() => ({}));
-  const result = fridgeForm.safeParse(body);
+  const result = fridgePostForm.safeParse(body);
 
   if (!result.success) {
     return NextResponse.json(
@@ -49,13 +48,18 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
   }
 
   const fridge = new Fridge({
-    ...result.data,
+    name: result.data.name,
     owner: session.user.id,
   });
 
   await fridge.save();
 
   return NextResponse.json(fridge, { status: 201 });
+});
+
+const fridgePutForm = z.object({
+  name: z.string().optional(),
+  members: z.array(z.string()).optional(),
 });
 
 export const PUT = withApiErrorHandling(
@@ -66,7 +70,7 @@ export const PUT = withApiErrorHandling(
     const { id } = params;
 
     const body = await req.json().catch(() => ({}));
-    const result = fridgeForm.safeParse(body);
+    const result = fridgePutForm.safeParse(body);
 
     if (!result.success) {
       return NextResponse.json(
@@ -86,6 +90,7 @@ export const PUT = withApiErrorHandling(
     }
 
     if (result.data.name) fridge.name = result.data.name;
+
     if (result.data.members) {
       for (const member of result.data.members) {
         if (typeof member !== "string") continue;

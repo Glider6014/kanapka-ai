@@ -1,7 +1,7 @@
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 import Ingredient from "./Ingredient";
 import { NutritionTotals } from "../types/NutritionTotals";
-import calculateFactor from "@/lib/Ingredients/calculateFactor";
+import calculateFactor from "@/lib/ingredients/calculateFactor";
 
 type RecipeIngredient = {
   ingredient: Schema.Types.ObjectId;
