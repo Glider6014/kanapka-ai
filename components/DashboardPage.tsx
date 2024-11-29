@@ -5,7 +5,7 @@ import { useState } from "react";
 import { RecipeType } from "@/models/Recipe";
 import { FridgesPanel } from "@/components/FridgesPanel";
 
-export default function Home() {
+export function DashboardPage() {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   return (
     <>
