@@ -3,21 +3,13 @@ import {
   withApiErrorHandling,
   getServerSessionOrCauseUnathorizedError,
 } from "@/lib/apiUtils";
-import Fridge, { FridgeType } from "@/models/Fridge";
+import Fridge from "@/models/Fridge";
 import { z } from "zod";
 import connectDB from "@/lib/connectToDatabase";
-import { Session } from "next-auth";
-import { generateIngredient } from "@/lib/Ingredients/generateIngredeints";
+import { generateIngredient } from "@/lib/ingredients/generateIngredients";
 
 const ingredientsForm = z.object({
-  ingredients: z.array(
-    z.object({
-      name: z.string(),
-      quantity: z.number().positive(),
-      unit: z.enum(["g", "ml", "piece"]),
-      expiryDate: z.string().datetime().optional(),
-    })
-  ),
+  ingredients: z.array(z.string().trim()),
 });
 
 export const GET = withApiErrorHandling(
@@ -27,9 +19,7 @@ export const GET = withApiErrorHandling(
     const session = await getServerSessionOrCauseUnathorizedError();
     const { fridgeId } = params;
 
-    const fridge = await Fridge.findById(fridgeId).populate(
-      "ingredients.ingredient"
-    );
+    const fridge = await Fridge.findById(fridgeId);
 
     if (!fridge) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -39,13 +29,11 @@ export const GET = withApiErrorHandling(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    return NextResponse.json({
-      ingredients: fridge.ingredients,
-    });
+    return NextResponse.json({ ingredients: fridge.ingredients });
   }
 );
 
-export const POST = withApiErrorHandling(
+export const PATCH = withApiErrorHandling(
   async (req: NextRequest, { params }: { params: { fridgeId: string } }) => {
     const session = await getServerSessionOrCauseUnathorizedError();
     const { fridgeId } = params;
@@ -70,50 +58,19 @@ export const POST = withApiErrorHandling(
       );
     }
 
-    const addedIngredients = [];
-    const updatedIngredients = [];
+    const ingredients = [];
 
-    for (const ingredientData of result.data.ingredients) {
-      const ingredient = await generateIngredient(ingredientData.name);
-
+    for (const ingredientInput of result.data.ingredients) {
+      const ingredient = await generateIngredient(ingredientInput);
       if (!ingredient) continue;
 
-      const updatedIngredient = fridge.ingredients.find(
-        (ing) => ing.ingredient.toString() === ingredient._id.toString()
-      );
-
-      if (updatedIngredient) {
-        updatedIngredient.quantity =
-          ingredientData.quantity || updatedIngredient.quantity;
-
-        updatedIngredient.unit = ingredientData.unit || updatedIngredient.unit;
-
-        if (ingredientData.expiryDate) {
-          updatedIngredient.expiryDate = new Date(ingredientData.expiryDate);
-        }
-
-        updatedIngredients.push(ingredientData.name);
-        continue;
-      }
-
-      fridge.ingredients.push({
-        ingredient: ingredient._id,
-        quantity: ingredientData.quantity,
-        unit: ingredientData.unit,
-        expiryDate: ingredientData.expiryDate
-          ? new Date(ingredientData.expiryDate)
-          : undefined,
-      });
-
-      addedIngredients.push(ingredientData.name);
+      ingredients.push(ingredient.name);
     }
 
+    fridge.ingredients = ingredients;
     await fridge.save();
 
-    return NextResponse.json({
-      addedIngredients,
-      updatedIngredients,
-    });
+    return NextResponse.json({ ingredients });
   }
 );
 
@@ -146,24 +103,17 @@ export const DELETE = withApiErrorHandling(
       );
     }
 
-    const deletedIngredients = [];
+    const ingredients = [];
 
-    for (const ingredientId of result.data.ingredients) {
-      const ingredient = fridge.ingredients.find(
-        (ing) => ing.ingredient.toString() === ingredientId
-      );
+    for (const ingredient in fridge.ingredients) {
+      if (result.data.ingredients.includes(ingredient)) continue;
 
-      if (!ingredient) continue;
-
-      deletedIngredients.push(ingredientId);
-
-      fridge.ingredients.splice(fridge.ingredients.indexOf(ingredient), 1);
+      ingredients.push(ingredient);
     }
 
-    fridge.save();
+    fridge.ingredients = ingredients;
+    await fridge.save();
 
-    return NextResponse.json({
-      deletedIngredients,
-    });
+    return NextResponse.json({ ingredients });
   }
 );
