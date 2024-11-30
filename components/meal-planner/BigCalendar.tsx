@@ -1,14 +1,13 @@
 import {
   Calendar as BigCalendar,
   dateFnsLocalizer,
-  SlotInfo,
   View,
   Views,
 } from 'react-big-calendar';
 import withDragAndDrop, {
   EventInteractionArgs as DragAndDropArgs,
 } from 'react-big-calendar/lib/addons/dragAndDrop';
-import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { format, parse, getDay } from 'date-fns';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import CustomToolbar from './CustomToolbar';
@@ -23,7 +22,7 @@ const locales = {
 const localizer = dateFnsLocalizer({
   format,
   parse,
-  startOfWeek,
+  startOfWeek: () => 0,
   getDay,
   locales,
 });
@@ -64,24 +63,38 @@ const Calendar: React.FC<CalendarProps> = ({
     };
   }, []);
 
+  const adjustToSecondColumn = (date: Date) => {
+    const newDate = new Date(date);
+    const dayOfWeek = newDate.getDay();
+
+    // If it's Sunday, move to next Monday
+    if (dayOfWeek === 0) {
+      newDate.setDate(newDate.getDate() + 1);
+    } else {
+      // For other days, move to the next Monday if we're not already there
+      const daysUntilMonday = (8 - dayOfWeek) % 7;
+      if (daysUntilMonday !== 0) {
+        newDate.setDate(newDate.getDate() + daysUntilMonday);
+      }
+    }
+
+    return newDate;
+  };
+
   const handleNavigate = (newDate: Date) => {
     setCurrentDate(newDate);
   };
 
-  const handleSelectSlot = (slotInfo: SlotInfo) => {
-    // Prevent creation of all-day events
-    if (slotInfo.action === 'select' && slotInfo.bounds) {
-      const title = window.prompt('New event name');
-      if (title) {
-        const newEvent: CustomEvent = {
-          id: Date.now(),
-          title,
-          start: slotInfo.start,
-          end: slotInfo.end,
-        };
-        setEvents([...events, newEvent]);
-      }
+  const dayPropGetter = (date: Date) => {
+    const now = new Date();
+    if (date < now) {
+      return {
+        style: {
+          backgroundColor: '#f0f0f0',
+        },
+      };
     }
+    return {};
   };
 
   const eventPropGetter = () => ({
@@ -131,13 +144,16 @@ const Calendar: React.FC<CalendarProps> = ({
           end: new Date(event.end),
         }))}
         defaultView={Views.WEEK}
+        dayPropGetter={dayPropGetter}
+        date={
+          view === Views.WEEK ? adjustToSecondColumn(currentDate) : currentDate
+        }
         view={view}
         onView={setView}
         resizable
         style={{ height: 'calc(100vh - 80px)' }}
         step={30}
         timeslots={2}
-        date={currentDate}
         onNavigate={handleNavigate}
         components={{
           toolbar: (props) => <CustomToolbar {...props} />,
@@ -160,8 +176,6 @@ const Calendar: React.FC<CalendarProps> = ({
           eventTimeRangeEndFormat: () => '',
         }}
         showAllEvents={false}
-        selectable
-        onSelectSlot={handleSelectSlot}
       />
     </div>
   );
