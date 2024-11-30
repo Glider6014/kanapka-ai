@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 
 const FAQ = () => {
-  const [openItem, setOpenItem] = useState(null);
+  const [openItem, setOpenItem] = useState<number | null>(null);
 
-  const toggleItem = (index) => {
+  const toggleItem = (index: number) => {
     setOpenItem(openItem === index ? null : index);
   };
 
@@ -36,14 +36,14 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="w-full  bg-gradient-to-t from-[#f8ffe5] to-[rgb(255,255,255)] px-4 py-12 flex justify-center">
+    <div className="w-full bg-gradient-to-t from-[#f8ffe5] to-[rgb(255,255,255)] px-4 py-12 flex justify-center">
       <div className="w-full max-w-6xl">
-        <div className="flex items-start gap-12">
-          <div className="w-1/3">
+        <div className="flex flex-col md:flex-row items-start gap-12">
+          <div className="w-full md:w-1/3 order-1 md:order-none">
             <h2 className="text-2xl font-bold text-left">Kanapka AI - FAQs</h2>
           </div>
 
-          <div className="w-2/3">
+          <div className="w-full md:w-2/3 order-2 md:order-none">
             {faqData.map((item, index) => (
               <div key={index} className="border-b last:border-none py-4">
                 <button

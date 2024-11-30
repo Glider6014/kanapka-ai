@@ -68,7 +68,7 @@ export default function Features() {
         {features.map((feature, index) => (
           <div
             key={index}
-            className="flex flex-col items-start text-left p-6 bg-gray-50 shadow-lg rounded-lg border border-black"
+            className="flex flex-col items-start text-left p-6 bg-blue-50 rounded-lg"
           >
             <div className="mb-4">
               <feature.icon className="w-12 h-12" />

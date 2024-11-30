@@ -20,7 +20,7 @@ export const NavbarData = () => {
     },
     {
       label: "Dashboard",
-      href: "/",
+      href: "/dashboard",
       className: standardStyle,
     },
     {
