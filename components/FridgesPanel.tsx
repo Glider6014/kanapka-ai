@@ -1,15 +1,22 @@
 "use client";
 
-import { RecipeType } from "@/models/Recipe";
 import { useEffect, useState } from "react";
 import { FridgeType } from "@/models/Fridge";
 import { FridgePanel } from "./FridgePanel";
 
 type FridgesPanelProps = {
-  setRecipes?: React.Dispatch<React.SetStateAction<RecipeType[]>>;
+  setIngredients?: React.Dispatch<React.SetStateAction<string[]>>;
+  isSearchRecipesButtonVisible?: boolean;
+  isSearchRecipesButtonDisabled?: boolean;
+  searchRecipes?: (ingredients: string[]) => void;
 };
 
-export const FridgesPanel = ({ setRecipes }: FridgesPanelProps) => {
+export const FridgesPanel = ({
+  setIngredients,
+  isSearchRecipesButtonVisible,
+  isSearchRecipesButtonDisabled,
+  searchRecipes,
+}: FridgesPanelProps) => {
   const [fridges, setFridges] = useState<FridgeType[]>([]);
   const [activeTab, setActiveTab] = useState<number>(0);
 
@@ -53,8 +60,11 @@ export const FridgesPanel = ({ setRecipes }: FridgesPanelProps) => {
         {fridges.map((fridge) => (
           <FridgePanel
             key={fridge._id.toString()}
+            setIngredients={setIngredients}
+            isSearchRecipesButtonVisible={isSearchRecipesButtonVisible}
+            isSearchRecipesButtonDisabled={isSearchRecipesButtonDisabled}
+            searchRecipes={searchRecipes}
             fridge={fridge}
-            setRecipes={setRecipes}
           />
         ))}
       </div>

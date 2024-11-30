@@ -13,11 +13,11 @@ const ingredientsForm = z.object({
 });
 
 export const GET = withApiErrorHandling(
-  async (req: NextRequest, { params }: { params: { fridgeId: string } }) => {
+  async (req: NextRequest, { params }: { params: { id: string } }) => {
     await connectDB();
 
     const session = await getServerSessionOrCauseUnathorizedError();
-    const { fridgeId } = params;
+    const { id: fridgeId } = params;
 
     const fridge = await Fridge.findById(fridgeId);
 
@@ -33,15 +33,15 @@ export const GET = withApiErrorHandling(
   }
 );
 
-export const PATCH = withApiErrorHandling(
-  async (req: NextRequest, { params }: { params: { fridgeId: string } }) => {
+export const PUT = withApiErrorHandling(
+  async (req: NextRequest, { params }: { params: { id: string } }) => {
     const session = await getServerSessionOrCauseUnathorizedError();
-    const { fridgeId } = params;
+    const { id: fridgeId } = params;
 
     const fridge = await Fridge.findById(fridgeId);
 
     if (!fridge) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
+      return NextResponse.json({ error: "Fridge not found" }, { status: 404 });
     }
 
     if (!(fridge.isOwner(session) || fridge.isMember(session))) {
@@ -58,64 +58,20 @@ export const PATCH = withApiErrorHandling(
       );
     }
 
-    const ingredients = [];
+    const ingredientNames = (
+      await Promise.all(
+        result.data.ingredients
+          .filter((ing) => ing.length > 0)
+          .map(async (ing) => {
+            const ingredient = await generateIngredient(ing);
+            return ingredient ? ingredient.name : null;
+          })
+      )
+    ).filter((ing) => ing !== null);
 
-    for (const ingredientInput of result.data.ingredients) {
-      if (ingredientInput.length === 0) continue;
-
-      const ingredient = await generateIngredient(ingredientInput);
-      if (!ingredient) continue;
-
-      ingredients.push(ingredient.name);
-    }
-
-    fridge.ingredients = ingredients;
+    fridge.ingredients = ingredientNames;
     await fridge.save();
 
-    return NextResponse.json({ ingredients });
-  }
-);
-
-const deleteIngredientsForm = z.object({
-  ingredients: z.array(z.string()), // MongoDB ObjectId as string
-});
-
-export const DELETE = withApiErrorHandling(
-  async (req: NextRequest, { params }: { params: { fridgeId: string } }) => {
-    const session = await getServerSessionOrCauseUnathorizedError();
-    const { fridgeId } = params;
-
-    const fridge = await Fridge.findById(fridgeId);
-
-    if (!fridge) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    }
-
-    if (!(fridge.isOwner(session) || fridge.isMember(session))) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    const body = await req.json().catch(() => ({}));
-    const result = deleteIngredientsForm.safeParse(body);
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: "Invalid input", issues: result.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const ingredients = [];
-
-    for (const ingredient in fridge.ingredients) {
-      if (result.data.ingredients.includes(ingredient)) continue;
-
-      ingredients.push(ingredient);
-    }
-
-    fridge.ingredients = ingredients;
-    await fridge.save();
-
-    return NextResponse.json({ ingredients });
+    return NextResponse.json({ ingredients: ingredientNames });
   }
 );
