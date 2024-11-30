@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useMemo } from "react";
 import { format } from "date-fns";
 
 interface GenerateMealsModalProps {
@@ -11,18 +11,32 @@ interface SelectedDayInfo {
   date: Date;
 }
 
-const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const getDaysStartingFromToday = () => {
+  const staticDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const today = new Date();
+  const todayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
+
+  const reorderedDays = [
+    ...staticDays.slice(todayIndex),
+    ...staticDays.slice(0, todayIndex),
+  ];
+
+  return reorderedDays;
+};
 
 const getNextDayDate = (dayName: string): Date => {
+  const staticDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const today = new Date();
-  const dayIndex = days.indexOf(dayName);
   const todayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
-  const daysUntilNext = dayIndex - todayIndex;
+  const targetDayIndex = staticDays.indexOf(dayName);
+  let daysToAdd = targetDayIndex - todayIndex;
+
+  if (daysToAdd <= 0) {
+    daysToAdd += 7;
+  }
 
   const nextDate = new Date();
-  nextDate.setDate(
-    today.getDate() + (daysUntilNext <= 0 ? daysUntilNext + 7 : daysUntilNext)
-  );
+  nextDate.setDate(today.getDate() + daysToAdd);
   return nextDate;
 };
 
@@ -34,6 +48,8 @@ const GenerateMealsModal: FC<GenerateMealsModalProps> = ({
   const [preferences, setPreferences] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const days = useMemo(() => getDaysStartingFromToday(), []);
 
   const handleDaySelect = (day: string) => {
     const nextDate = getNextDayDate(day);

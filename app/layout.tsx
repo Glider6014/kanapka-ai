@@ -3,7 +3,6 @@ import "./globals.css";
 import { CustomSessionProvider } from "@/components/CustomSessionProvider";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import { Navbar } from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,7 +19,6 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
       >
-        <Navbar />
         <CustomSessionProvider>{children}</CustomSessionProvider>
       </body>
     </html>

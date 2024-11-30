@@ -16,16 +16,21 @@ import {
 import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+  email: z
+    .string()
+    .email({
+      message: "Invalid email address.",
+    })
+    .nonempty({
+      message: "Email is required.",
+    }),
 });
 
 export default function Newsletter() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      email: "",
     },
   });
 
@@ -44,31 +49,35 @@ export default function Newsletter() {
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="flex flex-col items-center space-y-4"
                 >
+                  <FormLabel className="mb-6 text-4xl text-center font-bold">
+                    Sign up for the Kanapka AI newsletter today!
+                  </FormLabel>
                   <FormField
                     control={form.control}
-                    name="username"
-                    render={({ field }) => (
+                    name="email"
+                    render={({ field, fieldState }) => (
                       <FormItem className="flex flex-col items-center">
-                        <FormLabel className="mb-6 text-4xl text-center font-bold">
-                          Get started with Kanapka AI today
-                        </FormLabel>
-                        <div className="flex items-center">
-                          <FormControl>
+                        <div className="flex flex-col md:flex-row items-center w-full">
+                          <FormControl className="w-full md:w-auto">
                             <Input
-                              className="rounded-l-full border-none px-4 py-2 text-black"
-                              type="email"
+                              className={`rounded-t-md md:rounded-l-full mb-3 md:mb-0 text-opacity-70 focus-visible:text-opacity-100 border-solid border-2 focus-visible:ring-0 focus-visible:bg-opacity-20 border-black px-4 py-2 placeholder:text-white placeholder:text-opacity-70 placeholder:focus-visible:text-opacity-90 ${
+                                fieldState.invalid
+                                  ? "text-red-500 border-red-500"
+                                  : "text-white"
+                              }`}
+                              type="text"
                               placeholder="Email"
                               {...field}
                             />
                           </FormControl>
                           <Button
-                            className="rounded-r-full bg-black font-bold hover:bg-gradient-to-r from-purple-700 to-orange-500 hover:opacity-90 text-white px-6 py-2 transition-transform transform hover:scale-105 duration-200"
+                            className="rounded-b-md md:rounded-r-full md:rounded-b-none bg-black font-bold hover:bg-gradient-to-r from-purple-700 to-orange-500 text-white px-6 py-2 transition-transform hover:scale-105 duration-200 w-full md:w-auto"
                             type="submit"
                           >
-                            Sign up - it’s free!
+                            Sign up - it's free!
                           </Button>
                         </div>
-                        <FormMessage />
+                        <FormMessage className="text-white" />
                       </FormItem>
                     )}
                   />

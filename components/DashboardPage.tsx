@@ -4,6 +4,7 @@ import { RecipesList } from "@/components/RecipesList";
 import { useState } from "react";
 import { RecipeType } from "@/models/Recipe";
 import { FridgesPanel } from "@/components/FridgesPanel";
+import { Navbar } from "./Navbar";
 
 export function DashboardPage() {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
@@ -40,6 +41,7 @@ export function DashboardPage() {
 
   return (
     <>
+      <Navbar />
       <div className="container mx-auto p-4">
         <div className="flex flex-col md:flex-row gap-4">
           <FridgesPanel

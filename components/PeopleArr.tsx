@@ -18,7 +18,8 @@ export const people0 = [
   {
     name: "Ewa Wiśniewska",
     work: "Dietetyk",
-    description: "Poleca 'Kanapka AI' swoim klientom do planowania zdrowych posiłków.",
+    description:
+      "Poleca 'Kanapka AI' swoim klientom do planowania zdrowych posiłków.",
     image:
       "https://marcinbiodrowski.com/wp-content/uploads/2018/03/dlaczego-warto-miec-dobre-zdjecie-w-CV.jpg",
   },
@@ -32,21 +33,24 @@ export const people0 = [
   {
     name: "Maria Kamińska",
     work: "Nauczycielka",
-    description: "Uczy swoich uczniów o zdrowym odżywianiu, korzystając z przepisów z 'Kanapka AI'.",
+    description:
+      "Uczy swoich uczniów o zdrowym odżywianiu, korzystając z przepisów z 'Kanapka AI'.",
     image:
       "https://marcinbiodrowski.com/wp-content/uploads/2018/03/dlaczego-warto-miec-dobre-zdjecie-w-CV.jpg",
   },
   {
     name: "Tomasz Zieliński",
     work: "Sportowiec",
-    description: "Trenuje na najwyższym poziomie, dzięki zdrowym przepisom z 'Kanapka AI'.",
+    description:
+      "Trenuje na najwyższym poziomie, dzięki zdrowym przepisom z 'Kanapka AI'.",
     image:
       "https://marcinbiodrowski.com/wp-content/uploads/2018/03/dlaczego-warto-miec-dobre-zdjecie-w-CV.jpg",
   },
   {
     name: "Karolina Szymańska",
     work: "Fotograf",
-    description: "Fotografuje przepiękne dania przygotowane z przepisów 'Kanapka AI'.",
+    description:
+      "Fotografuje przepiękne dania przygotowane z przepisów 'Kanapka AI'.",
     image:
       "https://marcinbiodrowski.com/wp-content/uploads/2018/03/dlaczego-warto-miec-dobre-zdjecie-w-CV.jpg",
   },
@@ -67,7 +71,8 @@ export const people0 = [
   {
     name: "Katarzyna Lewandowska",
     work: "Fitness Trener",
-    description: "Tworzy plany żywieniowe dla swoich klientów z pomocą 'Kanapka AI'.",
+    description:
+      "Tworzy plany żywieniowe dla swoich klientów z pomocą 'Kanapka AI'.",
     image:
       "https://marcinbiodrowski.com/wp-content/uploads/2018/03/dlaczego-warto-miec-dobre-zdjecie-w-CV.jpg",
   },
