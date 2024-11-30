@@ -195,6 +195,7 @@ export const FridgePanel = ({
               inputRef={(el) =>
                 el ? (inputRefs.current[Number(key)] = el) : null
               }
+              isDeleteButtonDisabled={isSaving}
               onFocus={handleOnFocusChange}
               onAdd={handleAdd}
             />

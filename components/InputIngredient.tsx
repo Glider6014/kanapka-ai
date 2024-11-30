@@ -11,10 +11,23 @@ type InputIngredientProps = {
   onFocus?: () => void;
   onBlur?: () => void;
   inputRef?: (el: HTMLInputElement | null) => void;
+  isDeleteButtonDisabled?: boolean;
 };
 
 const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
-  ({ value, onChange, onRemove, onAdd, onFocus, onBlur, inputRef }, ref) => {
+  (
+    {
+      value,
+      onChange,
+      onRemove,
+      onAdd,
+      onFocus,
+      onBlur,
+      inputRef,
+      isDeleteButtonDisabled,
+    },
+    ref
+  ) => {
     const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         onAdd?.();
@@ -48,6 +61,7 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
             variant="destructive"
             className="p-2 rounded-md h-9 w-11"
             onClick={onRemove}
+            disabled={isDeleteButtonDisabled}
           >
             <Trash2 size={24} />
           </Button>
