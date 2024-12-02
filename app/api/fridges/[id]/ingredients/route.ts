@@ -7,6 +7,7 @@ import Fridge from "@/models/Fridge";
 import { z } from "zod";
 import connectDB from "@/lib/connectToDatabase";
 import { generateIngredient } from "@/lib/ingredients/generateIngredients";
+import { validateIngredients } from "@/lib/ingredients/validateNames";
 
 const ingredientsForm = z.object({
   ingredients: z.array(z.string().trim()),
@@ -58,14 +59,28 @@ export const PUT = withApiErrorHandling(
       );
     }
 
+    // Validate ingredients first
+    const validationResults = await validateIngredients(
+      result.data.ingredients.filter((ing) => ing.length > 0)
+    );
+
+    const invalidIngredients = validationResults.filter((r) => !r.isValid);
+    if (invalidIngredients.length > 0) {
+      return NextResponse.json(
+        {
+          error: "Invalid ingredients detected",
+          invalidIngredients: invalidIngredients.map((r) => r.ingredient),
+        },
+        { status: 400 }
+      );
+    }
+
     const ingredientNames = (
       await Promise.all(
-        result.data.ingredients
-          .filter((ing) => ing.length > 0)
-          .map(async (ing) => {
-            const ingredient = await generateIngredient(ing);
-            return ingredient ? ingredient.name : null;
-          })
+        validationResults.map(async (validation) => {
+          const ingredient = await generateIngredient(validation.ingredient);
+          return ingredient ? ingredient.name : null;
+        })
       )
     ).filter((ing) => ing !== null);
 
