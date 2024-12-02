@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateRecipes } from "@/lib/Recipe/generateRecipes";
 import connectDB from "@/lib/connectToDatabase";
-import { generateIngredient } from "@/lib/Ingredients/generateIngredients";
+import { generateIngredient } from "@/lib/ingredients/generateIngredients";
 import mongoose from "mongoose";
 import RecipeModel from "@/models/Recipe";
 import {

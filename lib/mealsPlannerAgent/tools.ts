@@ -1,6 +1,6 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
-import { generateIngredient } from "@/lib/Ingredients/generateIngredeints";
+import { generateIngredient } from "@/lib/ingredients/generateIngredients";
 import { generateRecipeFromIds } from "@/lib/Recipe/generateRecipeFromIds";
 import { NutritionTotals } from "@/types/NutritionTotals";
 import connectDB from "../connectToDatabase";
