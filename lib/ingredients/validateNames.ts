@@ -9,8 +9,7 @@ type ValidationResult = {
 };
 
 const model = new ChatOpenAI({
-  modelName: "gpt-4", // Fixed typo from "gpt-4o-mini"
-  temperature: 0,
+  modelName: "gpt-4o-mini",
   openAIApiKey: process.env.OPENAI_API_KEY,
   stop: ["\n", " "],
 });
