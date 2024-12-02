@@ -6,7 +6,7 @@ import {
 import Fridge from "@/models/Fridge";
 import { z } from "zod";
 import connectDB from "@/lib/connectToDatabase";
-import { generateIngredient } from "@/lib/ingredients/generateIngredients";
+import { generateIngredient } from "@/lib/Ingredients/generateIngredients";
 
 const ingredientsForm = z.object({
   ingredients: z.array(z.string().trim()),
