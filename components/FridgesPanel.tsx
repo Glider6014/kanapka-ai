@@ -18,7 +18,7 @@ export const FridgesPanel = ({
   searchRecipes,
 }: FridgesPanelProps) => {
   const [fridges, setFridges] = useState<FridgeType[]>([]);
-  const [activeTab, setActiveTab] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
     fetch("/api/fridges")
@@ -57,16 +57,19 @@ export const FridgesPanel = ({
         ))}
       </div>
       <div className="p-4">
-        {fridges.map((fridge) => (
-          <FridgePanel
-            key={fridge._id.toString()}
-            setIngredients={setIngredients}
-            isSearchRecipesButtonVisible={isSearchRecipesButtonVisible}
-            isSearchRecipesButtonDisabled={isSearchRecipesButtonDisabled}
-            searchRecipes={searchRecipes}
-            fridge={fridge}
-          />
-        ))}
+        {fridges.map(
+          (fridge, index) =>
+            activeTab === index && (
+              <FridgePanel
+                key={fridge._id.toString()}
+                fridge={fridge}
+                setIngredients={setIngredients}
+                isSearchRecipesButtonVisible={isSearchRecipesButtonVisible}
+                isSearchRecipesButtonDisabled={isSearchRecipesButtonDisabled}
+                searchRecipes={searchRecipes}
+              />
+            )
+        )}
       </div>
     </div>
   );

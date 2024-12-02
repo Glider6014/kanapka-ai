@@ -174,12 +174,6 @@ export const FridgePanel = ({
     setIsTryingToSearch(false);
   }, [isTryingToSearch, isSaved, ingredients, saveIngredients, searchRecipes]);
 
-  console.log(`
-    isSearchRecipesButtonDisabled: ${isSearchRecipesButtonDisabled}
-    isSaving: ${isSaving}
-    isTryingToSearch: ${isTryingToSearch}
-  `);
-
   return (
     <div className="flex flex-col">
       <div className="flex flex-col flex-grow">
