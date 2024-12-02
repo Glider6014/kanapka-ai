@@ -41,8 +41,8 @@ export function DashboardPage() {
 
   return (
     <>
-      <Navbar />
       <div className="container mx-auto p-4">
+        <Navbar />
         <div className="flex flex-col md:flex-row gap-4">
           <FridgesPanel
             searchRecipes={handleSearchRecipes}

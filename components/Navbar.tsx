@@ -14,6 +14,7 @@ import {
 import { Logo } from "@/components/Logo";
 import { useRouter } from "next/navigation";
 import { NavbarData } from "@/components/data/navbarData";
+import UserDropDownMenu from "./UserDropDownMenu";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -67,6 +68,7 @@ export const Navbar = () => {
                 </NavigationMenuLink>
               </NavigationMenuItem>
             ))}
+            <UserDropDownMenu/>
           </NavigationMenuList>
         </NavigationMenu>
       </div>

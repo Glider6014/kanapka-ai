@@ -28,10 +28,10 @@ export const NavbarData = () => {
       href: "/recipes",
       className: standardStyle,
     },
-    {
-      label: "Logout",
-      className: standardStyle,
-      onClick: logout,
-    },
+    // {
+    //   label: "Logout",
+    //   className: standardStyle,
+    //   onClick: logout,
+    // },
   ];
 };
