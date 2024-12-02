@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateRecipes } from "@/lib/Recipe/generateRecipes";
 import connectDB from "@/lib/connectToDatabase";
 import { generateIngredient } from "@/lib/ingredients/generateIngredients";
+import { validateIngredient } from "@/lib/ingredients/validateNames";
 import mongoose from "mongoose";
 import RecipeModel from "@/models/Recipe";
 import {
@@ -34,6 +35,26 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
     .toString()
     .split(",")
     .map((i: string) => i.trim());
+
+  // Validate ingredients before processing
+  const validationResults = await Promise.all(
+    ingredientsList.map(validateIngredient)
+  );
+
+  const invalidIngredients = validationResults.filter(
+    (result) => !result.isValid
+  );
+  if (invalidIngredients.length > 0) {
+    return NextResponse.json(
+      {
+        error: `Invalid ingredients detected: ${invalidIngredients
+          .map((i) => i.ingredient)
+          .join(", ")}`,
+      },
+      { status: 400 }
+    );
+  }
+
   const generatedIngredients = await Promise.all(
     ingredientsList.map(async (ingredientName: string) => {
       const ingredient = await generateIngredient(ingredientName);
