@@ -20,7 +20,7 @@ export const Navbar = () => {
   const navbarItems = NavbarData();
 
   return (
-    <nav className="my-4 flex flex-col md:flex-row items-center justify-between gap-4 z-50">
+    <nav className="my-4 flex flex-col md:flex-row items-center justify-between mx-4 md:mx-0 gap-4 z-50">
       <div className="flex justify-between w-full md:w-auto">
         <Logo className="text-4xl md:text-5xl" />
         <div className="md:hidden">

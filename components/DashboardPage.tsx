@@ -40,7 +40,7 @@ export function DashboardPage() {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto overflow-hidden">
       <Navbar />
       <div className="flex flex-col md:flex-row gap-4">
         <FridgesPanel
