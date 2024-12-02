@@ -10,7 +10,6 @@ type ValidationResult = {
 
 const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
-  temperature: 0,
   openAIApiKey: process.env.OPENAI_API_KEY,
   stop: ["\n", " "],
 });
@@ -43,7 +42,7 @@ export async function validateIngredient(
   ingredient: string
 ): Promise<ValidationResult> {
   const response = await chain.invoke({ ingredient });
-
+  console.log(ingredient, response.content === "true");
   return {
     ingredient,
     isValid: response.content === "true",
