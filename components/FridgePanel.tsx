@@ -3,6 +3,7 @@
 import { FridgeType } from "@/models/Fridge";
 import InputIngredient from "./InputIngredient";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "./ui/button";
 
 type FridgePanelProps = {
   setIngredients?: React.Dispatch<React.SetStateAction<string[]>>;
@@ -202,25 +203,26 @@ export const FridgePanel = ({
           )
         )}
       </div>
-      <div className="flex">
-        <button
-          className="px-6 py-1 mb-4 h-9 rounded-md bg-green-300 hover:bg-green-400 disabled:bg-green-200 border border-green-600 disabled:border-green-300 disabled:text-gray-500"
+      <div className="my-4 flex flex-col md:flex-row justify-between gap-2">
+        <Button
+          variant="outline"
+          className="w-full md:w-1/2"
           disabled={isSaving}
           onClick={saveIngredients}
         >
           Save
-        </button>
-        <div className="flex-grow" /> {/* Spacer */}
+        </Button>
+
         {isSearchRecipesButtonVisible && (
-          <button
-            className="px-6 py-1 mb-4 h-9 rounded-md bg-blue-300 hover:bg-blue-400 disabled:bg-blue-200 border border-blue-600 disabled:border-blue-300 disabled:text-gray-500"
+          <Button
+            className="w-full md:w-1/2"
             disabled={
               isSearchRecipesButtonDisabled || isSaving || isTryingToSearch
             }
             onClick={handleSearchRecipes}
           >
             Search Recipes
-          </button>
+          </Button>
         )}
       </div>
     </div>

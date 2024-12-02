@@ -64,6 +64,19 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        "start-prim": {
+          DEFAULT: "#7e22ce",
+          foreground: "#4B0082",
+          primary: "#800080",
+        },
+        "end-prim": {
+          DEFAULT: "#f97316",
+          foreground: "#FF4500",
+          primary: "#FFA500",
+        },
+      },
+      backgroundImage: {
+        "gradient-to-r": "linear-gradient(to right, #7e22ce, #f97316)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -77,6 +90,10 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("tailwindcss-motion"), require('tailwindcss-animate'),],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("tailwindcss-motion"),
+    require("tailwindcss-animate"),
+  ],
 };
 export default config;
