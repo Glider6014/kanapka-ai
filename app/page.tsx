@@ -8,6 +8,8 @@ import Greeting from '@/components/Greeting';
 import About_app from '@/components/About_app';
 import Features from '@/components/Features';
 import PromoBanner from '@/components/PromoBanner';
+// import People from '@/components/People';
+// import { people0, people1 } from '@/components/PeopleArr';
 
 export default function Home() {
   return (
@@ -28,10 +30,10 @@ export default function Home() {
       </div>
       <div className='w-full'>
         <PromoBanner />
-        {/* 
-        <People people={people0} isReverse={false} />
-        <People people={people1} isReverse={true} />
-         */}
+        
+        {/* <People people={people0} isReverse={false} />
+        <People people={people1} isReverse={true} /> */}
+        
         <FAQ />
         <Newsletter />
         <Footer />

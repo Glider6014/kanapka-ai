@@ -14,6 +14,7 @@ import {
 import { Logo } from "@/components/Logo";
 import { useRouter } from "next/navigation";
 import { NavbarData } from "@/components/data/navbarData";
+import UserDropDownMenu from "./UserDropDownMenu";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -33,9 +34,7 @@ export const Navbar = () => {
                     className={`w-full ${item.className}`}
                     onClick={(e) => {
                       e.preventDefault();
-
-                      if (item.href) router.push(item.href);
-                      item.onClick?.();
+                      router.push(item.href);
                     }}
                   >
                     {item.label.toUpperCase()}
@@ -57,9 +56,7 @@ export const Navbar = () => {
                     className={`w-full md:w-auto ${item.className}`}
                     onClick={(e) => {
                       e.preventDefault();
-
-                      if (item.href) router.push(item.href);
-                      item.onClick?.();
+                      router.push(item.href);
                     }}
                   >
                     {item.label.toUpperCase()}
@@ -67,6 +64,7 @@ export const Navbar = () => {
                 </NavigationMenuLink>
               </NavigationMenuItem>
             ))}
+            <UserDropDownMenu />
           </NavigationMenuList>
         </NavigationMenu>
       </div>
