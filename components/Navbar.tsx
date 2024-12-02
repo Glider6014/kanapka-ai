@@ -34,9 +34,7 @@ export const Navbar = () => {
                     className={`w-full ${item.className}`}
                     onClick={(e) => {
                       e.preventDefault();
-
-                      if (item.href) router.push(item.href);
-                      item.onClick?.();
+                      router.push(item.href);
                     }}
                   >
                     {item.label.toUpperCase()}
@@ -58,9 +56,7 @@ export const Navbar = () => {
                     className={`w-full md:w-auto ${item.className}`}
                     onClick={(e) => {
                       e.preventDefault();
-
-                      if (item.href) router.push(item.href);
-                      item.onClick?.();
+                      router.push(item.href);
                     }}
                   >
                     {item.label.toUpperCase()}
@@ -68,7 +64,7 @@ export const Navbar = () => {
                 </NavigationMenuLink>
               </NavigationMenuItem>
             ))}
-            <UserDropDownMenu/>
+            <UserDropDownMenu />
           </NavigationMenuList>
         </NavigationMenu>
       </div>
