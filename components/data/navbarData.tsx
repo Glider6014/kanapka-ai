@@ -14,7 +14,7 @@ export const NavbarData = () => {
     {
       label: "Home",
       href: "/",
-      className: `text-white bg-gradient-to-r from-purple-700 to-orange-500 rounded dark:bg-blue-600 ${buttonVariants(
+      className: `text-white bg-gradient-to-r from-start-prim to-end-prim rounded ${buttonVariants(
         { variant: "default" }
       )}`,
     },

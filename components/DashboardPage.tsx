@@ -40,20 +40,18 @@ export function DashboardPage() {
   };
 
   return (
-    <>
-      <div className="container mx-auto p-4">
-        <Navbar />
-        <div className="flex flex-col md:flex-row gap-4">
-          <FridgesPanel
-            searchRecipes={handleSearchRecipes}
-            isSearchRecipesButtonVisible={true}
-            isSearchRecipesButtonDisabled={isSearching}
-          />
-          <div className="w-full md:w-3/5 mt-4 md:mt-0">
-            <RecipesList recipes={recipes} />
-          </div>
+    <div className="container mx-auto overflow-hidden">
+      <Navbar />
+      <div className="flex flex-col md:flex-row gap-4">
+        <FridgesPanel
+          searchRecipes={handleSearchRecipes}
+          isSearchRecipesButtonVisible={true}
+          isSearchRecipesButtonDisabled={isSearching}
+        />
+        <div className="w-full md:w-3/5 mt-4 md:mt-0">
+          <RecipesList recipes={recipes} />
         </div>
       </div>
-    </>
+    </div>
   );
 }
