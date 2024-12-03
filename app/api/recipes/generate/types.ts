@@ -22,7 +22,6 @@ export type RecipeOutput = {
   prepTime: number;
   cookTime: number;
   difficulty: "Easy" | "Medium" | "Hard";
-  experience: number;
 };
 
 export type GenerateRecipeOutput = RecipeOutput[];
