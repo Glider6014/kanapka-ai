@@ -98,13 +98,7 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const eventPropGetter = () => ({
-    className: 'event-wrapper',
-    style: {
-      backgroundColor: '#3b82f6',
-      border: 'none',
-      borderRadius: '4px',
-      padding: 0,
-    },
+    className: 'event-wrapper bg-end-prim-primary rounded border-none p-0',
   });
 
   const moveEvent = (args: DragAndDropArgs<object>) => {

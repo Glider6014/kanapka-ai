@@ -40,7 +40,7 @@ export default function Newsletter() {
 
   return (
     <>
-      <div className="flex justify-center bg-gradient-to-r from-purple-700 to-orange-500 text-white">
+      <div className="flex justify-center bg-gradient-to-r from-start-prim to-end-prim text-white">
         <div className="container m-20 p-4">
           <div className="flex flex-col items-center gap-4">
             <div className="w-full md:w-auto mt-4 md:mt-0">

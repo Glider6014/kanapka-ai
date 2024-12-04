@@ -121,7 +121,7 @@ const GenerateMealsModal: FC<GenerateMealsModalProps> = ({
                 key={day}
                 className={`p-2 text-center rounded ${
                   selectedDay?.name === day
-                    ? "bg-blue-500 text-white"
+                    ? "bg-end-prim-foreground text-white"
                     : "bg-gray-100 hover:bg-gray-200"
                 }`}
                 onClick={() => handleDaySelect(day)}
@@ -151,7 +151,7 @@ const GenerateMealsModal: FC<GenerateMealsModalProps> = ({
           <button
             className={`px-4 py-2 rounded ${
               selectedDay && preferences
-                ? "bg-blue-500 text-white hover:bg-blue-600"
+                ? "bg-black text-white hover:bg-gray-800"
                 : "bg-gray-300 cursor-not-allowed"
             }`}
             onClick={handleGenerate}
