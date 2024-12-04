@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/connectToDatabase";
-import Recipe from "@/models/Recipe";
+import Recipe, { RecipeType } from "@/models/Recipe";
 import { z } from "zod";
 
 export const GetRecipesSchema = z.object({
@@ -27,6 +27,13 @@ export const GetRecipesSchema = z.object({
 });
 
 export type GetRecipesSchemaType = z.infer<typeof GetRecipesSchema>;
+
+export type GetRecipesResponse = {
+  count: number;
+  results: RecipeType[];
+  offset: number;
+  limit: number;
+};
 
 function createQuery(params: GetRecipesSchemaType) {
   const query = Recipe.find();
@@ -65,10 +72,12 @@ export async function GET(req: NextRequest) {
   const recipes = await itemsQuery.exec();
   const count = await countQuery.countDocuments();
 
-  return NextResponse.json({
+  const response: GetRecipesResponse = {
     count,
     results: recipes,
     offset: params.offset,
     limit: params.limit,
-  });
+  };
+
+  return NextResponse.json(response);
 }
