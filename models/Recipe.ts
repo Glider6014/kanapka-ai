@@ -32,7 +32,6 @@ const RecipeSchema = new Schema({
     required: true,
     default: "Easy",
   },
-  experience: { type: Number, required: true, default: 10 },
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: "User",
