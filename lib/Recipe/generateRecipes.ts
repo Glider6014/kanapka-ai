@@ -2,96 +2,58 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { z } from "zod";
-import { IngredientType } from "@/models/Ingredient";
 import Recipe, { RecipeType } from "@/models/Recipe";
+import { IngredientType } from "@/models/Ingredient";
 
+// Zdefiniowanie schematu przepisu
 const recipeSchema = z.object({
-  name: z.string({
-    required_error: "Name is required",
-  }),
-  description: z.string({
-    required_error: "Description is required",
-  }),
+  name: z.string(),
+  description: z.string(),
   ingredients: z
     .array(
       z.object({
-        name: z.string({
-          required_error: "Ingredient name is required",
-        }),
-        amount: z
-          .number({
-            required_error: "Amount is required",
-            invalid_type_error: "Amount must be a number",
-          })
-          .nonnegative("Amount must be zero or positive"),
+        name: z.string(),
+        amount: z.number().nonnegative(),
       })
     )
-    .min(1, "At least one ingredient is required"),
-  steps: z.array(z.string()).min(1, {
-    message: "At least one step is required",
-  }),
-  prepTime: z
-    .number({
-      required_error: "Preparation time is required",
-      invalid_type_error: "Preparation time must be a number",
-    })
-    .nonnegative("Preparation time must be zero or positive"),
-  cookTime: z
-    .number({
-      required_error: "Cooking time is required",
-      invalid_type_error: "Cooking time must be a number",
-    })
-    .nonnegative("Cooking time must be zero or positive"),
-  difficulty: z.enum(["Easy", "Medium", "Hard"], {
-    required_error: "Difficulty level is required",
-    invalid_type_error: "Invalid difficulty level",
-  }),
+    .min(1),
+  steps: z.array(z.string()).min(1),
+  prepTime: z.number().nonnegative(),
+  cookTime: z.number().nonnegative(),
+  difficulty: z.enum(["Easy", "Medium", "Hard"]),
 });
 
+// Parser do przekształcania wyników na JSON
 const parser = new StringOutputParser();
 
+// Model AI z LangChain
 const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
-  temperature: 0,
+  temperature: 0.5,
   openAIApiKey: process.env.OPENAI_API_KEY,
 });
 
+// Szablon prompta do generowania przepisów
 const prompt = ChatPromptTemplate.fromMessages([
   [
     "system",
-    `
-Create {count} recipe(s) using the provided ingredients as much as possible.
+    `You are a recipe generator AI. Generate as many meaningful recipes as possible using the provided ingredients.
+Response must be a valid JSON array of recipe objects.
 
-Each recipe MUST include ALL of these required fields:
-{{
-  "name": "string (recipe title)",
-  "description": "string (brief description)",
-  "ingredients": [
-    {{
-      "name": "string (ingredient name)",
-      "amount": number (positive quantity)
-  }}
-  ],
-  "steps": ["string (step 1)", "string (step 2)"],
-  "prepTime": number (minutes),
-  "cookTime": number (minutes),
-  "difficulty": "Easy" | "Medium" | "Hard"
-  }}
-
-Example of valid response:
+Example response:
 [
   {{
-    "name": "Simple Pasta",
-    "description": "Quick and easy pasta dish",
+    "name": "Recipe Name",
+    "description": "Brief description",
     "ingredients": [
       {{
-        "name": "pasta",
+        "name": "ingredient name",
         "amount": 100
-    }}
+  }}
     ],
-    "steps": ["Boil water", "Cook pasta"],
-    "prepTime": 5,
-    "cookTime": 10,
+    "steps": ["Step 1", "Step 2"],
+    "prepTime": 10,
+    "cookTime": 20,
     "difficulty": "Easy"
   }}
 ]
@@ -99,69 +61,69 @@ Example of valid response:
 Available ingredients:
 {ingredients}
 
-Respond ONLY with a valid JSON array containing {count} recipes.
-`,
+Respond ONLY with a valid JSON array of recipes.`,
   ],
-  ["user", "{ingredients}"],
 ]);
 
-const chain = prompt.pipe(model).pipe(parser);
-
-export async function generateRecipes(
+// Funkcja generująca przepisy
+export async function* generateRecipes(
   ingredients: IngredientType[],
-  count: number = 3
-): Promise<RecipeType[]> {
+  maxRecipes: number = 5
+): AsyncGenerator<RecipeType> {
   try {
-    const ingredientsString = ingredients
-      .map((ing) => `- ${ing.name} (unit: ${ing.unit})`)
-      .join("\n");
+    const ingredientsList = ingredients
+      .map((ing) => `${ing.name} (${ing.unit})`)
+      .join(", ");
 
-    const results = await chain.invoke({
-      ingredients: ingredientsString,
-      count,
+    const chain = prompt.pipe(model).pipe(parser);
+    const response = await chain.invoke({
+      ingredients: ingredientsList,
+      count: maxRecipes,
     });
 
-    const parsedResults = JSON.parse(results);
-    console.log("Parsed Results:", JSON.stringify(parsedResults, null, 2));
+    let parsedRecipes;
+    try {
+      parsedRecipes = JSON.parse(response);
+      if (!Array.isArray(parsedRecipes)) {
+        throw new Error("Response is not an array");
+      }
+    } catch (error) {
+      console.error("Parse error:", error);
+      console.error("Raw response:", response);
+      throw error;
+    }
 
-    const recipes = await Promise.all(
-      parsedResults.map(async (parsedResult: z.infer<typeof recipeSchema>) => {
-        const validation = recipeSchema.safeParse(parsedResult);
+    for (const recipe of parsedRecipes) {
+      const validation = recipeSchema.safeParse(recipe);
 
-        if (!validation.success) {
-          console.error(
-            "Validation errors:",
-            validation.error.flatten().fieldErrors
-          );
-          return null;
-        }
+      if (!validation.success) {
+        console.error("Recipe validation failed:", validation.error.flatten());
+        continue;
+      }
 
-        return new Recipe({
-          name: validation.data.name,
-          description: validation.data.description,
-          ingredients: validation.data.ingredients
-            .map((ing) => ({
-              ingredient: ingredients.find(
-                (i) => i.name === ing.name.toLowerCase()
-              )?._id,
-              amount: ing.amount,
-            }))
-            .filter((ing) => ing.ingredient),
-          steps: validation.data.steps,
-          prepTime: validation.data.prepTime,
-          cookTime: validation.data.cookTime,
-          difficulty: validation.data.difficulty,
-        });
-      })
-    );
+      const validRecipe = new Recipe({
+        name: validation.data.name,
+        description: validation.data.description,
+        ingredients: validation.data.ingredients.map((ing) => ({
+          ingredient: ingredients.find(
+            (ingredient) =>
+              ingredient.name.toLowerCase() === ing.name.toLowerCase()
+          )?._id,
+          amount: ing.amount,
+        })),
+        steps: validation.data.steps,
+        prepTime: validation.data.prepTime,
+        cookTime: validation.data.cookTime,
+        difficulty: validation.data.difficulty,
+      });
 
-    return recipes.filter((recipe): recipe is RecipeType => recipe !== null);
+      yield validRecipe;
+    }
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error("Validation errors:", error.flatten().fieldErrors);
     } else {
       console.error("Recipe generation error:", error);
     }
-    return [];
   }
 }

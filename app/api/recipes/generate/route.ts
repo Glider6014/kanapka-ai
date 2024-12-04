@@ -72,26 +72,51 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
     );
   }
 
-  const recipes = await generateRecipes(generatedIngredients, count);
+  const stream = new TransformStream();
+  const writer = stream.writable.getWriter();
+  const encoder = new TextEncoder();
 
-  if (!recipes || !recipes.length) {
-    return NextResponse.json(
-      { error: "Failed to generate recipes" },
-      { status: 500 }
-    );
-  }
+  (async () => {
+    try {
+      const recipeGenerator = generateRecipes(generatedIngredients, count);
 
-  const savedRecipes = await Promise.all(
-    recipes.map(async (recipeData) => {
-      const recipe = new RecipeModel(recipeData);
-      recipe.createdBy = new mongoose.Types.ObjectId(session.user.id);
-      await recipe.save();
-      await recipe.populate("ingredients.ingredient");
-      return recipe;
-    })
-  );
+      for await (const recipeData of recipeGenerator) {
+        try {
+          const recipe = new RecipeModel(recipeData);
+          recipe.createdBy = new mongoose.Types.ObjectId(session.user.id);
+          await recipe.save();
+          await recipe.populate("ingredients.ingredient");
 
-  return NextResponse.json({
-    recipes: savedRecipes,
+          const chunk = encoder.encode(JSON.stringify({ recipe }) + "\n");
+          await writer.write(chunk);
+        } catch (error) {
+          console.error("Error processing recipe:", error);
+          const errorChunk = encoder.encode(
+            JSON.stringify({ error: "Failed to process recipe" }) + "\n"
+          );
+          await writer.write(errorChunk);
+        }
+      }
+    } catch (error) {
+      console.error("Streaming error:", error);
+      const errorChunk = encoder.encode(
+        JSON.stringify({ error: "Recipe generation failed" }) + "\n"
+      );
+      await writer.write(errorChunk);
+    } finally {
+      try {
+        await writer.close();
+      } catch (error) {
+        console.error("Error closing writer:", error);
+      }
+    }
+  })();
+
+  return new Response(stream.readable, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    },
   });
 });

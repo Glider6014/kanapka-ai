@@ -10,33 +10,68 @@ export function DashboardPage() {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
-  const handleSearchRecipes = (ingredients: string[]) => {
+  const handleSearchRecipes = async (ingredients: string[]) => {
     setIsSearching(true);
+    setRecipes([]);
 
-    fetch("/api/recipes/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ingredients, count: 5 }),
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          alert(`Failed to search recipes: ${(await res.json()).error}`);
-          throw new Error("Failed to search recipes");
-        }
-        return res;
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        setRecipes(data.recipes);
-      })
-      .catch((err) => {
-        console.error(err);
-      })
-      .finally(() => {
-        setIsSearching(false);
+    try {
+      const response = await fetch("/api/recipes/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ingredients, count: 5 }),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        alert(`Failed to search recipes: ${error.error}`);
+        return;
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) return;
+
+      const processStream = async () => {
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) break;
+
+          buffer += new TextDecoder().decode(value);
+          const lines = buffer.split("\n");
+
+          // Process all complete lines
+          for (let i = 0; i < lines.length - 1; i++) {
+            if (!lines[i].trim()) continue;
+
+            try {
+              const { recipe, error } = JSON.parse(lines[i]);
+              if (error) {
+                console.error("Stream error:", error);
+                continue;
+              }
+              if (recipe) {
+                setRecipes((prev) => [...prev, recipe]);
+              }
+            } catch (e) {
+              console.error("Parse error:", e);
+            }
+          }
+
+          // Keep the last incomplete line in the buffer
+          buffer = lines[lines.length - 1];
+        }
+      };
+
+      await processStream();
+    } catch (err) {
+      console.error("Stream error:", err);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   return (
