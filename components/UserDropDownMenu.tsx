@@ -5,10 +5,12 @@ import { signOut } from "next-auth/react";
 const AvatarDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
 
-    const logout = async () => {
+  const logout = async () => {
     await signOut({ callbackUrl: "/" });
-    };
+  };
 
   const handleOutsideClick = (event: MouseEvent) => {
     if (
@@ -26,14 +28,42 @@ const AvatarDropdown: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const context = canvas.getContext("2d");
+      if (context) {
+        const nickname = "User"; // Replace with actual user nickname
+        const firstLetter = nickname.charAt(0).toUpperCase();
+        const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, "#7e22ce");
+        gradient.addColorStop(1, "#800080");
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "#FFF";
+        context.font = "bold 24px Arial"; // Smaller font size
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(firstLetter, canvas.width / 2, canvas.height / 2 + 2); // Adjusted position
+        setAvatarUrl(canvas.toDataURL());
+      }
+    }
+  }, []);
+
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
+      <canvas
+        ref={canvasRef}
+        width={40}
+        height={40}
+        style={{ display: "none" }}
+      />
       <button
         className="flex items-center justify-center focus:outline-none"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <Avatar className="h-10 w-10">
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarImage src={avatarUrl} alt="User Avatar" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </button>
