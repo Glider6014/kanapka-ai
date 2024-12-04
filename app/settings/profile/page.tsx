@@ -9,8 +9,7 @@ export default function Home() {
                 <Sidebar />
 
                 <div className="flex-1 p-6 bg-gray-50 md:ml-72">
-                    <h1 className="text-2xl font-semibold text-gray-800">333333333333333333</h1>
-                    <p className="text-gray-700">S333333333333333333333.</p>
+                 
                 </div>
             </div>
         </div>

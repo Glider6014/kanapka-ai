@@ -1,7 +1,7 @@
 "use client"
 
 import Sidebar from "@/components/Sidebar";
-import {Navbar} from "@/components/Navbar";
+import { Navbar } from "@/components/Navbar";
 
 import {
     toast
@@ -38,23 +38,13 @@ const formSchema = z.object({
 
 
 export default function Home() {
-    const form = useForm < z.infer < typeof formSchema >> ({
+    const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
 
     })
 
-    function onSubmit(values: z.infer < typeof formSchema > ) {
-        try {
-            console.log(values);
-            toast(
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-            );
-        } catch (error) {
-            console.error("Form submission error", error);
-            toast.error("Failed to submit the form. Please try again.");
-        }
+    function onSubmit(values: z.infer<typeof formSchema>) {
+
     }
 
     return (
@@ -65,49 +55,54 @@ export default function Home() {
 
                 <div className="flex-1 p-6 bg-gray-50 md:ml-72">
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl">
-
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                             <FormField
-                                control={form.control}
                                 name="name"
+                                control={form.control}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder="You username"
-
-                                                type="text"
-                                                {...field} />
+                                            <Input placeholder="Name" {...field} />
                                         </FormControl>
-                                        <FormDescription>Your name may appear around Kanapka AI where you contribute or are mentioned</FormDescription>
+                                        <FormDescription>
+                                            This is your public display name.
+                                        </FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-
                             <FormField
-                                control={form.control}
                                 name="Email"
+                                control={form.control}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Email</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder="Email"
-
-                                                type="email"
-                                                {...field} />
+                                            <Input placeholder="Email" {...field} />
                                         </FormControl>
-                                        <FormDescription>Email</FormDescription>
+                                        <FormDescription>
+                                            We'll never share your email with anyone else.
+                                        </FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-
-                            <Button type="submit">Submit</Button>
+                            <Button type="submit">Save Changes</Button>
                         </form>
                     </Form>
+                    <div className="mt-8">
+                        <p className="text-red-600 font-medium">Delete Account</p>
+                        <hr className="my-2 border-red-200" />
+                        <p>Once you delete your account, there is no going back. Please be certain.</p>
+                        <button
+                            type="button"
+                            className="px-4 py-2 text-red-600 border border-red-600 rounded-md hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                        >
+                            Delete Account
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
