@@ -20,7 +20,6 @@ const singleRecipeSchema = z.object({
   prepTime: z.number().nonnegative(),
   cookTime: z.number().nonnegative(),
   difficulty: z.enum(["Easy", "Medium", "Hard"]),
-  experience: z.number().nonnegative(),
 });
 
 const model = new ChatOpenAI({
@@ -52,8 +51,7 @@ const prompt = ChatPromptTemplate.fromMessages([
     "steps": ["string (step 1)", "string (step 2)", ...],
     "prepTime": number (minutes),
     "cookTime": number (minutes),
-    "difficulty": "Easy" | "Medium" | "Hard",
-    "experience": number (positive points)
+    "difficulty": "Easy" | "Medium" | "Hard"
   }}
   
   Example response:
@@ -69,8 +67,7 @@ const prompt = ChatPromptTemplate.fromMessages([
     "steps": ["Step 1", "Step 2"],
     "prepTime": 10,
     "cookTime": 20,
-    "difficulty": "Easy",
-    "experience": 50
+    "difficulty": "Easy"
   }}
   
   Available ingredients:
@@ -125,7 +122,6 @@ export async function generateRecipeFromIds(
       prepTime: validation.data.prepTime,
       cookTime: validation.data.cookTime,
       difficulty: validation.data.difficulty,
-      experience: validation.data.experience,
       createdBy: new Types.ObjectId(userId),
     });
     recipe.save();

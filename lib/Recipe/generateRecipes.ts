@@ -46,12 +46,6 @@ const recipeSchema = z.object({
     required_error: "Difficulty level is required",
     invalid_type_error: "Invalid difficulty level",
   }),
-  experience: z
-    .number({
-      required_error: "Experience points are required",
-      invalid_type_error: "Experience must be a number",
-    })
-    .nonnegative("Experience points must be zero or positive"),
 });
 
 const parser = new StringOutputParser();
@@ -81,8 +75,7 @@ Each recipe MUST include ALL of these required fields:
   "steps": ["string (step 1)", "string (step 2)"],
   "prepTime": number (minutes),
   "cookTime": number (minutes),
-  "difficulty": "Easy" | "Medium" | "Hard",
-  "experience": number (positive points)
+  "difficulty": "Easy" | "Medium" | "Hard"
   }}
 
 Example of valid response:
@@ -99,8 +92,7 @@ Example of valid response:
     "steps": ["Boil water", "Cook pasta"],
     "prepTime": 5,
     "cookTime": 10,
-    "difficulty": "Easy",
-    "experience": 50
+    "difficulty": "Easy"
   }}
 ]
 
@@ -159,7 +151,6 @@ export async function generateRecipes(
           prepTime: validation.data.prepTime,
           cookTime: validation.data.cookTime,
           difficulty: validation.data.difficulty,
-          experience: validation.data.experience,
         });
       })
     );
