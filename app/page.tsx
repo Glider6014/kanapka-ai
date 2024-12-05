@@ -1,13 +1,13 @@
 'use client';
 
-import FAQ from '@/components/FAQ';
-import Newsletter from '@/components/Newsletter';
+import FAQ from '@/components/home-page/FAQ';
+import Newsletter from '@/components/home-page/Newsletter';
 import Footer from '@/components/Footer';
-import { MainNavbar } from '@/components/MainNavbar';
-import Greeting from '@/components/Greeting';
-import About_app from '@/components/About_app';
-import Features from '@/components/Features';
-import PromoBanner from '@/components/PromoBanner';
+import { MainNavbar } from '@/components/home-page/MainNavbar';
+import Greeting from '@/components/home-page/Greeting';
+import About_app from '@/components/home-page/About_app';
+import Features from '@/components/home-page/Features';
+import PromoBanner from '@/components/home-page/PromoBanner';
 // import People from '@/components/People';
 // import { people0, people1 } from '@/components/PeopleArr';
 

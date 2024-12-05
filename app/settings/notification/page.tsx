@@ -12,7 +12,7 @@ export default function Home() {
             <div className="flex flex-col md:flex-row gap-4 mt-4">
                 <Sidebar />
 
-                <div className="flex-1 p-6 bg-gray-50 md:ml-72">
+                <div className="flex-1 p-6 md:ml-72">
 
                     <h2 className="text-xl font-semibold mb-4">Notification Settings</h2>
                     <div className="flex items-center justify-between mb-4">
