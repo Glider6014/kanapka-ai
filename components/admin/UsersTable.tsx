@@ -191,7 +191,7 @@ export default function UsersTable({ users }: UsersTableProps) {
         <tbody className="divide-y divide-gray-200 overflow-y-auto">
           {users.map((user) => (
             <UserRow
-              key={user._id.toString()}
+              key={user.username}
               user={user}
               editPermissions={editPermissionsMode}
             />
