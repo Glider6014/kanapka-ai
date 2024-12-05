@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { CircleUserRound, LogOut, Settings } from "lucide-react"; 
 
 const AvatarDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
+  const { data: session } = useSession();
 
   const logout = async () => {
     await signOut({ callbackUrl: "/" });
@@ -45,26 +47,26 @@ const AvatarDropdown: React.FC = () => {
               <ul className="py-1">
                 <li>
                   <button
-                      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => router.push("/profile")}
+                    className="block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100"
+                    onClick={() => router.push(`/profile/${session?.user?.id}`)}
                   >
-                    Profile
+                    <CircleUserRound className="inline h-4 w-4 mr-2" /> Profile
                   </button>
                 </li>
                 <li>
                   <button
-                      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => router.push("/settings")}
+                    className="block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100"
+                    onClick={() => router.push("/settings/profile")}
                   >
-                    Settings
+                    <Settings className="inline h-4 w-4 mr-2" /> Settings
                   </button>
                 </li>
                 <li>
                   <button
-                      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={logout}
+                    className="block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100"
+                    onClick={logout}
                   >
-                    Logout
+                    <LogOut className="inline h-4 w-4 mr-2" /> Logout
                   </button>
                 </li>
               </ul>
