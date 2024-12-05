@@ -20,12 +20,14 @@ import {
   usernameSchema,
   emailSchema,
   passwordSchema,
+  displayNameSchema,
 } from "@/lib/formSchemas/authFormSchemas";
 import { z } from "zod";
 
 const signUpFormSchemaWithConfirmPassword = z
   .object({
     username: usernameSchema,
+    displayName: displayNameSchema,
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: z.string(),
@@ -47,6 +49,7 @@ export default function Home() {
     resolver: zodResolver(signUpFormSchemaWithConfirmPassword),
     defaultValues: {
       username: "",
+      displayName: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -63,6 +66,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           username: values.username,
+          displayName: values.displayName,
           email: values.email,
           password: values.password,
         }),
@@ -110,6 +114,21 @@ export default function Home() {
                         <FormLabel className="text-lg">Username</FormLabel>
                         <FormControl>
                           <Input placeholder="Username" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Input - displayName */}
+                  <FormField
+                    control={form.control}
+                    name="displayName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-lg">Display Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Display Name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

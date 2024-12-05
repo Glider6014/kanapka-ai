@@ -8,7 +8,14 @@ export const usernameSchema = z
     /^[a-zA-Z0-9_-]+$/,
     "Username can only contain letters, numbers, dashes, and underscores."
   );
+
+export const displayNameSchema = z
+  .string()
+  .min(3, "Display name must be at least 3 characters.")
+  .max(20, "Display name cannot exceed 20 characters.");
+
 export const emailSchema = z.string().email("Invalid email address.");
+
 export const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters.")
@@ -28,6 +35,7 @@ export const signInFormSchema = z.object({
 // Sign Up
 export const signUpFormSchema = z.object({
   username: usernameSchema,
+  displayName: displayNameSchema,
   email: emailSchema,
   password: passwordSchema,
 });

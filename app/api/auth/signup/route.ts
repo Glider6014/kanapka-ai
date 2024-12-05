@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: result.error.message }, { status: 400 });
   }
 
-  const { username, email, password } = result.data;
+  const { username, displayName, email, password } = result.data;
 
   if (
     await User.exists({
@@ -30,20 +30,17 @@ export async function POST(request: Request) {
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  const user = await User.create({
+  const createdUser = await User.create({
     username,
+    displayName,
     email,
     password: hashedPassword,
   });
 
-  // Remove password from response
-  const userWithoutPassword = {
-    ...user,
-    password: undefined,
-  };
+  const user = await User.findById(createdUser._id).select("-password");
 
   return NextResponse.json(
-    { message: "User created successfully", user: userWithoutPassword },
+    { message: "User created successfully", user },
     { status: 201 }
   );
 }
