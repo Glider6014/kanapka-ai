@@ -14,6 +14,10 @@ const UserSchema = new Schema({
   },
   favorites: [{ type: Schema.Types.ObjectId, ref: "Recipe", required: true }],
   createdAt: { type: Date, default: Date.now, required: true },
+  // bio: { type: String },
+  // avatarUrl: { type: String },
+  // following: { type: Number, default: 0 },
+  // followers: { type: Number, default: 0 },
 });
 
 export type UserType = InferSchemaType<typeof UserSchema>;
