@@ -16,6 +16,10 @@ const UserSchema = new Schema({
   createdAt: { type: Date, default: Date.now, required: true },
 });
 
+// Double index for faster lookups
+UserSchema.index({ _id: 1 });
+UserSchema.index({ username: 1 });
+
 export type UserType = InferSchemaType<typeof UserSchema>;
 
 const User = (models.User as Model<UserType>) || model("User", UserSchema);
