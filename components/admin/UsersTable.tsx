@@ -85,7 +85,7 @@ function UserRow({
   return (
     <tr className="hover:bg-gray-100">
       <td className="px-6 py-4 whitespace-nowrap w-[20ch]">
-        {userData.username}
+        {userData.username} - {userData.displayName}
       </td>
       <td className="px-6 py-4 whitespace-nowrap w-[20ch]">
         <span
@@ -171,7 +171,7 @@ export default function UsersTable({ users }: UsersTableProps) {
         <thead className="bg-gray-100">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-              Username
+              Username - Display Name
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
               Email
