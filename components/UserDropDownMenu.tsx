@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 const AvatarDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const { data: session } = useSession();
 
   const logout = async () => {
     await signOut({ callbackUrl: "/" });
@@ -33,7 +34,7 @@ const AvatarDropdown: React.FC = () => {
     if (canvas) {
       const context = canvas.getContext("2d");
       if (context) {
-        const nickname = "User"; // Replace with actual user nickname
+        const nickname = session?.user?.username || "CN";
         const firstLetter = nickname.charAt(0).toUpperCase();
         const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
         gradient.addColorStop(0, "#7e22ce");
@@ -48,7 +49,7 @@ const AvatarDropdown: React.FC = () => {
         setAvatarUrl(canvas.toDataURL());
       }
     }
-  }, []);
+  }, [session]);
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
