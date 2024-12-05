@@ -90,7 +90,6 @@ export default function RecipePage({ params }: { params: { id: string } }) {
           <CardTitle className="text-3xl font-bold">{recipe.name}</CardTitle>
           <div className="flex gap-2 mt-2">
             <Badge>{recipe.difficulty}</Badge>
-            <Badge variant="secondary">{recipe.experience}XP</Badge>
           </div>
         </CardHeader>
         <CardContent>

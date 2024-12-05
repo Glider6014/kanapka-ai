@@ -101,7 +101,7 @@ function UserRow({
           {userData.permissions.map((permission) => (
             <div
               key={permission}
-              className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded flex items-center gap-1"
+              className="px-2 py-1 text-xs bg-blue-100 text-start-prim rounded flex items-center gap-1"
             >
               <span>{permission}</span>
               {editPermissions && (

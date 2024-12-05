@@ -1,6 +1,6 @@
 export default function Greeting() {
   return (
-    <div className="relative bg-gradient-to-r from-purple-700 to-orange-500 text-white py-12 md:pt-12 md:pb-48 px-8">
+    <div className="relative bg-gradient-to-r from-start-prim to-end-prim text-white py-12 md:pt-12 md:pb-48 px-8">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center">
         <div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -9,7 +9,7 @@ export default function Greeting() {
           <p className="text-lg md:text-3xl mb-8">For big or small.</p>
           <form className="flex flex-col md:flex-row gap-4">
             <button className="bg-black font-bold text-white px-6 py-2 rounded-md transition">
-              Sign up – it's free!
+              Sign up - it's free!
             </button>
           </form>
         </div>

@@ -48,7 +48,7 @@ export const FridgesPanel = ({
           <button
             key={fridge._id.toString()}
             className={`px-4 py-2 ${
-              activeTab === index ? "border-b-2 border-blue-500" : ""
+              activeTab === index ? "border-b-2 border-end-prim" : ""
             }`}
             onClick={() => handleTabClick(index)}
           >

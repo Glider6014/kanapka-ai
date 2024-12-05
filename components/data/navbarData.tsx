@@ -28,6 +28,11 @@ export const NavbarData = () => {
       href: "/recipes",
       className: standardStyle,
     },
+    {
+      label: "Meal planner",
+      href: "/meal-planner",
+      className: standardStyle,
+    },
     // {
     //   label: "Logout",
     //   className: standardStyle,

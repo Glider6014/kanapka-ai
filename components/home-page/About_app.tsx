@@ -57,7 +57,7 @@ const AboutApp = () => {
                 key={index}
                 className={`flex flex-col items-start p-4 rounded-lg w-full cursor-pointer ${
                   currentImage === index
-                    ? "bg-gradient-to-r from-purple-700 to-orange-500 text-white"
+                    ? "bg-gradient-to-r from-start-prim to-end-prim text-white"
                     : "bg-opacity-0 text-black border-black"
                 } border-2 h-42`}
                 onClick={() => handleDivClick(index)}
