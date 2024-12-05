@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isValidObjectId } from "mongoose";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
+import Recipe from "@/models/Recipe";
 
 export type GETParams = {
   params: {
@@ -27,5 +28,8 @@ export async function GET(req: NextRequest, { params }: GETParams) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  return NextResponse.json(user); 
+  const recipes =  await Recipe.find({ createdBy: id }).populate("ingredients.ingredient");
+  const count_recipes = await Recipe.countDocuments({ createdBy: id });
+
+  return NextResponse.json({ user, recipes, count_recipes });
 }
