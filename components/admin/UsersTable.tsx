@@ -84,7 +84,7 @@ function UserRow({
 
   return (
     <tr className="hover:bg-gray-100">
-      <td className="px-6 py-4 whitespace-nowrap w-[20ch]">
+      <td className="px-6 py-4 whitespace-nowrap w-[25ch]">
         {userData.username} - {userData.displayName}
       </td>
       <td className="px-6 py-4 whitespace-nowrap w-[20ch]">
@@ -97,7 +97,7 @@ function UserRow({
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <ul className="flex flex-wrap gap-x-2">
+        <ul className="flex flex-wrap gap-x-2 gap-y-1">
           {userData.permissions.map((permission) => (
             <div
               key={permission}
