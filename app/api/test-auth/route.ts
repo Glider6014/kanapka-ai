@@ -11,12 +11,6 @@ export async function GET() {
 
   return NextResponse.json({
     authenticated: true,
-    session: {
-      user: {
-        email: session.user.email,
-        username: session.user.username,
-        permissions: session.user.permissions,
-      },
-    },
+    session: session,
   });
 }
