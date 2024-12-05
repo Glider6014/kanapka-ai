@@ -13,8 +13,11 @@ const UserSchema = new Schema({
     default: [UserPermissions.readRecipes],
   },
   favorites: [{ type: Schema.Types.ObjectId, ref: "Recipe", required: true }],
-  experience: { type: Number, default: 0, required: true },
   createdAt: { type: Date, default: Date.now, required: true },
+  // bio: { type: String },
+  // avatarUrl: { type: String },
+  // following: { type: Number, default: 0 },
+  // followers: { type: Number, default: 0 },
 });
 
 export type UserType = InferSchemaType<typeof UserSchema>;

@@ -2,8 +2,16 @@ import React from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Pencil, Calendar } from "lucide-react";
 
-const Header = () => {
-  const joinDate = "April 2024"; 
+type HeaderProps = {
+  user: {
+    username: string;
+    createdAt: string;
+  };
+};
+
+const Header: React.FC<HeaderProps> = ({ user }) => {
+  const joinDate = new Date(user.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' });
+
   return (
     <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden">
       <div className="relative h-32 bg-gradient-to-r from-blue-400 to-blue-600">
@@ -14,13 +22,13 @@ const Header = () => {
 
       <div className="relative -mt-16 pl-6 sm:pl-8">
         <Avatar className="w-24 h-24 bg-gray-300 rounded-full border-4 border-white overflow-hidden">
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage src={"https://github.com/shadcn.png"} alt={`@${user.username}`} />
+          <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
         </Avatar>
 
         <div className="mt-4">
-          <h1 className="text-xl font-bold text-gray-800">wiktor666</h1>
-          <span className="text-sm text-gray-500">@wiktor666324234</span>
+          <h1 className="text-xl font-bold text-gray-800">{user.username}</h1>
+          <span className="text-sm text-gray-500">@{user.username}</span>
         </div>
 
         <div className="mt-2">
