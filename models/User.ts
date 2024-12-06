@@ -15,8 +15,8 @@ const UserSchema = new Schema({
   },
   favorites: [{ type: Schema.Types.ObjectId, ref: "Recipe", required: true }],
   createdAt: { type: Date, default: Date.now, required: true },
-  // bio: { type: String },
-  // avatarUrl: { type: String },
+  bio: { type: String, required: true },
+  avatar: { type: String, required: true },
   // following: { type: Number, default: 0 },
   // followers: { type: Number, default: 0 },
 });

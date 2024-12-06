@@ -22,6 +22,9 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
         <div className="max-w-full sm:max-w-4xl mx-auto">
           <Header user={{
             username: user.username,
+            displayName: user.toObject().displayName,
+            bio: user.toObject().bio,
+            avatar: user.toObject().avatar,
             createdAt: user.createdAt.toISOString()
           }} />
           <Stats userId={id}/>
