@@ -1,10 +1,14 @@
+"use client";
+
 import React from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Pencil, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import EditProfileDialog from './EditProfileDialog';
+import { useSession } from "next-auth/react";
 
 type HeaderProps = {
   user: {
+    id: string;
     displayName: string;
     username: string;
     bio: string,
@@ -15,13 +19,17 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = ({ user }) => {
   const joinDate = new Date(user.createdAt).toLocaleString('en-GB', { month: 'long', year: 'numeric' });
-
+  const { data: session } = useSession();
+  const isOwner = (session?.user?.id) == user.id;
+  
   return (
     <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden">
       <div className="relative h-32 bg-gradient-to-r from-blue-400 to-blue-600">
-        <div className="absolute top-2 right-2">
-          <EditProfileDialog user={user}/>
-        </div>
+        {isOwner && (
+            <div className="absolute top-2 right-2">
+              <EditProfileDialog user={user}/>
+            </div>
+        )}
       </div>
 
       <div className="relative -mt-16 pl-6 sm:pl-8">

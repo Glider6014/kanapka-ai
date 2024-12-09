@@ -8,7 +8,6 @@ import User from '@/models/User';
 const ProfilePage = async ({ params }: { params: { id: string } }) => {
   await connectDB();
   const { id } = params;
-
   
   const user = await User.findById(id);
   if (!user) {
@@ -21,6 +20,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
       <div className="p-4 sm:p-6">
         <div className="max-w-full sm:max-w-4xl mx-auto">
           <Header user={{
+            id: user._id.toString(),
             username: user.username,
             displayName: user.toObject().displayName,
             bio: user.toObject().bio,
