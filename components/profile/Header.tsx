@@ -13,6 +13,7 @@ type HeaderProps = {
     username: string;
     bio: string,
     avatar: string,
+    bgc: string,
     createdAt: string;
   };
 };
@@ -24,11 +25,18 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
   
   return (
     <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden">
-      <div className="relative h-32 bg-gradient-to-r from-blue-400 to-blue-600">
+      <div 
+        className="relative h-32"
+        style={{ 
+          backgroundImage: user.bgc ? `url(${user.bgc})` : 'linear-gradient(to right, #7e22ce, #f97316)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
         {isOwner && (
-            <div className="absolute top-2 right-2">
-              <EditProfileDialog user={user}/>
-            </div>
+        <div className="absolute top-2 right-2">
+          <EditProfileDialog user={user}/>
+        </div>
         )}
       </div>
 

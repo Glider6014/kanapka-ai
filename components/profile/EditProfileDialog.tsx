@@ -33,12 +33,14 @@ type EditProfileDialogProps = {
     displayName: string;
     bio: string;
     avatar: string;
+    bgc: string;
   };
 };
 
 const FormSchema = z.object({
   displayName: z.string().min(1, "Name cannot be empty."),
   avatar: z.string().url("Avatar must be a valid URL."),
+  bgc: z.string().url("Avatar must be a valid URL."),
   bio: z
     .string()
     .min(10, "Bio must be at least 10 characters.")
@@ -66,6 +68,7 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
             updateData: {
               displayName: values.displayName,
               avatar: values.avatar,
+              bgc: values.bgc,
               bio: values.bio,
             },
           }),
@@ -123,6 +126,19 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
                   <FormLabel>Avatar</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="https://example.com/avatar.jpg" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="bgc"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Background</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="https://example.com/background.jpg" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

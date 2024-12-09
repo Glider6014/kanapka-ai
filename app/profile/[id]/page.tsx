@@ -25,6 +25,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
             displayName: user.toObject().displayName,
             bio: user.toObject().bio,
             avatar: user.toObject().avatar,
+            bgc: user.toObject().bgc || "",
             createdAt: user.createdAt.toISOString()
           }} />
           <Stats userId={id}/>
