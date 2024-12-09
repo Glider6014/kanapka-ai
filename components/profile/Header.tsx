@@ -19,9 +19,9 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
   return (
     <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden">
       <div className="relative h-32 bg-gradient-to-r from-blue-400 to-blue-600">
-        <button className="absolute top-2 right-2 bg-white text-gray-700 p-2 rounded-full shadow-md hover:bg-gray-200">
-          <EditProfileDialog />
-        </button>
+        <div className="absolute top-2 right-2">
+          <EditProfileDialog user={user}/>
+        </div>
       </div>
 
       <div className="relative -mt-16 pl-6 sm:pl-8">
