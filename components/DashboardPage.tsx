@@ -6,6 +6,8 @@ import { RecipeType } from "@/models/Recipe";
 import { FridgesPanel } from "@/components/FridgesPanel";
 import { Navbar } from "./Navbar";
 
+// Remove the restoreRecipeType utility since we're getting complete recipe data
+
 export function DashboardPage() {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -17,58 +19,45 @@ export function DashboardPage() {
     try {
       const response = await fetch("/api/recipes/generate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ingredients, count: 5 }),
       });
 
-      if (!response.ok) {
+      if (!response.ok || !response.body) {
         const error = await response.json();
         alert(`Failed to search recipes: ${error.error}`);
         return;
       }
 
-      const reader = response.body?.getReader();
-      if (!reader) return;
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
 
-      const processStream = async () => {
-        let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-        while (true) {
-          const { done, value } = await reader.read();
+        buffer += decoder.decode(value, { stream: true });
+        const messages = buffer.split("\n\n");
+        buffer = messages.pop() || "";
 
-          if (done) break;
-
-          buffer += new TextDecoder().decode(value);
-          const lines = buffer.split("\n");
-
-          // Process all complete lines
-          for (let i = 0; i < lines.length - 1; i++) {
-            if (!lines[i].trim()) continue;
-
+        for (const message of messages) {
+          if (message.startsWith("data: ")) {
+            const json = message.replace("data: ", "").trim();
             try {
-              const { recipe, error } = JSON.parse(lines[i]);
-              if (error) {
-                console.error("Stream error:", error);
-                continue;
-              }
-              if (recipe) {
-                setRecipes((prev) => [...prev, recipe]);
-              }
-            } catch (e) {
-              console.error("Parse error:", e);
+              const recipeData = JSON.parse(json) as RecipeType;
+              setRecipes((prev) => {
+                if (prev.some((r) => r._id === recipeData._id)) return prev;
+                return [...prev, recipeData];
+              });
+            } catch (error) {
+              console.error("Error parsing recipe:", error);
             }
           }
-
-          // Keep the last incomplete line in the buffer
-          buffer = lines[lines.length - 1];
         }
-      };
-
-      await processStream();
-    } catch (err) {
-      console.error("Stream error:", err);
+      }
+    } catch (error) {
+      console.error("Stream error:", error);
     } finally {
       setIsSearching(false);
     }
@@ -84,7 +73,13 @@ export function DashboardPage() {
           isSearchRecipesButtonDisabled={isSearching}
         />
         <div className="w-full md:w-3/5 mt-4 md:mt-0">
-          <RecipesList recipes={recipes} />
+          {recipes.length > 0 ? (
+            <RecipesList recipes={recipes} />
+          ) : (
+            <div className="text-center text-gray-500">
+              {isSearching ? "Generating recipes..." : "No recipes to display"}
+            </div>
+          )}
         </div>
       </div>
     </div>

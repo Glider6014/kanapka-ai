@@ -1,129 +1,74 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";
-import { z } from "zod";
+import agent from "@/lib/recipeAgent/agent";
+import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import Recipe, { RecipeType } from "@/models/Recipe";
-import { IngredientType } from "@/models/Ingredient";
+import { z } from "zod";
+import { StringOutputParser } from "@langchain/core/output_parsers";
 
-// Zdefiniowanie schematu przepisu
-const recipeSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  ingredients: z
-    .array(
-      z.object({
-        name: z.string(),
-        amount: z.number().nonnegative(),
-      })
-    )
-    .min(1),
-  steps: z.array(z.string()).min(1),
-  prepTime: z.number().nonnegative(),
-  cookTime: z.number().nonnegative(),
-  difficulty: z.enum(["Easy", "Medium", "Hard"]),
-});
+interface GenerateRecipesParams {
+  ingredients: string[];
+  count: number;
+  userId: string;
+}
 
-// Parser do przekształcania wyników na JSON
-const parser = new StringOutputParser();
+export async function* generateRecipes({
+  ingredients,
+  count,
+  userId,
+}: GenerateRecipesParams): AsyncGenerator<RecipeType> {
+  if (!ingredients || !count) {
+    throw new Error("'ingredients' and 'count' are required.");
+  }
 
-// Model AI z LangChain
-const model = new ChatOpenAI({
-  modelName: "gpt-4o-mini",
-  temperature: 0.5,
-  openAIApiKey: process.env.OPENAI_API_KEY,
-});
+  const messages = [
+    new SystemMessage(
+      `You are a helpful assistant that generates recipes using provided ingredients.
 
-// Szablon prompta do generowania przepisów
-const prompt = ChatPromptTemplate.fromMessages([
-  [
-    "system",
-    `You are a recipe generator AI. Generate as many meaningful recipes as possible using the provided ingredients.
-Response must be a valid JSON array of recipe objects.
+Use the available tools ("ingredients_generator" and "recipe_generator") to generate recipes and return their IDs.
 
-Example response:
-[
-  {{
-    "name": "Recipe Name",
-    "description": "Brief description",
-    "ingredients": [
-      {{
-        "name": "ingredient name",
-        "amount": 100
-  }}
-    ],
-    "steps": ["Step 1", "Step 2"],
-    "prepTime": 10,
-    "cookTime": 20,
-    "difficulty": "Easy"
-  }}
-]
+The "userId" is "${userId}". When calling "recipe_generator", make sure to include "userId" with this value.
 
-Available ingredients:
-{ingredients}
+IMPORTANT:
+- Respond ONLY with a valid JSON object in the exact format: { "recipeIds": ["id1", "id2", ...] }.
+- Do NOT include any additional text, explanations, or formatting.
+- Ensure the JSON is properly formatted without any extra characters.
 
-Respond ONLY with a valid JSON array of recipes.`,
-  ],
-]);
+Example of the required format:
+{ "recipeIds": ["67572cca8b92375c5a027b43", "67572ccb8b92375c5a027b54"] }`
+    ),
+    new HumanMessage(
+      `Please generate ${count} unique recipes using some or all of these ingredients: ${ingredients.join(
+        ", "
+      )}.`
+    ),
+  ];
 
-// Funkcja generująca przepisy
-export async function* generateRecipes(
-  ingredients: IngredientType[],
-  maxRecipes: number = 5
-): AsyncGenerator<RecipeType> {
+  const outputSchema = z.object({
+    recipeIds: z.array(z.string()),
+  });
+
+  const parser = new StringOutputParser();
+
   try {
-    const ingredientsList = ingredients
-      .map((ing) => `${ing.name} (${ing.unit})`)
-      .join(", ");
+    const finalState = await agent.invoke({ messages });
+    const { messages: agentMessages } = finalState;
+    const lastMessage = agentMessages[agentMessages.length - 1];
 
-    const chain = prompt.pipe(model).pipe(parser);
-    const response = await chain.invoke({
-      ingredients: ingredientsList,
-      count: maxRecipes,
-    });
+    const parsedOutput = await parser.parse(lastMessage.content);
+    const validation = outputSchema.safeParse(JSON.parse(parsedOutput));
 
-    let parsedRecipes;
-    try {
-      parsedRecipes = JSON.parse(response);
-      if (!Array.isArray(parsedRecipes)) {
-        throw new Error("Response is not an array");
-      }
-    } catch (error) {
-      console.error("Parse error:", error);
-      console.error("Raw response:", response);
-      throw error;
+    if (!validation.success) {
+      throw new Error("Invalid response format from agent.");
     }
 
-    for (const recipe of parsedRecipes) {
-      const validation = recipeSchema.safeParse(recipe);
+    const { recipeIds } = validation.data;
 
-      if (!validation.success) {
-        console.error("Recipe validation failed:", validation.error.flatten());
-        continue;
+    for (const recipeId of recipeIds) {
+      const recipe = await Recipe.findById(recipeId);
+      if (recipe) {
+        yield recipe;
       }
-
-      const validRecipe = new Recipe({
-        name: validation.data.name,
-        description: validation.data.description,
-        ingredients: validation.data.ingredients.map((ing) => ({
-          ingredient: ingredients.find(
-            (ingredient) =>
-              ingredient.name.toLowerCase() === ing.name.toLowerCase()
-          )?._id,
-          amount: ing.amount,
-        })),
-        steps: validation.data.steps,
-        prepTime: validation.data.prepTime,
-        cookTime: validation.data.cookTime,
-        difficulty: validation.data.difficulty,
-      });
-
-      yield validRecipe;
     }
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.error("Validation errors:", error.flatten().fieldErrors);
-    } else {
-      console.error("Recipe generation error:", error);
-    }
+    throw new Error("Failed to generate recipes.");
   }
 }
