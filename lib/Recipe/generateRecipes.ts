@@ -1,167 +1,82 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";
-import { z } from "zod";
-import { IngredientType } from "@/models/Ingredient";
+import agent from "@/lib/recipeAgent/agent";
+import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import Recipe, { RecipeType } from "@/models/Recipe";
+import { z } from "zod";
+import { StringOutputParser } from "@langchain/core/output_parsers";
 
-const recipeSchema = z.object({
-  name: z.string({
-    required_error: "Name is required",
-  }),
-  description: z.string({
-    required_error: "Description is required",
-  }),
-  ingredients: z
-    .array(
-      z.object({
-        name: z.string({
-          required_error: "Ingredient name is required",
-        }),
-        amount: z
-          .number({
-            required_error: "Amount is required",
-            invalid_type_error: "Amount must be a number",
-          })
-          .nonnegative("Amount must be zero or positive"),
-      })
-    )
-    .min(1, "At least one ingredient is required"),
-  steps: z.array(z.string()).min(1, {
-    message: "At least one step is required",
-  }),
-  prepTime: z
-    .number({
-      required_error: "Preparation time is required",
-      invalid_type_error: "Preparation time must be a number",
-    })
-    .nonnegative("Preparation time must be zero or positive"),
-  cookTime: z
-    .number({
-      required_error: "Cooking time is required",
-      invalid_type_error: "Cooking time must be a number",
-    })
-    .nonnegative("Cooking time must be zero or positive"),
-  difficulty: z.enum(["Easy", "Medium", "Hard"], {
-    required_error: "Difficulty level is required",
-    invalid_type_error: "Invalid difficulty level",
-  }),
-});
+interface GenerateRecipesParams {
+  ingredients: string[];
+  count: number;
+  userId: string;
+}
 
-const parser = new StringOutputParser();
+export async function* generateRecipes({
+  ingredients,
+  count,
+  userId,
+}: GenerateRecipesParams): AsyncGenerator<RecipeType> {
+  if (!ingredients || !count) {
+    throw new Error("'ingredients' and 'count' are required.");
+  }
 
-const model = new ChatOpenAI({
-  modelName: "gpt-4o-mini",
-  temperature: 0,
-  openAIApiKey: process.env.OPENAI_API_KEY,
-});
+  const messages = [
+    new SystemMessage(
+      `You are a helpful assistant that generates recipes using provided ingredients.
 
-const prompt = ChatPromptTemplate.fromMessages([
-  [
-    "system",
-    `
-Create {count} recipe(s) using the provided ingredients as much as possible.
+Use the available tools ("ingredients_generator" and "recipe_generator") to generate recipes and return their IDs.
 
-Each recipe MUST include ALL of these required fields:
-{{
-  "name": "string (recipe title)",
-  "description": "string (brief description)",
-  "ingredients": [
-    {{
-      "name": "string (ingredient name)",
-      "amount": number (positive quantity)
-  }}
-  ],
-  "steps": ["string (step 1)", "string (step 2)"],
-  "prepTime": number (minutes),
-  "cookTime": number (minutes),
-  "difficulty": "Easy" | "Medium" | "Hard"
-  }}
+The "userId" is "${userId}". When calling "recipe_generator", make sure to include "userId" with this value.
 
-Example of valid response:
-[
-  {{
-    "name": "Simple Pasta",
-    "description": "Quick and easy pasta dish",
-    "ingredients": [
-      {{
-        "name": "pasta",
-        "amount": 100
-    }}
-    ],
-    "steps": ["Boil water", "Cook pasta"],
-    "prepTime": 5,
-    "cookTime": 10,
-    "difficulty": "Easy"
-  }}
-]
+IMPORTANT:
+- Respond ONLY with a valid JSON object in the exact format: { "recipeIds": ["id1", "id2", ...] }.
+- Do NOT include any additional text, explanations, or formatting.
+- Ensure the JSON is properly formatted without any extra characters.
 
-Available ingredients:
-{ingredients}
+Example of the required format:
+{ "recipeIds": ["67572cca8b92375c5a027b43", "67572ccb8b92375c5a027b54"] }`
+    ),
+    new HumanMessage(
+      `I have these ingredients available: ${ingredients.join(", ")}.
+Please generate ${count} recipes total, with a good mix of:
+- Recipes using only my available ingredients
+- Recipes that might require buying a few additional ingredients
 
-Respond ONLY with a valid JSON array containing {count} recipes.
-`,
-  ],
-  ["user", "{ingredients}"],
-]);
+For recipes requiring additional ingredients:
+1. First use ingredients_generator to create the new ingredients
+2. Then use recipe_generator to create the recipe
+3. Make sure to track all ingredient IDs carefully
 
-const chain = prompt.pipe(model).pipe(parser);
+Return the results as: { "recipeIds": ["id1", "id2", ...] }`
+    ),
+  ];
 
-export async function generateRecipes(
-  ingredients: IngredientType[],
-  count: number = 3
-): Promise<RecipeType[]> {
+  const outputSchema = z.object({
+    recipeIds: z.array(z.string()),
+  });
+
+  const parser = new StringOutputParser();
+
   try {
-    const ingredientsString = ingredients
-      .map((ing) => `- ${ing.name} (unit: ${ing.unit})`)
-      .join("\n");
+    const finalState = await agent.invoke({ messages });
+    const { messages: agentMessages } = finalState;
+    const lastMessage = agentMessages[agentMessages.length - 1];
 
-    const results = await chain.invoke({
-      ingredients: ingredientsString,
-      count,
-    });
+    const parsedOutput = await parser.parse(lastMessage.content);
+    const validation = outputSchema.safeParse(JSON.parse(parsedOutput));
 
-    const parsedResults = JSON.parse(results);
-    console.log("Parsed Results:", JSON.stringify(parsedResults, null, 2));
-
-    const recipes = await Promise.all(
-      parsedResults.map(async (parsedResult: z.infer<typeof recipeSchema>) => {
-        const validation = recipeSchema.safeParse(parsedResult);
-
-        if (!validation.success) {
-          console.error(
-            "Validation errors:",
-            validation.error.flatten().fieldErrors
-          );
-          return null;
-        }
-
-        return new Recipe({
-          name: validation.data.name,
-          description: validation.data.description,
-          ingredients: validation.data.ingredients
-            .map((ing) => ({
-              ingredient: ingredients.find(
-                (i) => i.name === ing.name.toLowerCase()
-              )?._id,
-              amount: ing.amount,
-            }))
-            .filter((ing) => ing.ingredient),
-          steps: validation.data.steps,
-          prepTime: validation.data.prepTime,
-          cookTime: validation.data.cookTime,
-          difficulty: validation.data.difficulty,
-        });
-      })
-    );
-
-    return recipes.filter((recipe): recipe is RecipeType => recipe !== null);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.error("Validation errors:", error.flatten().fieldErrors);
-    } else {
-      console.error("Recipe generation error:", error);
+    if (!validation.success) {
+      throw new Error("Invalid response format from agent.");
     }
-    return [];
+
+    const { recipeIds } = validation.data;
+
+    for (const recipeId of recipeIds) {
+      const recipe = await Recipe.findById(recipeId);
+      if (recipe) {
+        yield recipe;
+      }
+    }
+  } catch (error) {
+    throw new Error("Failed to generate recipes.");
   }
 }
