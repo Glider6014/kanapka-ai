@@ -29,7 +29,9 @@ export async function GET(req: NextRequest, { params }: GETParams) {
   }
 
   const recipes =  await Recipe.find({ createdBy: id }).populate("ingredients.ingredient");
-  const count_recipes = await Recipe.countDocuments({ createdBy: id });
+  const favoriteRecipes = await Recipe.find({ _id: { $in: user.favorites } })
+  const countRecipes = await Recipe.countDocuments({ createdBy: id });
+  const countFavoriteRecipes = user.favorites.length;
 
-  return NextResponse.json({ user, recipes, count_recipes });
+  return NextResponse.json({ user, recipes, favoriteRecipes, countRecipes, countFavoriteRecipes });
 }

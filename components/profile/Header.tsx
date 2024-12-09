@@ -61,14 +61,14 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
           <span><Calendar className="w-4 h-4 inline"/> Joined on {joinDate}</span>
         </div>
 
-        <div className="mt-4 text-gray-600">
+        {/* <div className="mt-4 text-gray-600">
           <span className="mr-6">
             <strong>0</strong> following
           </span>
           <span>
             <strong>0</strong> followers
           </span>
-        </div>
+        </div> */}
       </div>
     </div>
   );
