@@ -1,10 +1,10 @@
 "use client";
 
-import Subscription from "@/components/Subscription";
+import Subscription from "@/components/home-page/Subscription";
 import Footer from "@/components/Footer";
-import { MainNavbar } from "@/components/MainNavbar";
-import SubscriptionTable from "@/components/Subscription_table";
-import FAQ from "@/components/FAQ";
+import { MainNavbar } from "@/components/home-page/MainNavbar";
+import SubscriptionTable from "@/components/home-page/Subscription_table";
+import FAQ from "@/components/home-page/FAQ";
 
 
 export default function Home() {

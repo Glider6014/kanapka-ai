@@ -84,8 +84,8 @@ function UserRow({
 
   return (
     <tr className="hover:bg-gray-100">
-      <td className="px-6 py-4 whitespace-nowrap w-[20ch]">
-        {userData.username}
+      <td className="px-6 py-4 whitespace-nowrap w-[25ch]">
+        {userData.username} - {userData.displayName}
       </td>
       <td className="px-6 py-4 whitespace-nowrap w-[20ch]">
         <span
@@ -97,11 +97,11 @@ function UserRow({
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <ul className="flex flex-wrap gap-x-2">
+        <ul className="flex flex-wrap gap-x-2 gap-y-1">
           {userData.permissions.map((permission) => (
             <div
               key={permission}
-              className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded flex items-center gap-1"
+              className="px-2 py-1 text-xs bg-blue-100 text-start-prim rounded flex items-center gap-1"
             >
               <span>{permission}</span>
               {editPermissions && (
@@ -171,7 +171,7 @@ export default function UsersTable({ users }: UsersTableProps) {
         <thead className="bg-gray-100">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-              Username
+              Username - Display Name
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
               Email
@@ -191,7 +191,7 @@ export default function UsersTable({ users }: UsersTableProps) {
         <tbody className="divide-y divide-gray-200 overflow-y-auto">
           {users.map((user) => (
             <UserRow
-              key={user._id.toString()}
+              key={user.username}
               user={user}
               editPermissions={editPermissionsMode}
             />

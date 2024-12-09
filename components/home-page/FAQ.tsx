@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 
 const FAQ = () => {
   const [openItem, setOpenItem] = useState<number | null>(null);

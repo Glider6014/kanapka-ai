@@ -20,36 +20,29 @@ const FridgeSchema = new Schema({
   },
 });
 
+function extractUserId(sessionOrUserOrId: string | UserType | Session) {
+  return typeof sessionOrUserOrId === "string"
+    ? sessionOrUserOrId
+    : (sessionOrUserOrId as Session)?.user?.id ||
+        (sessionOrUserOrId as UserType)?._id;
+}
+
 FridgeSchema.methods.isOwner = function (
+  this: FridgeType,
   sessionOrUserOrId: string | UserType | Session
 ) {
-  if (typeof sessionOrUserOrId === "string") {
-    return this.owner.toString() === sessionOrUserOrId;
-  }
-
-  const userId =
-    (sessionOrUserOrId as Session)?.user?.id ||
-    (sessionOrUserOrId as UserType)?._id;
+  const userId = extractUserId(sessionOrUserOrId);
 
   return this.owner.toString() === userId;
 };
 
 FridgeSchema.methods.isMember = function (
+  this: FridgeType,
   sessionOrUserOrId: string | UserType | Session
 ) {
-  if (typeof sessionOrUserOrId === "string") {
-    return this.members.some(
-      (member: UserType) => member._id.toString() === sessionOrUserOrId
-    );
-  }
+  const userId = extractUserId(sessionOrUserOrId);
 
-  const userId =
-    (sessionOrUserOrId as Session)?.user?.id ||
-    (sessionOrUserOrId as UserType)?._id;
-
-  return this.members.some(
-    (member: UserType) => member._id.toString() === userId
-  );
+  return this.members.some((member) => member._id.toString() === userId);
 };
 
 export type FridgeType = InferSchemaType<typeof FridgeSchema> & {

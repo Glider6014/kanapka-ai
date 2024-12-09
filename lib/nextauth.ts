@@ -11,7 +11,7 @@ if (!NEXTAUTH_SECRET) {
   throw new Error("You must provide a NEXTAUTH_SECRET environment variable");
 }
 
-async function getCurrentUser(userId: string) {
+async function getUserWithoutPassword(userId: string) {
   await connectDB();
 
   const user = await User.findById(userId).select("-password");
@@ -21,6 +21,7 @@ async function getCurrentUser(userId: string) {
     id: user._id.toString(),
     email: user.email,
     username: user.username,
+    displayName: user.displayName,
     permissions: user.permissions,
   };
 }
@@ -30,17 +31,26 @@ const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        emailOrUsername: {
+          label: "Email or Username",
+          type: "text",
+          placeholder: "Enter email or username",
+        },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.emailOrUsername || !credentials?.password) {
           throw new Error("Email and password required");
         }
 
         await connectDB();
 
-        const user = await User.findOne({ email: credentials.email });
+        const user = await User.findOne({
+          $or: [
+            { email: credentials.emailOrUsername },
+            { username: credentials.emailOrUsername },
+          ],
+        });
         if (!user) {
           throw new Error("No user found with this email");
         }
@@ -57,6 +67,7 @@ const authOptions: NextAuthOptions = {
           id: user._id.toString(),
           email: user.email,
           username: user.username,
+          displayName: user.displayName,
           permissions: user.permissions,
         };
       },
@@ -68,23 +79,14 @@ const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.username = user.username;
-        token.permissions = user.permissions;
-      }
-
-      return token;
+      return user ? { ...token, ...user } : token;
     },
 
     async session({ session, token }) {
-      const currentUser = await getCurrentUser(token.id);
+      const user = await getUserWithoutPassword(token.id);
+      if (!user) throw new Error("User no longer exists");
 
-      if (!currentUser) {
-        throw new Error("User no longer exists");
-      }
-
-      session.user = currentUser;
+      session.user = user;
 
       return session;
     },

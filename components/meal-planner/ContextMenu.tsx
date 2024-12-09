@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "../ui/button";
 
 interface ContextMenuProps {
   x: number;
@@ -21,15 +22,16 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 
   return (
     <div
-      className="fixed bg-white shadow-lg rounded-md py-1 z-50 border border-gray-200"
+      className="fixed bg-transparent shadow-lg rounded-md z-50"
       style={{ top: y, left: x }}
     >
-      <button
-        className="w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 text-left"
+      <Button
+        variant={'default'}
+        className="w-full px-4 py-2 text-sm bg-end-prim-foreground text-white hover:bg-gray-100 text-left"
         onClick={onDelete}
       >
         Delete meal
-      </button>
+      </Button>
     </div>
   );
 };

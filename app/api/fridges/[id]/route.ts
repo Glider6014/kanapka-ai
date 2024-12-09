@@ -64,14 +64,11 @@ export const PUT = withApiErrorHandling(
     if (result.data.name) fridge.name = result.data.name;
 
     if (result.data.members) {
-      for (const member of result.data.members) {
-        if (typeof member !== "string") continue;
+      for (const username of result.data.members) {
+        if (fridge.isMember(username)) continue;
 
-        const user = await User.findOne({
-          username: member,
-        });
+        const user = await User.findOne({ username });
         if (!user) continue;
-        if (fridge.isMember(user)) continue;
 
         fridge.members.push(user._id);
       }
