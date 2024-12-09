@@ -20,6 +20,10 @@ const IngredientSchema = new Schema({
   },
 });
 
+// Add index for faster name lookups
+IngredientSchema.index({ _id: 1 });
+IngredientSchema.index({ name: 1 });
+
 export type IngredientType = InferSchemaType<typeof IngredientSchema>;
 
 const Ingredient =
