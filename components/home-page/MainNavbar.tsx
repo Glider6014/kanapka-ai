@@ -16,6 +16,8 @@ import {
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+import { useSession } from "next-auth/react";
+import UserDropdownMenu from "@/components/UserDropDownMenu";
 
 const components = [
   {
@@ -29,24 +31,16 @@ const components = [
     description: "Plan your meals for the week with ease.",
   },
   {
-    title: "Nutrition Info",
-    href: "/",
-    description: "Get detailed nutritional information for all your meals.",
-  },
-  {
-    title: "Ingredient Database",
-    href: "/",
-    description: "Access a comprehensive database of ingredients.",
-  },
-  {
-    title: "Cooking Tips",
-    href: "/",
-    description: "Improve your cooking skills with expert tips.",
+    title: "Recipes List",
+    href: "/recipes",
+    description: "Get information on all recipes in the database.",
   },
 ];
 
 export const MainNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { data: session } = useSession();
+    const isOwner = (session?.user?.id);
 
   return (
     <div className="relative flex items-center justify-between pl-4 pr-5 md:px-0 py-0 md:py-2 max-w-6xl mx-auto">
@@ -103,21 +97,27 @@ export const MainNavbar = () => {
         </NavigationMenu>
       </div>
 
-      <div className="hidden lg:flex items-center space-x-4">
-        <Button
-          variant="outline"
-          className="bg-black hover:bg-black hover:text-white text-white font-bold w-full md:w-auto"
-          onClick={() => (window.location.href = "/user/signin")}
-        >
-          LOGIN
-        </Button>
-        <Button
-          variant="outline"
-          className="text-white font-bold bg-gradient-to-r from-purple-primary to-orange-primary w-full md:w-auto hover:text-white"
-          onClick={() => (window.location.href = "/user/signup")}
-        >
-          Get started for free
-        </Button>
+      <div className="hidden lg:flex items-center space-x-4 z-50">
+      {isOwner ? (
+        <UserDropdownMenu />
+      ) : (
+        <>
+          <Button
+            variant="outline"
+            className="bg-black hover:bg-black hover:text-white text-white font-bold w-full md:w-auto"
+            onClick={() => (window.location.href = "/user/signin")}
+          >
+            LOGIN
+          </Button>
+          <Button
+            variant="outline"
+            className="text-white font-bold bg-gradient-to-r from-purple-primary to-orange-primary w-full md:w-auto hover:text-white"
+            onClick={() => (window.location.href = "/user/signup")}
+          >
+            Get started for free
+          </Button>
+        </>
+      )}
       </div>
 
       <button
