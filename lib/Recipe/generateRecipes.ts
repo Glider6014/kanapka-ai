@@ -36,9 +36,17 @@ Example of the required format:
 { "recipeIds": ["67572cca8b92375c5a027b43", "67572ccb8b92375c5a027b54"] }`
     ),
     new HumanMessage(
-      `Please generate ${count} unique recipes using some or all of these ingredients: ${ingredients.join(
-        ", "
-      )}.`
+      `I have these ingredients available: ${ingredients.join(", ")}.
+Please generate ${count} recipes total, with a good mix of:
+- Recipes using only my available ingredients
+- Recipes that might require buying a few additional ingredients
+
+For recipes requiring additional ingredients:
+1. First use ingredients_generator to create the new ingredients
+2. Then use recipe_generator to create the recipe
+3. Make sure to track all ingredient IDs carefully
+
+Return the results as: { "recipeIds": ["id1", "id2", ...] }`
     ),
   ];
 
