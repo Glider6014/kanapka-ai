@@ -17,10 +17,12 @@ import { Heart } from "lucide-react";
 
 type RecipesListProps = {
   recipes: RecipeType[];
+  userId: string;
 };
 
-export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
+export const RecipesList: FC<RecipesListProps> = ({ recipes, userId }) => {
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [filter, setFilter] = useState<"all" | "favorites" | "mine">("all");
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -59,12 +61,27 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
     }
   };
 
+  const filteredRecipes = recipes.filter((recipe) => {
+    if (filter === "favorites") {
+      return favorites.includes(recipe._id.toString());
+    }
+    // if (filter === "mine") {
+    //   return recipe.userId === userId;
+    // }
+    return true;
+  });
+
   if (!recipes.length) {
     return <div>No recipes to display</div>;
   }
 
   return (
     <div className="mt-8 transform -translate-y-[30px] z-40">
+      <div className="flex justify-center py-4 space-x-2">
+        <Button className="w-32" onClick={() => setFilter("all")}>All</Button>
+        <Button className="w-32" onClick={() => setFilter("favorites")}>Favorites</Button>
+        {/* <Button className="w-32" onClick={() => setFilter("mine")}>My Recipes</Button> */}
+      </div>
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-100 hover:bg-gray-100">
@@ -77,7 +94,7 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {recipes.map((recipe) => (
+          {filteredRecipes.map((recipe) => (
             <TableRow key={recipe._id?.toString()}>
               <TableCell className="w-16">
                 <button
