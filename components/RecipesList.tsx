@@ -14,15 +14,17 @@ import { Button } from "@/components/ui/button";
 import { RecipeType } from "@/models/Recipe";
 import { HeartOff } from "lucide-react";
 import { Heart } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 type RecipesListProps = {
   recipes: RecipeType[];
-  userId: string;
 };
 
-export const RecipesList: FC<RecipesListProps> = ({ recipes, userId }) => {
+export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [filter, setFilter] = useState<"all" | "favorites" | "mine">("all");
+
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -65,9 +67,9 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, userId }) => {
     if (filter === "favorites") {
       return favorites.includes(recipe._id.toString());
     }
-    // if (filter === "mine") {
-    //   return recipe.userId === userId;
-    // }
+    if (filter === "mine") {
+      return recipe.createdBy.toString() === session?.user?.id;
+    }
     return true;
   });
 
@@ -78,9 +80,15 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, userId }) => {
   return (
     <div className="mt-8 transform -translate-y-[30px] z-40">
       <div className="flex justify-center py-4 space-x-2">
-        <Button className="w-32" onClick={() => setFilter("all")}>All</Button>
-        <Button className="w-32" onClick={() => setFilter("favorites")}>Favorites</Button>
-        {/* <Button className="w-32" onClick={() => setFilter("mine")}>My Recipes</Button> */}
+        <Button className="w-32" onClick={() => setFilter("all")}>
+          All
+        </Button>
+        <Button className="w-32" onClick={() => setFilter("favorites")}>
+          Favorites
+        </Button>
+        <Button className="w-32" onClick={() => setFilter("mine")}>
+          My Recipes
+        </Button>
       </div>
       <Table>
         <TableHeader>
