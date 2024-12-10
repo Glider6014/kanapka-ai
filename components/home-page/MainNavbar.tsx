@@ -39,8 +39,7 @@ const components = [
 
 export const MainNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { data: session } = useSession();
-    const isOwner = (session?.user?.id);
+  const { data: session } = useSession();
 
   return (
     <div className="relative flex items-center justify-between pl-4 pr-5 md:px-0 py-0 md:py-2 max-w-6xl mx-auto">
@@ -98,26 +97,26 @@ export const MainNavbar = () => {
       </div>
 
       <div className="hidden lg:flex items-center space-x-4 z-50">
-      {isOwner ? (
-        <UserDropdownMenu />
-      ) : (
-        <>
-          <Button
-            variant="outline"
-            className="bg-black hover:bg-black hover:text-white text-white font-bold w-full md:w-auto"
-            onClick={() => (window.location.href = "/user/signin")}
-          >
-            LOGIN
-          </Button>
-          <Button
-            variant="outline"
-            className="text-white font-bold bg-gradient-to-r from-purple-primary to-orange-primary w-full md:w-auto hover:text-white"
-            onClick={() => (window.location.href = "/user/signup")}
-          >
-            Get started for free
-          </Button>
-        </>
-      )}
+        {session?.user?.id ? (
+          <UserDropdownMenu />
+        ) : (
+          <>
+            <Button
+              variant="outline"
+              className="bg-black hover:bg-black hover:text-white text-white font-bold w-full md:w-auto"
+              onClick={() => (window.location.href = "/user/signin")}
+            >
+              LOGIN
+            </Button>
+            <Button
+              variant="outline"
+              className="text-white font-bold bg-gradient-to-r from-purple-primary to-orange-primary w-full md:w-auto hover:text-white"
+              onClick={() => (window.location.href = "/user/signup")}
+            >
+              Get started for free
+            </Button>
+          </>
+        )}
       </div>
 
       <button
