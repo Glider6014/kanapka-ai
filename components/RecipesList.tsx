@@ -78,14 +78,14 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
 
   return (
     <div className="mt-8 transform -translate-y-[30px] z-40">
-      <div className="flex justify-center py-4 space-x-2">
-        <Button className="w-32" onClick={() => setFilter("all")}>
+      <div className="flex justify-center py-2 px-2 md:px-0 space-x-2">
+        <Button className="w-1/3" onClick={() => setFilter("all")}>
           All
         </Button>
-        <Button className="w-32" onClick={() => setFilter("favorites")}>
+        <Button className="w-1/3" onClick={() => setFilter("favorites")}>
           Favorites
         </Button>
-        <Button className="w-32" onClick={() => setFilter("mine")}>
+        <Button className="w-1/3" onClick={() => setFilter("mine")}>
           My Recipes
         </Button>
       </div>
