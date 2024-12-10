@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Greeting() {
   return (
     <div className="relative bg-gradient-to-r from-start-prim to-end-prim text-white py-12 md:pt-12 md:pb-48 px-8">
@@ -8,9 +10,9 @@ export default function Greeting() {
           </h1>
           <p className="text-lg md:text-3xl mb-8">For big or small.</p>
           <form className="flex flex-col md:flex-row gap-4">
-            <button className="bg-black font-bold text-white px-6 py-2 rounded-md transition">
+            <Link href="/user/signup" className="bg-black font-bold text-white px-6 py-2 rounded-md transition">
               Sign up - it's free!
-            </button>
+            </Link>
           </form>
         </div>
 
