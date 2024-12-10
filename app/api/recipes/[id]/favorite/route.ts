@@ -25,11 +25,9 @@ export const POST = withApiErrorHandling(
       return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
     }
 
-    const user = await User.findByIdAndUpdate(
-      session.user.id,
-      { $addToSet: { favorites: recipeId } },
-      { new: true }
-    );
+    const user = await User.findByIdAndUpdate(session.user.id, {
+      $addToSet: { favorites: recipeId },
+    });
 
     return NextResponse.json({ success: true, favorites: user?.favorites });
   }
@@ -43,11 +41,9 @@ export const DELETE = withApiErrorHandling(
 
     await connectDB();
 
-    const user = await User.findByIdAndUpdate(
-      session.user.id,
-      { $pull: { favorites: recipeId } },
-      { new: true }
-    );
+    const user = await User.findByIdAndUpdate(session.user.id, {
+      $pull: { favorites: recipeId },
+    });
 
     return NextResponse.json({ success: true, favorites: user?.favorites });
   }
