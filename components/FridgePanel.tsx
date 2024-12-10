@@ -163,6 +163,42 @@ export const FridgePanel = ({
     setIsTryingToSearch(true);
   };
 
+  const handleKeyDown = (
+    key: number,
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    const input = inputRefs.current[key];
+    if (event.key === "Delete") {
+      if (input && input.value.trim() === "") {
+        const keys = Object.keys(inputRefs.current).map(Number);
+        const index = keys.indexOf(key);
+        if (index > 0) {
+          const prevKey = keys[index - 1];
+          inputRefs.current[prevKey].value = "";
+          handleIngredientChange(prevKey, "");
+          inputRefs.current[prevKey]?.focus(); // Move focus to the previous input
+        }
+      } else {
+        input.value = "";
+        handleIngredientChange(key, "");
+        inputRefs.current[key]?.focus(); // Keep focus on the current input
+      }
+    } else if (
+      event.key === "Backspace" &&
+      input &&
+      input.value.trim() === ""
+    ) {
+      const keys = Object.keys(inputRefs.current).map(Number);
+      const index = keys.indexOf(key);
+      if (index > 0) {
+        const prevKey = keys[index - 1];
+        inputRefs.current[prevKey].value = "";
+        handleIngredientChange(prevKey, "");
+        inputRefs.current[prevKey]?.focus(); // Move focus to the previous input
+      }
+    }
+  };
+
   useEffect(() => {
     if (!isTryingToSearch) return;
 
@@ -193,6 +229,7 @@ export const FridgePanel = ({
               isDeleteButtonDisabled={isSaving}
               onFocus={handleOnFocusChange}
               onAdd={handleAdd}
+              onKeyDown={(e) => handleKeyDown(Number(key), e)}
             />
           )
         )}

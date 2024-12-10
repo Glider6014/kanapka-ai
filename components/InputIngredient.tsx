@@ -12,6 +12,7 @@ type InputIngredientProps = {
   onBlur?: () => void;
   inputRef?: (el: HTMLInputElement | null) => void;
   isDeleteButtonDisabled?: boolean;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void; // Add this line
 };
 
 const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
@@ -25,6 +26,7 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
       onBlur,
       inputRef,
       isDeleteButtonDisabled,
+      onKeyDown, // Add this line
     },
     ref
   ) => {
@@ -45,6 +47,7 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
           onFocus={onFocus}
           onBlur={onBlur}
           onKeyPress={handleKeyPress}
+          onKeyDown={onKeyDown} // Add this line
           ref={(el) => {
             if (ref) {
               if (typeof ref === "function") {
