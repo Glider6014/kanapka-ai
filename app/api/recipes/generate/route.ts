@@ -1,97 +1,85 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateRecipes } from "@/lib/Recipe/generateRecipes";
 import connectDB from "@/lib/connectToDatabase";
-import { generateIngredient } from "@/lib/ingredients/generateIngredients";
-import { validateIngredient } from "@/lib/ingredients/validateNames";
-import mongoose from "mongoose";
-import RecipeModel from "@/models/Recipe";
 import {
   getServerSessionOrCauseUnathorizedError,
   withApiErrorHandling,
 } from "@/lib/apiUtils";
+import { RecipeType } from "@/models/Recipe";
 
 export const POST = withApiErrorHandling(async (req: NextRequest) => {
   await connectDB();
-
   const session = await getServerSessionOrCauseUnathorizedError();
 
   const body = await req.json().catch(() => null);
 
   if (!body) {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+      status: 400,
+    });
   }
 
-  const { ingredients: ingredientsInput, count } = body;
+  const { ingredients, count }: { ingredients: string[]; count: number } = body;
 
-  if (!ingredientsInput || !count) {
-    return NextResponse.json(
-      { error: "'ingredients' and 'count' are required" },
+  if (!ingredients?.length || !count) {
+    return new Response(
+      JSON.stringify({ error: "'ingredients' and 'count' are required." }),
       { status: 400 }
     );
   }
 
-  // Split ingredients string into array and process each ingredient
-  const ingredientsList = ingredientsInput
-    .toString()
-    .split(",")
-    .map((i: string) => i.trim());
+  const encoder = new TextEncoder();
+  const recipeGenerator = generateRecipes({
+    ingredients,
+    count,
+    userId: session.user.id,
+  });
 
-  // Validate ingredients before processing
-  const validationResults = await Promise.all(
-    ingredientsList.map(validateIngredient)
-  );
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        for await (const recipe of recipeGenerator) {
+          const recipeData: RecipeType = {
+            _id: recipe._id,
+            name: recipe.name,
+            description: recipe.description,
+            ingredients: recipe.ingredients,
+            steps: recipe.steps,
+            prepTime: recipe.prepTime,
+            cookTime: recipe.cookTime,
+            difficulty: recipe.difficulty,
+            createdBy: recipe.createdBy,
+            createdAt: recipe.createdAt,
+            calculateNutrition: recipe.calculateNutrition.bind(recipe),
+          };
 
-  const invalidIngredients = validationResults.filter(
-    (result) => !result.isValid
-  );
-  if (invalidIngredients.length > 0) {
-    return NextResponse.json(
-      {
-        error: `Invalid ingredients detected: ${invalidIngredients
-          .map((i) => i.ingredient)
-          .join(", ")}`,
-      },
-      { status: 400 }
-    );
-  }
-
-  const generatedIngredients = await Promise.all(
-    ingredientsList.map(async (ingredientName: string) => {
-      const ingredient = await generateIngredient(ingredientName);
-      if (!ingredient) {
-        throw new Error(`Failed to generate ingredient: ${ingredientName}`);
+          const chunk = JSON.stringify(recipeData, (key, value) => {
+            // Skip function serialization
+            if (typeof value === "function") return undefined;
+            return value;
+          });
+          controller.enqueue(encoder.encode(`data: ${chunk}\n\n`));
+        }
+      } catch (error) {
+        console.error("Stream error:", error);
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({
+              error: "Failed to generate recipes",
+            })}\n\n`
+          )
+        );
+      } finally {
+        controller.close();
       }
-      return ingredient;
-    })
-  );
+    },
+  });
 
-  if (!generatedIngredients.length) {
-    return NextResponse.json(
-      { error: "No ingredients could be generated" },
-      { status: 400 }
-    );
-  }
-
-  const recipes = await generateRecipes(generatedIngredients, count);
-
-  if (!recipes || !recipes.length) {
-    return NextResponse.json(
-      { error: "Failed to generate recipes" },
-      { status: 500 }
-    );
-  }
-
-  const savedRecipes = await Promise.all(
-    recipes.map(async (recipeData) => {
-      const recipe = new RecipeModel(recipeData);
-      recipe.createdBy = new mongoose.Types.ObjectId(session.user.id);
-      await recipe.save();
-      await recipe.populate("ingredients.ingredient");
-      return recipe;
-    })
-  );
-
-  return NextResponse.json({
-    recipes: savedRecipes,
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      Connection: "keep-alive",
+      "Cache-Control": "no-cache, no-transform",
+    },
   });
 });
