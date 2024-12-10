@@ -35,7 +35,7 @@ export default function Home() {
   //Define a submit handler
   async function onSubmit(values: SignInFormData) {
     const result = await signIn("credentials", {
-      email: values.email,
+      emailOrUsername: values.email,
       password: values.password,
       callbackUrl: "/dashboard",
     });
@@ -76,15 +76,17 @@ export default function Home() {
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-6"
                 >
-                  {/* Input email */}
+                  {/* Input emailOrUsername */}
                   <FormField
                     control={form.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-lg">E-mail</FormLabel>
+                        <FormLabel className="text-lg">
+                          E-mail or Username
+                        </FormLabel>
                         <FormControl>
-                          <Input placeholder="Email" {...field} />
+                          <Input placeholder="Email or Username" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
