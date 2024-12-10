@@ -39,8 +39,8 @@ type EditProfileDialogProps = {
 
 const FormSchema = z.object({
   displayName: z.string().min(1, "Name cannot be empty."),
-  avatar: z.string().url("Avatar must be a valid URL."),
-  bgc: z.string().url("Avatar must be a valid URL."),
+  avatar: z.string().url("Avatar must be a valid URL.").optional(),
+  bgc: z.string().url("Avatar must be a valid URL.").optional(),
   bio: z
     .string()
     .min(10, "Bio must be at least 10 characters.")

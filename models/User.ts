@@ -17,7 +17,7 @@ const UserSchema = new Schema({
   createdAt: { type: Date, default: Date.now, required: true },
   bio: { type: String, required: true },
   avatar: { type: String, required: true },
-  bgc: { type: String, required: false },
+  bgc: { type: String, required: true },
   // following: { type: Number, default: 0 },
   // followers: { type: Number, default: 0 },
 });

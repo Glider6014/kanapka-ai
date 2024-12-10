@@ -14,21 +14,26 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
     return <div>User not found</div>;
   }
 
+    // console.log("Raw user:", user);
+
+
   return (
     <div className="container mx-auto py-4 px-2 sm:px-4">
       <Navbar />
       <div className="p-4 sm:p-6">
         <div className="max-w-full sm:max-w-4xl mx-auto">
-          <Header user={{
-            id: user._id.toString(),
-            username: user.username,
-            displayName: user.toObject().displayName,
-            bio: user.toObject().bio,
-            avatar: user.toObject().avatar,
-            bgc: user.toObject().bgc || "",
-            createdAt: user.createdAt.toISOString()
-          }} />
-          <Stats userId={id}/>
+          <Header
+            user={{
+              id: user._id.toString(),
+              username: user.username,
+              displayName: user.displayName,
+              bio: user.bio || "",
+              avatar: user.avatar || "",
+              bgc: user.bgc || "",
+              createdAt: user.createdAt.toISOString(),
+            }}
+          />
+          <Stats userId={id} />
           <UserRecipes userId={id} />
         </div>
       </div>
