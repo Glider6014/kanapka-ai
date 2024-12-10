@@ -48,7 +48,6 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes }) => {
       const response = await fetch(`/api/recipes/${id}/favorite`, {
         method: isFavorite ? "DELETE" : "POST",
       });
-
       if (response.ok) {
         setFavorites((prevFavorites) =>
           isFavorite

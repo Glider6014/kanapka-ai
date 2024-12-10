@@ -36,13 +36,10 @@ export const POST = withApiErrorHandling(
 );
 
 export const DELETE = withApiErrorHandling(
-  async (
-    request: NextRequest,
-    { params }: { params: { recipeId: string } }
-  ) => {
+  async (request: NextRequest, { params }: { params: { id: string } }) => {
     const session = await getServerSessionOrCauseUnathorizedError();
 
-    const { recipeId } = params;
+    const { id: recipeId } = params;
 
     await connectDB();
 
