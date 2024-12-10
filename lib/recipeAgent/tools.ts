@@ -93,7 +93,6 @@ IMPORTANT: Save the _id values as you'll need them for recipe_generator!`,
   }
 );
 
-// ...existing code...
 export const recipeGenerator = tool(
   async ({
     recipeName,
@@ -122,7 +121,7 @@ export const recipeGenerator = tool(
     const recipe = await generateRecipeFromIds(recipeName, idsList, userId);
 
     if (!recipe) {
-      return null;
+      return "";
     }
 
     console.log("RecipeName, ingredientIds");
@@ -136,7 +135,6 @@ export const recipeGenerator = tool(
       nutrition,
     };
 
-    // Zwróć tylko recipeId
     return JSON.stringify({ recipeId: recipe._id.toString() });
   },
   {
@@ -166,7 +164,6 @@ IMPORTANT: Use the exact _id values returned by ingredients_generator!`,
     }),
   }
 );
-// ...existing code...
 
 export const mealScheduler = tool(
   async ({
