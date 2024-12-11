@@ -26,56 +26,62 @@ const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
   temperature: 0,
   openAIApiKey: process.env.OPENAI_API_KEY,
+  cache: true,
 });
 
-const prompt = ChatPromptTemplate.fromMessages([
+const systemPrompt = ChatPromptTemplate.fromMessages([
   [
     "system",
-    `You are a recipe creation assistant. Create precise recipes following JSON format.`,
+    `You are a recipe creation assistant. Create precise recipes following JSON format.
+
+Response must be a valid JSON object with this structure:
+{{
+  "name": "string (should match recipe name)",
+  "description": "string (brief description)",
+  "ingredients": [
+    {{
+      "ingredientId": "string (from provided ingredients)",
+      "amount": number (positive quantity)
+  }}
   ],
+  "steps": ["string (step 1)", "string (step 2)", ...],
+  "prepTime": number (minutes),
+  "cookTime": number (minutes),
+  "difficulty": "Easy" | "Medium" | "Hard"
+  }}
+
+Example response:
+{{
+  "name": "Simple Recipe",
+  "description": "A quick and easy dish",
+  "ingredients": [
+    {{
+      "ingredientId": "507f1f77bcf86cd799439011",
+      "amount": 100
+  }}
+  ],
+  "steps": ["Step 1", "Step 2"],
+  "prepTime": 10,
+  "cookTime": 20,
+  "difficulty": "Easy"
+  }}
+
+Respond ONLY with a valid JSON object for a single recipe.`,
+  ],
+]);
+
+const humanPrompt = ChatPromptTemplate.fromMessages([
   [
     "human",
     `Create a recipe named "{recipeName}" using these ingredients:
-  {ingredients}
-  
-  Response must be a valid JSON object with this structure:
-  {{
-    "name": "string (should match {recipeName})",
-    "description": "string (brief description)",
-    "ingredients": [
-      {{
-        "ingredientId": "string (from provided ingredients)",
-        "amount": number (positive quantity)
-      }}
-    ],
-    "steps": ["string (step 1)", "string (step 2)", ...],
-    "prepTime": number (minutes),
-    "cookTime": number (minutes),
-    "difficulty": "Easy" | "Medium" | "Hard"
-  }}
-  
-  Example response:
-  {{
-    "name": "Simple Recipe",
-    "description": "A quick and easy dish",
-    "ingredients": [
-      {{
-        "ingredientId": "507f1f77bcf86cd799439011",
-        "amount": 100
-      }}
-    ],
-    "steps": ["Step 1", "Step 2"],
-    "prepTime": 10,
-    "cookTime": 20,
-    "difficulty": "Easy"
-  }}
-  
-  Available ingredients:
-  {ingredients}
-  
-  Respond ONLY with a valid JSON object for a single recipe.`,
+{ingredients}
+
+Available ingredients:
+{ingredients}`,
   ],
 ]);
+
+const prompt = ChatPromptTemplate.fromMessages([systemPrompt, humanPrompt]);
 
 const parser = new StringOutputParser();
 const chain = prompt.pipe(model).pipe(parser);

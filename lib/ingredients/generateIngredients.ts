@@ -65,19 +65,17 @@ const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
   temperature: 0,
   openAIApiKey: process.env.OPENAI_API_KEY,
+  cache: true,
 });
 
-const prompt = ChatPromptTemplate.fromTemplate(`
-  Analyze the given food ingredient and provide its nutritional information.
-  IMPORTANT: Always return the ingredient name in English, regardless of input language.
-  
+const systemPrompt = ChatPromptTemplate.fromTemplate(`
+  You are a nutritional information analyzer for food ingredients. Provide nutritional data in a specific JSON format.
+
   Required format:
   {{
     "name": "ingredient name in English",
     "unit": "g" | "ml" | "piece",
     "nutrition": {{
-      // For pieces: values per 1 piece
-      // For g/ml: values per 100g or 100ml
       "calories": number,
       "protein": number (g),
       "fats": number (g),
@@ -87,20 +85,25 @@ const prompt = ChatPromptTemplate.fromTemplate(`
       "sodium": number (mg)
     }}
   }}
-  
-  Examples:
-  Input: "jabłko" (Polish) -> Output: {{"name": "apple", ...}}
-  Input: "помидор" (Russian) -> Output: {{"name": "tomato", ...}}
-  
-  Notes:
+
+  IMPORTANT:
+  - Always return the ingredient name in English, regardless of input language.
   - Nutrition values should be PER PIECE for unit="piece"
   - Nutrition values should be PER 100g for unit="g"
   - Nutrition values should be PER 100ml for unit="ml"
-  
-  Ingredient to analyze: {ingredient}
-  
+
+  Examples:
+  Input: "jabłko" (Polish) -> Output: {{"name": "apple", ...}}
   Respond ONLY with a valid JSON object.
-  `);
+`);
+
+const humanPrompt = ChatPromptTemplate.fromTemplate(`
+  Analyze the following food ingredient and provide its nutritional information:
+
+  Ingredient to analyze: {ingredient}
+`);
+
+const prompt = ChatPromptTemplate.fromMessages([systemPrompt, humanPrompt]);
 
 const chain = prompt.pipe(model).pipe(parser);
 
