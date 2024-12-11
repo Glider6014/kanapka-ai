@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { KeyboardEvent, forwardRef } from "react";
+import { KeyboardEvent, forwardRef, useState } from "react";
 
 type InputIngredientProps = {
   value: string;
@@ -12,7 +12,8 @@ type InputIngredientProps = {
   onBlur?: () => void;
   inputRef?: (el: HTMLInputElement | null) => void;
   isDeleteButtonDisabled?: boolean;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void; // Add this line
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
@@ -26,14 +27,27 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
       onBlur,
       inputRef,
       isDeleteButtonDisabled,
-      onKeyDown, // Add this line
+      onKeyDown,
     },
     ref
   ) => {
+    const [keyPressed, setKeyPressed] = useState<string | null>(null);
+
     const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         onAdd?.();
       }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+      if (keyPressed !== e.key) {
+        setKeyPressed(e.key);
+        onKeyDown?.(e);
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
+      setKeyPressed(null);
     };
 
     return (
@@ -47,7 +61,8 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
           onFocus={onFocus}
           onBlur={onBlur}
           onKeyPress={handleKeyPress}
-          onKeyDown={onKeyDown} // Add this line
+          onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
           ref={(el) => {
             if (ref) {
               if (typeof ref === "function") {

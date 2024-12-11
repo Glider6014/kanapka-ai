@@ -192,9 +192,8 @@ export const FridgePanel = ({
       const index = keys.indexOf(key);
       if (index > 0) {
         const prevKey = keys[index - 1];
-        inputRefs.current[prevKey].value = "";
-        handleIngredientChange(prevKey, "");
         inputRefs.current[prevKey]?.focus(); // Move focus to the previous input
+        event.preventDefault();
       }
     }
   };
