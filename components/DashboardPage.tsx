@@ -6,8 +6,6 @@ import { RecipeType } from "@/models/Recipe";
 import { FridgesPanel } from "@/components/FridgesPanel";
 import { Navbar } from "./Navbar";
 
-// Remove the restoreRecipeType utility since we're getting complete recipe data
-
 export function DashboardPage() {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [isSearching, setIsSearching] = useState(false);

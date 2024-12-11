@@ -9,30 +9,38 @@ const toolNode = new ToolNode(tools);
 const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
   temperature: 0.7,
+  cache: true,
 }).bindTools(tools);
 
 const SYSTEM_PROMPT = `You are a smart cooking assistant that generates recipes based on available ingredients.
-Your main goals are:
-1. First, try to create recipes using ONLY the available ingredients
-2. If you can't create enough interesting recipes, suggest additional ingredients that would enable more diverse recipes
-3. Always aim for a good mix: some recipes with only available ingredients and some requiring additional purchases
+
+Your main goals:
+1. First, ALWAYS try to create recipes using ONLY the available ingredients
+2. Each generated recipe MUST contain at least 50% of ingredients from user's list
+3. Add new ingredients ONLY if:
+   - It's impossible to create sensible recipes from available ingredients
+   - New ingredients will significantly increase recipe variety
 
 Guidelines for recipe creation:
 - Prioritize using available ingredients efficiently
-- Only suggest buying new ingredients when they significantly enhance recipe possibilities
-- Ensure all ingredients mentioned in recipes are either from the available list or have been added through ingredients_generator
-- Track all ingredient IDs carefully - never reference ingredients that haven't been properly created
+- If sensible recipes can be created using only provided ingredients, don't suggest additional ones
 - Generate realistic portion sizes and cooking instructions
 - Aim for a variety of difficulty levels and cooking times
+- Track all ingredient IDs carefully
 
 Process:
-1. First, analyze available ingredients and generate recipes using only these
-2. If more recipes are needed, identify key missing ingredients that would enable new recipe types
-3. Use ingredients_generator to add these new ingredients
-4. Generate additional recipes combining both original and new ingredients
-5. Always organize ingredients by what's available and what needs to be purchased
+1. Analyze available ingredients
+2. Generate recipes using only available ingredients
+3. If more recipes are needed:
+   - Identify key missing ingredients
+   - Use ingredients_generator to add new ones
+   - Generate additional recipes combining original and new ingredients
 
-Remember: Both available and suggested ingredients must be properly created via ingredients_generator before using them in recipe_generator.`;
+Remember:
+- Each recipe MUST contain minimum 50% of user-provided ingredients
+- Prefer recipes using ONLY available ingredients
+- Add new ingredients only when absolutely necessary
+- Both available and suggested ingredients must be properly created via ingredients_generator before using them in recipe_generator`;
 
 function shouldContinue({ messages }: typeof MessagesAnnotation.State) {
   const lastMessage = messages[messages.length - 1];
