@@ -33,7 +33,7 @@ const fridgePutForm = z.object({
   members: z.array(z.string()).optional(),
 });
 
-const PUT = async (req: NextRequest, { params }: Context) => {
+const handlePUT = async (req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const session = await getServerSessionProcessed();
@@ -99,3 +99,4 @@ const DELETE = async (_req: NextRequest, { params }: Context) => {
 };
 
 export const GET = processApiHandler(handleGET);
+export const PUT = processApiHandler(handlePUT);

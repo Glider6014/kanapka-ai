@@ -33,7 +33,7 @@ const handleGET = async (req: NextRequest, { params }: Context) => {
   return NextResponse.json({ ingredients: fridge.ingredients });
 };
 
-const PUT = async (req: NextRequest, { params }: Context) => {
+const handlePUT = async (req: NextRequest, { params }: Context) => {
   const session = await getServerSessionProcessed();
   const { id: fridgeId } = params;
 
@@ -89,3 +89,4 @@ const PUT = async (req: NextRequest, { params }: Context) => {
 };
 
 export const GET = processApiHandler(handleGET);
+export const PUT = processApiHandler(handlePUT);
