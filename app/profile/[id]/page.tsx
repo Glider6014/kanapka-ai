@@ -4,8 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import UserRecipes from "@/components/profile/UserRecipes";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
-
-type Context = { params: { id: string } };
+import { Context } from "@/lib/apiUtils";
 
 const ProfilePage = async ({ params }: Context) => {
   await connectDB();

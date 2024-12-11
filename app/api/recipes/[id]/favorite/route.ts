@@ -3,52 +3,52 @@ import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import Recipe from "@/models/Recipe";
 import {
-  getServerSessionOrCauseUnathorizedError,
-  withApiErrorHandling,
+  Context,
+  getServerSessionProcessed,
+  processApiHandler,
 } from "@/lib/apiUtils";
 
-type Context = { params: { id: string } };
+const POST = async (_req: NextRequest, { params }: Context) => {
+  const session = await getServerSessionProcessed();
 
-export const POST = withApiErrorHandling(
-  async (_req: NextRequest, { params }: Context) => {
-    const session = await getServerSessionOrCauseUnathorizedError();
+  const { id: recipeId } = params;
 
-    const { id: recipeId } = params;
+  await connectDB();
 
-    await connectDB();
-
-    if (!(await Recipe.exists({ _id: recipeId }))) {
-      return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      session.user.id,
-      {
-        $addToSet: { favorites: recipeId },
-      },
-      { new: true }
-    );
-
-    return NextResponse.json({ success: true, favorites: user?.favorites });
+  if (!(await Recipe.exists({ _id: recipeId }))) {
+    return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
   }
-);
 
-export const DELETE = withApiErrorHandling(
-  async (_req: NextRequest, { params }: Context) => {
-    const session = await getServerSessionOrCauseUnathorizedError();
+  const user = await User.findByIdAndUpdate(
+    session.user.id,
+    {
+      $addToSet: { favorites: recipeId },
+    },
+    { new: true }
+  );
 
-    const { id: recipeId } = params;
+  return NextResponse.json({ success: true, favorites: user?.favorites });
+};
 
-    await connectDB();
+const DELETE = async (_req: NextRequest, { params }: Context) => {
+  const session = await getServerSessionProcessed();
 
-    const user = await User.findByIdAndUpdate(
-      session.user.id,
-      {
-        $pull: { favorites: recipeId },
-      },
-      { new: true }
-    );
+  const { id: recipeId } = params;
 
-    return NextResponse.json({ success: true, favorites: user?.favorites });
-  }
-);
+  await connectDB();
+
+  const user = await User.findByIdAndUpdate(
+    session.user.id,
+    {
+      $pull: { favorites: recipeId },
+    },
+    { new: true }
+  );
+
+  return NextResponse.json({ success: true, favorites: user?.favorites });
+};
+
+export default {
+  POST: processApiHandler(POST),
+  DELETE: processApiHandler(DELETE),
+};

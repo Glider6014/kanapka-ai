@@ -3,10 +3,9 @@ import { isValidObjectId } from "mongoose";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import Recipe from "@/models/Recipe";
+import { Context, processApiHandler } from "@/lib/apiUtils";
 
-type Context = { params: { id: string } };
-
-export async function GET(_req: NextRequest, { params }: Context) {
+const GET = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const { id } = params;
@@ -38,4 +37,8 @@ export async function GET(_req: NextRequest, { params }: Context) {
     countRecipes,
     countFavoriteRecipes,
   });
-}
+};
+
+export default {
+  GET: processApiHandler(GET),
+};

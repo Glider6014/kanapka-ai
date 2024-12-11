@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateRecipes } from "@/lib/Recipe/generateRecipes";
 import connectDB from "@/lib/connectToDatabase";
-import {
-  getServerSessionOrCauseUnathorizedError,
-  withApiErrorHandling,
-} from "@/lib/apiUtils";
+import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
 import { RecipeType } from "@/models/Recipe";
 
-export const POST = withApiErrorHandling(async (req: NextRequest) => {
+const POST = async (req: NextRequest) => {
   await connectDB();
-  const session = await getServerSessionOrCauseUnathorizedError();
+  const session = await getServerSessionProcessed();
 
   const body = await req.json().catch(() => null);
 
   if (!body) {
-    return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+    return new NextResponse(JSON.stringify({ error: "Invalid JSON body" }), {
       status: 400,
     });
   }
@@ -22,7 +19,7 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
   const { ingredients, count }: { ingredients: string[]; count: number } = body;
 
   if (!ingredients?.length || !count) {
-    return new Response(
+    return new NextResponse(
       JSON.stringify({ error: "'ingredients' and 'count' are required." }),
       { status: 400 }
     );
@@ -75,11 +72,15 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
     },
   });
 
-  return new Response(stream, {
+  return new NextResponse(stream, {
     headers: {
       "Content-Type": "text/event-stream",
       Connection: "keep-alive",
       "Cache-Control": "no-cache, no-transform",
     },
   });
-});
+};
+
+export default {
+  POST: processApiHandler(POST),
+};

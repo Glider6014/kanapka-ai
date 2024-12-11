@@ -14,8 +14,7 @@ import {
 import { Logo } from "@/components/Logo";
 import { RecipeType } from "@/models/Recipe";
 import { IngredientType } from "@/models/Ingredient";
-
-type Context = { params: { id: string } };
+import { Context } from "@/lib/apiUtils";
 
 type NutrutionType = {
   calories: number;

@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
+import { Context, processApiHandler } from "@/lib/apiUtils";
 
-type Context = { params: { id: string } };
-
-export async function GET(_req: NextRequest, { params }: Context) {
+const GET = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const recipe = await Recipe.findById(params.id);
@@ -16,4 +15,8 @@ export async function GET(_req: NextRequest, { params }: Context) {
   const nutrition = await recipe.calculateNutrition();
 
   return NextResponse.json(nutrition);
-}
+};
+
+export default {
+  GET: processApiHandler(GET),
+};

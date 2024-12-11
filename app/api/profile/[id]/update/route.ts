@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
-import { getServerSession, Session, User as UserType } from "next-auth";
-import authOptions from "@/lib/nextauth";
+import { Session, User as UserType } from "next-auth";
 import { z } from "zod";
 import { UserPermissions } from "@/lib/permissions";
-
-type Context = { params: { id: string } };
+import {
+  Context,
+  getServerSessionProcessed,
+  processApiHandler,
+} from "@/lib/apiUtils";
 
 function canEditUser(user: UserType, session: Session) {
   return (
@@ -27,15 +29,11 @@ const postRequestSchema = z.object({
 
 export type PostRequestSchemaType = z.infer<typeof postRequestSchema>;
 
-export async function POST(req: NextRequest, { params }: Context) {
+const POST = async (req: NextRequest, { params }: Context) => {
   await connectDB();
 
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionProcessed();
   const { id: userId } = params;
-
-  if (!session) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
 
   if (!canEditUser(session.user, session)) {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
@@ -69,4 +67,8 @@ export async function POST(req: NextRequest, { params }: Context) {
   return NextResponse.json({
     message: "User updated successfully",
   });
-}
+};
+
+export default {
+  POST: processApiHandler(POST),
+};

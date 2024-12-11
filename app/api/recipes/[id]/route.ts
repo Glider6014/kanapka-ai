@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { isValidObjectId } from "mongoose";
 import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
+import { Context, processApiHandler } from "@/lib/apiUtils";
 
-type Context = { params: { id: string } };
-
-export async function GET(_req: NextRequest, { params }: Context) {
+const GET = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const { id } = params;
@@ -24,4 +23,8 @@ export async function GET(_req: NextRequest, { params }: Context) {
   }
 
   return NextResponse.json(recipe);
-}
+};
+
+export default {
+  GET: processApiHandler(GET),
+};

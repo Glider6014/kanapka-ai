@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  withApiErrorHandling,
-  getServerSessionOrCauseUnathorizedError,
-} from "@/lib/apiUtils";
+import { processApiHandler, getServerSessionProcessed } from "@/lib/apiUtils";
 import Fridge from "@/models/Fridge";
 import connectDB from "@/lib/connectToDatabase";
 import { z } from "zod";
 
-export const GET = withApiErrorHandling(async () => {
+const GET = async () => {
   await connectDB();
 
-  const session = await getServerSessionOrCauseUnathorizedError();
+  const session = await getServerSessionProcessed();
 
   const userId = session.user.id;
   const fridges = await Fridge.find({
@@ -29,16 +26,16 @@ export const GET = withApiErrorHandling(async () => {
   }
 
   return NextResponse.json(fridges);
-});
+};
 
 const fridgePostForm = z.object({
   name: z.string(),
 });
 
-export const POST = withApiErrorHandling(async (req: NextRequest) => {
+const POST = async (req: NextRequest) => {
   await connectDB();
 
-  const session = await getServerSessionOrCauseUnathorizedError();
+  const session = await getServerSessionProcessed();
 
   const body = await req.json().catch(() => ({}));
   const validationResult = fridgePostForm.safeParse(body);
@@ -58,4 +55,9 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
   await fridge.save();
 
   return NextResponse.json(fridge, { status: 201 });
-});
+};
+
+export default {
+  GET: processApiHandler(GET),
+  POST: processApiHandler(POST),
+};

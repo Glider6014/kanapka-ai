@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { planMeals } from "@/lib/mealsPlannerAgent/agent";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/nextauth";
+import { processApiHandler } from "@/lib/apiUtils";
 
-export async function POST(req: NextRequest) {
+const POST = async (req: NextRequest) => {
   try {
     const { preferences, targetDate } = await req.json();
     const session = await getServerSession(authOptions);
@@ -36,4 +37,8 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+};
+
+export default {
+  POST: processApiHandler(POST),
+};
