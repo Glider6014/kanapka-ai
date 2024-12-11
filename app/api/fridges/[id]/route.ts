@@ -77,7 +77,7 @@ const handlePUT = async (req: NextRequest, { params }: Context) => {
   return NextResponse.json(fridge);
 };
 
-const DELETE = async (_req: NextRequest, { params }: Context) => {
+const handleDELETE = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const session = await getServerSessionProcessed();
@@ -100,3 +100,4 @@ const DELETE = async (_req: NextRequest, { params }: Context) => {
 
 export const GET = processApiHandler(handleGET);
 export const PUT = processApiHandler(handlePUT);
+export const DELETE = processApiHandler(handleDELETE);

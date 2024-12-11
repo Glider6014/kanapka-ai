@@ -30,7 +30,7 @@ const handlePOST = async (_req: NextRequest, { params }: Context) => {
   return NextResponse.json({ success: true, favorites: user?.favorites });
 };
 
-const DELETE = async (_req: NextRequest, { params }: Context) => {
+const handleDELETE = async (_req: NextRequest, { params }: Context) => {
   const session = await getServerSessionProcessed();
 
   const { id: recipeId } = params;
@@ -49,3 +49,4 @@ const DELETE = async (_req: NextRequest, { params }: Context) => {
 };
 
 export const POST = processApiHandler(handlePOST);
+export const DELETE = processApiHandler(handleDELETE);

@@ -48,7 +48,7 @@ const handlePOST = async (req: NextRequest, { params }: Context) => {
   });
 };
 
-const DELETE = async (req: NextRequest, { params }: Context) => {
+const handleDELETE = async (req: NextRequest, { params }: Context) => {
   const session = await getServerSessionProcessed();
 
   await connectDB();
@@ -66,3 +66,4 @@ const DELETE = async (req: NextRequest, { params }: Context) => {
 };
 
 export const POST = processApiHandler(handlePOST);
+export const DELETE = processApiHandler(handleDELETE);
