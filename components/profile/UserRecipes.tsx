@@ -29,8 +29,8 @@ const UserRecipes = ({ userId }: { userId: string }) => {
       </TabsContent>
       {isOwner && ( 
         <TabsContent value="FavoriteUserRecipes">
-          <div className="mb-4 text-gray-700 italic text-sm flex items-center space-x-2 bg-blue-100 p-2 rounded-lg shadow-sm">
-            <Lock /> <span>Your likes are private. Only you can see them.</span>
+          <div className="mb-4 text-white italic text-sm flex items-center space-x-2 bg-start-prim-foreground bg-opacity-60 p-2 rounded-lg shadow-sm">
+            <Lock /> <span className="text-white opacity-100">Your likes are private. Only you can see them.</span>
           </div>
           <FavoriteUserRecipes userId={userId}/>
         </TabsContent>
