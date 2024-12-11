@@ -201,6 +201,21 @@ export const FridgePanel = ({
           (input) => input && input.value.trim() === ""
         );
         nextEmptyInput?.focus();
+      } else if (event.key === "ArrowDown") {
+        const keys = Object.keys(inputRefs.current).map(Number);
+        const index = keys.indexOf(key);
+        if (index < keys.length - 1) {
+          const nextKey = keys[index + 1];
+          inputRefs.current[nextKey]?.focus(); // Move focus to the next input
+        }
+      } else if (event.key === "ArrowUp") {
+        const keys = Object.keys(inputRefs.current).map(Number);
+        const index = keys.indexOf(key);
+        if (index > 0) {
+          const prevKey = keys[index - 1];
+          inputRefs.current[prevKey]?.focus(); // Move focus to the previous input
+          event.preventDefault();
+        }
       }
     },
     [keyPressed, handleIngredientChange, refreshIngredients]
