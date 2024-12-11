@@ -3,7 +3,7 @@ import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
 
-const GET = async () => {
+const handleGET = async () => {
   await connectDB();
 
   const session = await getServerSessionProcessed();
@@ -15,6 +15,4 @@ const GET = async () => {
   return NextResponse.json({ favorites: user?.favorites || [] });
 };
 
-export default {
-  GET: processApiHandler(GET),
-};
+export const GET = processApiHandler(handleGET);

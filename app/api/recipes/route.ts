@@ -61,7 +61,7 @@ function createQuery(params: GetRecipesSchemaType) {
   return query;
 }
 
-const GET = async (req: NextRequest) => {
+const handleGET = async (req: NextRequest) => {
   await connectDB();
 
   const searchParams = Object.fromEntries(req.nextUrl.searchParams.entries());
@@ -83,6 +83,4 @@ const GET = async (req: NextRequest) => {
   return NextResponse.json(response);
 };
 
-export default {
-  GET: processApiHandler(GET),
-};
+export const GET = processApiHandler(handleGET);

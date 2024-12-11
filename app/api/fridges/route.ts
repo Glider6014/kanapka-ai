@@ -4,7 +4,7 @@ import Fridge from "@/models/Fridge";
 import connectDB from "@/lib/connectToDatabase";
 import { z } from "zod";
 
-const GET = async () => {
+const handleGET = async () => {
   await connectDB();
 
   const session = await getServerSessionProcessed();
@@ -32,7 +32,7 @@ const fridgePostForm = z.object({
   name: z.string(),
 });
 
-const POST = async (req: NextRequest) => {
+const handlePOST = async (req: NextRequest) => {
   await connectDB();
 
   const session = await getServerSessionProcessed();
@@ -57,7 +57,5 @@ const POST = async (req: NextRequest) => {
   return NextResponse.json(fridge, { status: 201 });
 };
 
-export default {
-  GET: processApiHandler(GET),
-  POST: processApiHandler(POST),
-};
+export const GET = processApiHandler(handleGET);
+export const POST = processApiHandler(handlePOST);

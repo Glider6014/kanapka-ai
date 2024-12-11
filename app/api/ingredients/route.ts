@@ -3,7 +3,7 @@ import connectDB from "@/lib/connectToDatabase";
 import Ingredient from "@/models/Ingredient";
 import { NextResponse } from "next/server";
 
-const GET = async () => {
+const handleGET = async () => {
   await connectDB();
 
   const ingredients = await Ingredient.find({});
@@ -11,6 +11,4 @@ const GET = async () => {
   return NextResponse.json(ingredients, { status: 200 });
 };
 
-export default {
-  GET: processApiHandler(GET),
-};
+export const GET = processApiHandler(handleGET);

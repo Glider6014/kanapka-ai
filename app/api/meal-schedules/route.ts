@@ -13,7 +13,7 @@ interface Schedule {
   };
 }
 
-const GET = async () => {
+const handleGET = async () => {
   const session = await getServerSessionProcessed();
 
   await connectDB();
@@ -43,6 +43,4 @@ const GET = async () => {
   return NextResponse.json({ events });
 };
 
-export default {
-  GET: processApiHandler(GET),
-};
+export const GET = processApiHandler(handleGET);

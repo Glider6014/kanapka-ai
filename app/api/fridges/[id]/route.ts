@@ -9,7 +9,7 @@ import connectDB from "@/lib/connectToDatabase";
 import { z } from "zod";
 import User from "@/models/User";
 
-const GET = async (_req: NextRequest, { params }: Context) => {
+const handleGET = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const session = await getServerSessionProcessed();
@@ -98,8 +98,4 @@ const DELETE = async (_req: NextRequest, { params }: Context) => {
   return NextResponse.json({ message: "Fridge deleted" });
 };
 
-export default {
-  GET: processApiHandler(GET),
-  PUT: processApiHandler(PUT),
-  DELETE: processApiHandler(DELETE),
-};
+export const GET = processApiHandler(handleGET);

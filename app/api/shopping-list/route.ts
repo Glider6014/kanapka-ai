@@ -3,7 +3,7 @@ import connectDB from "@/lib/connectToDatabase";
 import { MealSchedule } from "@/models/MealSchedule";
 import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
 
-const GET = async (req: NextRequest) => {
+const handleGET = async (req: NextRequest) => {
   const session = await getServerSessionProcessed();
 
   const { searchParams } = new URL(req.url);
@@ -84,6 +84,4 @@ const GET = async (req: NextRequest) => {
   return NextResponse.json({ items });
 };
 
-export default {
-  GET: processApiHandler(GET),
-};
+export const GET = processApiHandler(handleGET);

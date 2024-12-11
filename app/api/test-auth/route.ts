@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
 
-const GET = async () => {
+const handleGET = async () => {
   const session = await getServerSessionProcessed();
 
   return NextResponse.json({
@@ -10,6 +10,4 @@ const GET = async () => {
   });
 };
 
-export default {
-  GET: processApiHandler(GET),
-};
+export const GET = processApiHandler(handleGET);

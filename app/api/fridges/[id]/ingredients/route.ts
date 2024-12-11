@@ -14,7 +14,7 @@ const ingredientsForm = z.object({
   ingredients: z.array(z.string().trim()),
 });
 
-const GET = async (req: NextRequest, { params }: Context) => {
+const handleGET = async (req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const session = await getServerSessionProcessed();
@@ -88,7 +88,4 @@ const PUT = async (req: NextRequest, { params }: Context) => {
   return NextResponse.json({ ingredients: ingredientNames });
 };
 
-export default {
-  GET: processApiHandler(GET),
-  PUT: processApiHandler(PUT),
-};
+export const GET = processApiHandler(handleGET);

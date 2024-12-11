@@ -4,7 +4,7 @@ import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
 import { Context, processApiHandler } from "@/lib/apiUtils";
 
-const GET = async (_req: NextRequest, { params }: Context) => {
+const handleGET = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const { id } = params;
@@ -25,6 +25,4 @@ const GET = async (_req: NextRequest, { params }: Context) => {
   return NextResponse.json(recipe);
 };
 
-export default {
-  GET: processApiHandler(GET),
-};
+export const GET = processApiHandler(handleGET);

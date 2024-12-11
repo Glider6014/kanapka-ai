@@ -5,7 +5,7 @@ import User from "@/models/User";
 import Recipe from "@/models/Recipe";
 import { Context, processApiHandler } from "@/lib/apiUtils";
 
-const GET = async (_req: NextRequest, { params }: Context) => {
+const handleGET = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const { id } = params;
@@ -39,6 +39,4 @@ const GET = async (_req: NextRequest, { params }: Context) => {
   });
 };
 
-export default {
-  GET: processApiHandler(GET),
-};
+export const GET = processApiHandler(handleGET);

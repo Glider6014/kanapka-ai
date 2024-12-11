@@ -4,7 +4,7 @@ import { UserPermissions } from "@/lib/permissions";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 
-const GET = async () => {
+const handleGET = async () => {
   await connectDB();
 
   await getServerSessionProcessed([UserPermissions.readUsers]);
@@ -14,6 +14,4 @@ const GET = async () => {
   return NextResponse.json(users);
 };
 
-export default {
-  GET: processApiHandler(GET),
-};
+export const GET = processApiHandler(handleGET);
