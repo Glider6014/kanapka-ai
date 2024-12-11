@@ -4,7 +4,7 @@ import { UserPermissions } from "@/lib/permissions";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 
-export const GET = processApiHandler(async () => {
+const GET = async () => {
   await connectDB();
 
   await getServerSessionProcessed([UserPermissions.readUsers]);
@@ -12,4 +12,8 @@ export const GET = processApiHandler(async () => {
   const users = await User.find().select("-password");
 
   return NextResponse.json(users);
-});
+};
+
+export default {
+  GET: processApiHandler(GET),
+};
