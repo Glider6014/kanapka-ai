@@ -28,6 +28,7 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
       inputRef,
       isDeleteButtonDisabled,
       onKeyDown,
+      onKeyUp,
     },
     ref
   ) => {
@@ -48,6 +49,7 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
 
     const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
       setKeyPressed(null);
+      onKeyUp?.(e);
     };
 
     return (
