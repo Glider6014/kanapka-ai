@@ -9,13 +9,9 @@ const requestSchema = z.object({
   userId: z.string(),
   updateData: z.object({
     displayName: z.string().optional(),
-    favorites: z.array(z.string()).optional(),
     bio: z.string().optional(),
     avatar: z.string().url().optional(),
-    bgc: z
-      .string()
-      .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
-      .optional(),
+    bgc: z.string().url().optional(),
   }),
 });
 
