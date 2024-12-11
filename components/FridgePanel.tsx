@@ -195,9 +195,15 @@ export const FridgePanel = ({
           inputRefs.current[prevKey]?.focus(); // Move focus to the previous input
           event.preventDefault();
         }
+      } else if (event.key === "Enter" && input.value.trim() !== "") {
+        refreshIngredients(true);
+        const nextEmptyInput = Object.values(inputRefs.current).find(
+          (input) => input && input.value.trim() === ""
+        );
+        nextEmptyInput?.focus();
       }
     },
-    [keyPressed, handleIngredientChange]
+    [keyPressed, handleIngredientChange, refreshIngredients]
   );
 
   const handleKeyUp = useCallback(

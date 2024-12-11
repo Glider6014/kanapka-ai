@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { KeyboardEvent, forwardRef, useState } from "react";
+import { KeyboardEvent, forwardRef, useState, useRef } from "react";
 
 type InputIngredientProps = {
   value: string;
@@ -33,14 +33,16 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
     ref
   ) => {
     const [keyPressed, setKeyPressed] = useState<string | null>(null);
-
-    const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        onAdd?.();
-      }
-    };
+    const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter" && value.trim() !== "") {
+        onAdd?.();
+        const nextEmptyInput = Object.values(inputRefs.current).find(
+          (input) => input && input.value.trim() === ""
+        );
+        nextEmptyInput?.focus();
+      }
       if (keyPressed !== e.key) {
         setKeyPressed(e.key);
         onKeyDown?.(e);
@@ -62,7 +64,6 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
           onChange={onChange}
           onFocus={onFocus}
           onBlur={onBlur}
-          onKeyPress={handleKeyPress}
           onKeyDown={handleKeyDown}
           onKeyUp={handleKeyUp}
           ref={(el) => {
