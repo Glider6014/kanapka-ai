@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -24,7 +23,7 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 12;
-  
+
   const fetchRecipes = async (page: number) => {
     setLoading(true);
     try {
@@ -51,6 +50,18 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
     if (page > 0 && page <= totalPages) {
       setCurrentPage(page);
     }
+  };
+
+  const getPageRange = () => {
+    const range = 3;
+    const start = Math.max(1, currentPage - range);
+    const end = Math.min(totalPages, currentPage + range);
+
+    const pages = [];
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
   };
 
   if (loading) {
@@ -81,7 +92,7 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
             ))}
           </div>
 
-          <Pagination className="mt-5">
+          <Pagination className="mt-5 overflow-x-auto">
             <PaginationContent className="cursor-pointer">
               <PaginationItem>
                 <PaginationPrevious
@@ -89,13 +100,13 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
                   aria-disabled={currentPage === 1}
                 />
               </PaginationItem>
-              {[...Array(totalPages)].map((_, index) => (
-                <PaginationItem key={index}>
+              {getPageRange().map((page) => (
+                <PaginationItem key={page}>
                   <PaginationLink
-                    onClick={() => handlePageChange(index + 1)}
-                    isActive={currentPage === index + 1}
+                    onClick={() => handlePageChange(page)}
+                    isActive={currentPage === page}
                   >
-                    {index + 1}
+                    {page}
                   </PaginationLink>
                 </PaginationItem>
               ))}

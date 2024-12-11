@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 type Recipe = {
   _id: string;
@@ -17,19 +24,21 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
   const [totalPages, setTotalPages] = useState(1);
   const limit = 12;
 
-    const fetchFavoriteRecipes = async (page: number) => {
-      try {
-        const response = await fetch(`/api/profile/${userId}`);
-        const data = await response.json();
+  const fetchFavoriteRecipes = async (page: number) => {
+    try {
+      const response = await fetch(`/api/profile/${userId}`);
+      const data = await response.json();
 
-        setFavoriteRecipes(data.favoriteRecipes || []);
-        setTotalPages(Math.max(1, Math.ceil((data.favoriteRecipes?.length || 0) / limit)));
-      } catch (error) {
-        console.error("Error fetching favorite recipes:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setFavoriteRecipes(data.favoriteRecipes || []);
+      setTotalPages(
+        Math.max(1, Math.ceil(data.favoriteRecipes.length / limit))
+      );
+    } catch (error) {
+      console.error("Error fetching favorite recipes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchFavoriteRecipes(currentPage);
@@ -41,6 +50,10 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
     }
   };
 
+  const paginatedRecipes = favoriteRecipes.slice(
+    (currentPage - 1) * limit,
+    currentPage * limit
+  );
 
   if (loading) {
     return <div>Loading favorite recipes...</div>;
@@ -53,7 +66,7 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
       ) : (
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {favoriteRecipes.map((recipe) => (
+            {paginatedRecipes.map((recipe) => (
               <div
                 key={recipe._id}
                 className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center"
@@ -71,13 +84,14 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
           </div>
 
           <Pagination className="mt-5">
-            <PaginationContent className="cursor-pointer">
+            <PaginationContent className="cursor-pointer flex space-x-2">
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => handlePageChange(currentPage - 1)}
                   aria-disabled={currentPage === 1}
                 />
               </PaginationItem>
+
               {[...Array(totalPages)].map((_, index) => (
                 <PaginationItem key={index}>
                   <PaginationLink
@@ -88,7 +102,7 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
                   </PaginationLink>
                 </PaginationItem>
               ))}
-              <PaginationItem></PaginationItem>
+
               <PaginationItem>
                 <PaginationNext
                   onClick={() => handlePageChange(currentPage + 1)}
