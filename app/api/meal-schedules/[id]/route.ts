@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/nextauth";
 import connectDB from "@/lib/connectToDatabase";
@@ -6,7 +6,7 @@ import { MealSchedule } from "@/models/MealSchedule";
 
 type Context = { params: { id: string } };
 
-export async function PUT(request: Request, { params }: Context) {
+export async function PUT(request: NextRequest, { params }: Context) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -61,7 +61,7 @@ export async function PUT(request: Request, { params }: Context) {
   }
 }
 
-export async function DELETE(request: Request, { params }: Context) {
+export async function DELETE(request: NextRequest, { params }: Context) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

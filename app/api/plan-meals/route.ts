@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { planMeals } from "@/lib/mealsPlannerAgent/agent";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/nextauth";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const { preferences, targetDate } = await request.json();
     const session = await getServerSession(authOptions);

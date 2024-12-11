@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import { signUpFormSchema } from "@/lib/formSchemas/authFormSchemas";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   await connectDB();
 
   const body = await request.json().catch(() => null);
