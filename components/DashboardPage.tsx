@@ -20,7 +20,10 @@ export function DashboardPage() {
       const response = await fetch("/api/recipes/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ingredients, count: 5 }),
+        body: JSON.stringify({
+          ingredients: ingredients.filter((i) => i.length > 0),
+          count: 5,
+        }),
       });
 
       if (!response.ok || !response.body) {
