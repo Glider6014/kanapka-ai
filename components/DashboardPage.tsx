@@ -9,10 +9,12 @@ import { Navbar } from "./Navbar";
 export function DashboardPage() {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string>("");
 
   const handleSearchRecipes = async (ingredients: string[]) => {
     setIsSearching(true);
     setRecipes([]);
+    setSearchError("");
 
     try {
       const response = await fetch("/api/recipes/generate", {
@@ -23,7 +25,7 @@ export function DashboardPage() {
 
       if (!response.ok || !response.body) {
         const error = await response.json();
-        alert(`Failed to search recipes: ${error.error}`);
+        setSearchError(error.error || "Failed to search recipes");
         return;
       }
 
@@ -71,7 +73,9 @@ export function DashboardPage() {
           isSearchRecipesButtonDisabled={isSearching}
         />
         <div className="w-full md:w-3/5 mt-4 md:mt-0">
-          {recipes.length > 0 ? (
+          {searchError ? (
+            <div className="text-center text-red-500">{searchError}</div>
+          ) : recipes.length > 0 ? (
             <RecipesList recipes={recipes} />
           ) : (
             <div className="text-center text-gray-500">

@@ -7,6 +7,7 @@ import {
 } from "@/lib/apiUtils";
 import { RecipeType } from "@/models/Recipe";
 import Fridge from "@/models/Fridge";
+import { validateIngredients } from "@/lib/ingredients/validateNames";
 
 export const POST = withApiErrorHandling(async (req: NextRequest) => {
   await connectDB();
@@ -25,6 +26,20 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
   if (!ingredients?.length || !count) {
     return new Response(
       JSON.stringify({ error: "'ingredients' and 'count' are required." }),
+      { status: 400 }
+    );
+  }
+
+  // First validate all ingredients
+  const validationResults = await validateIngredients(ingredients);
+  const invalidIngredients = validationResults.filter((r) => !r.isValid);
+
+  if (invalidIngredients.length > 0) {
+    return new Response(
+      JSON.stringify({
+        error: "Some ingredients are invalid",
+        invalidIngredients: invalidIngredients.map((r) => r.ingredient),
+      }),
       { status: 400 }
     );
   }
