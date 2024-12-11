@@ -4,13 +4,9 @@ import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import Recipe from "@/models/Recipe";
 
-export type GETParams = {
-  params: {
-    id: string;
-  };
-};
+type Context = { params: { id: string } };
 
-export async function GET(req: NextRequest, { params }: GETParams) {
+export async function GET(req: NextRequest, { params }: Context) {
   await connectDB();
 
   const { id } = params;
@@ -28,10 +24,18 @@ export async function GET(req: NextRequest, { params }: GETParams) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  const recipes =  await Recipe.find({ createdBy: id }).populate("ingredients.ingredient");
-  const favoriteRecipes = await Recipe.find({ _id: { $in: user.favorites } })
+  const recipes = await Recipe.find({ createdBy: id }).populate(
+    "ingredients.ingredient"
+  );
+  const favoriteRecipes = await Recipe.find({ _id: { $in: user.favorites } });
   const countRecipes = await Recipe.countDocuments({ createdBy: id });
   const countFavoriteRecipes = user.favorites.length;
 
-  return NextResponse.json({ user, recipes, favoriteRecipes, countRecipes, countFavoriteRecipes });
+  return NextResponse.json({
+    user,
+    recipes,
+    favoriteRecipes,
+    countRecipes,
+    countFavoriteRecipes,
+  });
 }

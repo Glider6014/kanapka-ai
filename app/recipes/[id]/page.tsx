@@ -15,6 +15,8 @@ import { Logo } from "@/components/Logo";
 import { RecipeType } from "@/models/Recipe";
 import { IngredientType } from "@/models/Ingredient";
 
+type Context = { params: { id: string } };
+
 type NutrutionType = {
   calories: number;
   protein: number;
@@ -32,7 +34,7 @@ type PopulatedRecipeType = {
   }[];
 } & RecipeType;
 
-export default function RecipePage({ params }: { params: { id: string } }) {
+export default function RecipePage({ params }: Context) {
   const [recipe, setRecipe] = useState<PopulatedRecipeType | null>(null);
   const [nutrition, setNutrition] = useState<NutrutionType | null>(null);
   const [isLoading, setIsLoading] = useState(true);

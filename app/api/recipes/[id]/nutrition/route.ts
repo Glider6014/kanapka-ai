@@ -2,13 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
 
-export type GETParams = {
-  params: {
-    id: string;
-  };
-};
+type Context = { params: { id: string } };
 
-export async function GET(req: NextRequest, { params }: GETParams) {
+export async function GET(req: NextRequest, { params }: Context) {
   await connectDB();
 
   const recipe = await Recipe.findById(params.id);

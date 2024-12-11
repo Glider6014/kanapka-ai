@@ -8,8 +8,10 @@ import connectDB from "@/lib/connectToDatabase";
 import { z } from "zod";
 import User from "@/models/User";
 
+type Context = { params: { id: string } };
+
 export const GET = withApiErrorHandling(
-  async (req: NextRequest, { params }: { params: { id: string } }) => {
+  async (req: NextRequest, { params }: Context) => {
     await connectDB();
 
     const session = await getServerSessionOrCauseUnathorizedError();
@@ -35,7 +37,7 @@ const fridgePutForm = z.object({
 });
 
 export const PUT = withApiErrorHandling(
-  async (req: NextRequest, { params }: { params: { id: string } }) => {
+  async (req: NextRequest, { params }: Context) => {
     await connectDB();
 
     const session = await getServerSessionOrCauseUnathorizedError();
@@ -81,7 +83,7 @@ export const PUT = withApiErrorHandling(
 );
 
 export const DELETE = withApiErrorHandling(
-  async (req: NextRequest, { params }: { params: { id: string } }) => {
+  async (req: NextRequest, { params }: Context) => {
     await connectDB();
 
     const session = await getServerSessionOrCauseUnathorizedError();

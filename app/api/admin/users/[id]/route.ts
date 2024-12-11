@@ -6,12 +6,11 @@ import connectDB from "@/lib/connectToDatabase";
 import { UserPermissions } from "@/lib/permissions";
 import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
-import { permission } from "process";
 
-type Params = { params: { id: string } };
+type Context = { params: { id: string } };
 
 export const POST = withApiErrorHandling(
-  async (req: NextRequest, { params }: Params) => {
+  async (req: NextRequest, { params }: Context) => {
     await connectDB();
 
     await getServerSessionOrCauseUnathorizedError([UserPermissions.writeUsers]);
@@ -35,7 +34,7 @@ export const POST = withApiErrorHandling(
 );
 
 export const DELETE = withApiErrorHandling(
-  async (_req: NextRequest, { params }: Params) => {
+  async (_req: NextRequest, { params }: Context) => {
     await connectDB();
 
     await getServerSessionOrCauseUnathorizedError([

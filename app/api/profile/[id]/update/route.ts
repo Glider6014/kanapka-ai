@@ -6,11 +6,7 @@ import authOptions from "@/lib/nextauth";
 import { z } from "zod";
 import { UserPermissions } from "@/lib/permissions";
 
-type Context = {
-  params: {
-    id: string;
-  };
-};
+type Context = { params: { id: string } };
 
 function canEditUser(user: UserType, session: Session) {
   return (

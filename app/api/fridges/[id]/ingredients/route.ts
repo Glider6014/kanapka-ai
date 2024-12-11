@@ -9,12 +9,14 @@ import connectDB from "@/lib/connectToDatabase";
 import { generateIngredient } from "@/lib/ingredients/generateIngredients";
 import { validateIngredients } from "@/lib/ingredients/validateNames";
 
+type Context = { params: { id: string } };
+
 const ingredientsForm = z.object({
   ingredients: z.array(z.string().trim()),
 });
 
 export const GET = withApiErrorHandling(
-  async (req: NextRequest, { params }: { params: { id: string } }) => {
+  async (req: NextRequest, { params }: Context) => {
     await connectDB();
 
     const session = await getServerSessionOrCauseUnathorizedError();
@@ -35,7 +37,7 @@ export const GET = withApiErrorHandling(
 );
 
 export const PUT = withApiErrorHandling(
-  async (req: NextRequest, { params }: { params: { id: string } }) => {
+  async (req: NextRequest, { params }: Context) => {
     const session = await getServerSessionOrCauseUnathorizedError();
     const { id: fridgeId } = params;
 
