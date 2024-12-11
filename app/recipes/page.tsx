@@ -15,7 +15,10 @@ const RecipesPage = async () => {
       <h2 className="text-2xl font-bold mb-4 text-center bg-gray-300 p-5 text-gray-700">
         Recipes List
       </h2>
-      <RecipesList recipes={JSON.parse(JSON.stringify(recipes))} />
+      <RecipesList
+        recipes={JSON.parse(JSON.stringify(recipes))}
+        hasFilters={true}
+      />
     </div>
   );
 };

@@ -74,7 +74,7 @@ export function DashboardPage() {
         />
         <div className="w-full md:w-3/5 mt-4 md:mt-0">
           {recipes.length > 0 ? (
-            <RecipesList recipes={recipes} />
+            <RecipesList recipes={recipes} hasFilters={false} />
           ) : (
             <div className="text-center text-gray-500">
               {isSearching ? "Generating recipes..." : "No recipes to display"}
