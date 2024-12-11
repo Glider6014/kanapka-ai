@@ -49,6 +49,8 @@ export const FridgePanel = ({
     setIsSaving(true);
     setInvalidIngredients([]); // Reset invalid ingredients
 
+    // TODO: Make it parrallel and add waiting animation to each input
+
     for (const [_, input] of Object.entries(inputRefs.current)) {
       input.disabled = true;
     }
