@@ -42,11 +42,11 @@ export const PUT = withApiErrorHandling(
     const { id } = params;
 
     const body = await req.json().catch(() => ({}));
-    const result = fridgePutForm.safeParse(body);
+    const validationResult = fridgePutForm.safeParse(body);
 
-    if (!result.success) {
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: "Invalid input", issues: result.error.issues },
+        { error: "Invalid input", issues: validationResult.error.issues },
         { status: 400 }
       );
     }
@@ -61,10 +61,10 @@ export const PUT = withApiErrorHandling(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    if (result.data.name) fridge.name = result.data.name;
+    if (validationResult.data.name) fridge.name = validationResult.data.name;
 
-    if (result.data.members) {
-      for (const username of result.data.members) {
+    if (validationResult.data.members) {
+      for (const username of validationResult.data.members) {
         if (fridge.isMember(username)) continue;
 
         const user = await User.findOne({ username });

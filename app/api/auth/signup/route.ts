@@ -8,14 +8,16 @@ export async function POST(request: Request) {
   await connectDB();
 
   const body = await request.json().catch(() => null);
+  const validationResult = signUpFormSchema.safeParse(body);
 
-  const result = signUpFormSchema.safeParse(body);
-
-  if (!result.success) {
-    return NextResponse.json({ error: result.error.message }, { status: 400 });
+  if (!validationResult.success) {
+    return NextResponse.json(
+      { error: validationResult.error.message },
+      { status: 400 }
+    );
   }
 
-  const { username, displayName, email, password } = result.data;
+  const { username, displayName, email, password } = validationResult.data;
 
   if (
     await User.exists({

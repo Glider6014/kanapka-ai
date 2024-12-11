@@ -50,18 +50,18 @@ export const PUT = withApiErrorHandling(
     }
 
     const body = await req.json().catch(() => ({}));
-    const result = ingredientsForm.safeParse(body);
+    const validationResult = ingredientsForm.safeParse(body);
 
-    if (!result.success) {
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: "Invalid input", issues: result.error.issues },
+        { error: "Invalid input", issues: validationResult.error.issues },
         { status: 400 }
       );
     }
 
     // Validate ingredients first
     const validationResults = await validateIngredients(
-      result.data.ingredients.filter((ing) => ing.length > 0)
+      validationResult.data.ingredients.filter((ing) => ing.length > 0)
     );
 
     const invalidIngredients = validationResults.filter((r) => !r.isValid);

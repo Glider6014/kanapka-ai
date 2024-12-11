@@ -123,20 +123,20 @@ export async function generateIngredient(
     });
 
     const parsedResult = JSON.parse(result);
-    const validation = ingredientSchema.safeParse(parsedResult);
+    const validationResult = ingredientSchema.safeParse(parsedResult);
 
-    if (!validation.success) {
+    if (!validationResult.success) {
       console.error(
         "Validation errors:",
-        validation.error.flatten().fieldErrors
+        validationResult.error.flatten().fieldErrors
       );
       return null;
     }
 
     const newIngredient = new Ingredient({
-      name: validation.data.name.toLowerCase(),
-      unit: validation.data.unit,
-      nutrition: validation.data.nutrition,
+      name: validationResult.data.name.toLowerCase(),
+      unit: validationResult.data.unit,
+      nutrition: validationResult.data.nutrition,
     });
 
     await newIngredient.save();

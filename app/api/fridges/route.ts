@@ -39,18 +39,19 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
   await connectDB();
 
   const session = await getServerSessionOrCauseUnathorizedError();
-  const body = await req.json().catch(() => ({}));
-  const result = fridgePostForm.safeParse(body);
 
-  if (!result.success) {
+  const body = await req.json().catch(() => ({}));
+  const validationResult = fridgePostForm.safeParse(body);
+
+  if (!validationResult.success) {
     return NextResponse.json(
-      { error: "Invalid input", issues: result.error.issues },
+      { error: "Invalid input", issues: validationResult.error.issues },
       { status: 400 }
     );
   }
 
   const fridge = new Fridge({
-    name: result.data.name,
+    name: validationResult.data.name,
     owner: session.user.id,
   });
 
