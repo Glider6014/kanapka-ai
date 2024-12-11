@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/lib/nextauth";
 import { processApiHandler } from "@/lib/apiUtils";
 
-const POST = async (req: NextRequest) => {
+const handlePOST = async (req: NextRequest) => {
   try {
     const { preferences, targetDate } = await req.json();
     const session = await getServerSession(authOptions);
@@ -39,6 +39,4 @@ const POST = async (req: NextRequest) => {
   }
 };
 
-export default {
-  POST: processApiHandler(POST),
-};
+export const POST = processApiHandler(handlePOST);

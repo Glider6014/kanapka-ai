@@ -29,7 +29,7 @@ const postRequestSchema = z.object({
 
 export type PostRequestSchemaType = z.infer<typeof postRequestSchema>;
 
-const POST = async (req: NextRequest, { params }: Context) => {
+const handlePOST = async (req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const session = await getServerSessionProcessed();
@@ -69,6 +69,4 @@ const POST = async (req: NextRequest, { params }: Context) => {
   });
 };
 
-export default {
-  POST: processApiHandler(POST),
-};
+export const POST = processApiHandler(handlePOST);

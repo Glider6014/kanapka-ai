@@ -5,7 +5,7 @@ import User from "@/models/User";
 import { signUpFormSchema } from "@/lib/formSchemas/authFormSchemas";
 import { processApiHandler } from "@/lib/apiUtils";
 
-const POST = async (req: NextRequest) => {
+const handlePOST = async (req: NextRequest) => {
   await connectDB();
 
   const body = await req.json().catch(() => null);
@@ -48,6 +48,4 @@ const POST = async (req: NextRequest) => {
   );
 };
 
-export default {
-  POST: processApiHandler(POST),
-};
+export const POST = processApiHandler(handlePOST);

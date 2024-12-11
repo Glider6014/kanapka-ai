@@ -4,7 +4,7 @@ import connectDB from "@/lib/connectToDatabase";
 import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
 import { RecipeType } from "@/models/Recipe";
 
-const POST = async (req: NextRequest) => {
+const handlePOST = async (req: NextRequest) => {
   await connectDB();
   const session = await getServerSessionProcessed();
 
@@ -81,6 +81,4 @@ const POST = async (req: NextRequest) => {
   });
 };
 
-export default {
-  POST: processApiHandler(POST),
-};
+export const POST = processApiHandler(handlePOST);

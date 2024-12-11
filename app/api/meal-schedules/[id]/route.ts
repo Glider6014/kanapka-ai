@@ -7,7 +7,7 @@ import {
   processApiHandler,
 } from "@/lib/apiUtils";
 
-const POST = async (req: NextRequest, { params }: Context) => {
+const handlePOST = async (req: NextRequest, { params }: Context) => {
   const session = await getServerSessionProcessed();
 
   const { date, duration } = await req.json();
@@ -65,7 +65,4 @@ const DELETE = async (req: NextRequest, { params }: Context) => {
   return NextResponse.json({ success: true });
 };
 
-export default {
-  POST: processApiHandler(POST),
-  DELETE: processApiHandler(DELETE),
-};
+export const POST = processApiHandler(handlePOST);

@@ -8,7 +8,7 @@ import {
   processApiHandler,
 } from "@/lib/apiUtils";
 
-const POST = async (_req: NextRequest, { params }: Context) => {
+const handlePOST = async (_req: NextRequest, { params }: Context) => {
   const session = await getServerSessionProcessed();
 
   const { id: recipeId } = params;
@@ -48,7 +48,4 @@ const DELETE = async (_req: NextRequest, { params }: Context) => {
   return NextResponse.json({ success: true, favorites: user?.favorites });
 };
 
-export default {
-  POST: processApiHandler(POST),
-  DELETE: processApiHandler(DELETE),
-};
+export const POST = processApiHandler(handlePOST);
