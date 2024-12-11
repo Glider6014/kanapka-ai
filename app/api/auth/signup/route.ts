@@ -4,10 +4,10 @@ import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import { signUpFormSchema } from "@/lib/formSchemas/authFormSchemas";
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   await connectDB();
 
-  const body = await request.json().catch(() => null);
+  const body = await req.json().catch(() => null);
   const validationResult = signUpFormSchema.safeParse(body);
 
   if (!validationResult.success) {

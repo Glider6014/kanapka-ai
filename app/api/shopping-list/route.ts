@@ -4,14 +4,14 @@ import connectDB from "@/lib/connectToDatabase";
 import { MealSchedule } from "@/models/MealSchedule";
 import authOptions from "@/lib/nextauth";
 
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const date = searchParams.get("date");
 
     if (!date) {

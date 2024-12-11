@@ -6,7 +6,7 @@ import Recipe from "@/models/Recipe";
 
 type Context = { params: { id: string } };
 
-export async function GET(req: NextRequest, { params }: Context) {
+export async function GET(_req: NextRequest, { params }: Context) {
   await connectDB();
 
   const { id } = params;

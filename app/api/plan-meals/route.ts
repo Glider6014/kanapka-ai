@@ -3,9 +3,9 @@ import { planMeals } from "@/lib/mealsPlannerAgent/agent";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/nextauth";
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const { preferences, targetDate } = await request.json();
+    const { preferences, targetDate } = await req.json();
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {

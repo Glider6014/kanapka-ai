@@ -10,7 +10,7 @@ import {
 type Context = { params: { id: string } };
 
 export const POST = withApiErrorHandling(
-  async (req: NextRequest, { params }: Context) => {
+  async (_req: NextRequest, { params }: Context) => {
     const session = await getServerSessionOrCauseUnathorizedError();
 
     const { id: recipeId } = params;
@@ -34,7 +34,7 @@ export const POST = withApiErrorHandling(
 );
 
 export const DELETE = withApiErrorHandling(
-  async (request: NextRequest, { params }: Context) => {
+  async (_req: NextRequest, { params }: Context) => {
     const session = await getServerSessionOrCauseUnathorizedError();
 
     const { id: recipeId } = params;

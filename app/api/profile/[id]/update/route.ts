@@ -27,7 +27,7 @@ const postRequestSchema = z.object({
 
 export type PostRequestSchemaType = z.infer<typeof postRequestSchema>;
 
-export async function POST(request: NextRequest, { params }: Context) {
+export async function POST(req: NextRequest, { params }: Context) {
   await connectDB();
 
   const session = await getServerSession(authOptions);
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest, { params }: Context) {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
   }
 
-  const body = await request.json();
+  const body = await req.json();
   const validationResult = postRequestSchema.safeParse(body);
 
   if (!validationResult.success) {

@@ -6,14 +6,14 @@ import { MealSchedule } from "@/models/MealSchedule";
 
 type Context = { params: { id: string } };
 
-export async function PUT(request: NextRequest, { params }: Context) {
+export async function PUT(req: NextRequest, { params }: Context) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { date, duration } = await request.json();
+    const { date, duration } = await req.json();
     if (!date) {
       return NextResponse.json({ error: "Date is required" }, { status: 400 });
     }
@@ -61,7 +61,7 @@ export async function PUT(request: NextRequest, { params }: Context) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: Context) {
+export async function DELETE(_req: NextRequest, { params }: Context) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
