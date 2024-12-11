@@ -3,6 +3,23 @@ import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/nextauth";
+import { z } from "zod";
+
+const requestSchema = z.object({
+  userId: z.string(),
+  updateData: z.object({
+    displayName: z.string().optional(),
+    favorites: z.array(z.string()).optional(),
+    bio: z.string().optional(),
+    avatar: z.string().url().optional(),
+    bgc: z
+      .string()
+      .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+      .optional(),
+  }),
+});
+
+type RequestSchemaType = z.infer<typeof requestSchema>;
 
 export async function POST(request: Request) {
   await connectDB();
@@ -15,17 +32,32 @@ export async function POST(request: Request) {
 
   const body = await request.json();
 
-  const { userId, updateData } = body;
+  // Validate request body against schema
+  const validatedData = requestSchema.safeParse(body);
 
-  if (!userId || !updateData) {
-    return NextResponse.json({ message: "Invalid input" }, { status: 400 });
+  if (!validatedData.success) {
+    return NextResponse.json(
+      {
+        message: "Invalid input",
+        errors: validatedData.error.errors,
+      },
+      { status: 400 }
+    );
   }
 
-  const user = await User.findByIdAndUpdate(userId, updateData);
+  const { userId, updateData } = validatedData.data;
 
-  if (!user) {
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { $set: updateData },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedUser) {
     return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
 
-  return NextResponse.json({ message: "User updated successfully", user });
+  return NextResponse.json({
+    message: "User updated successfully",
+  });
 }
