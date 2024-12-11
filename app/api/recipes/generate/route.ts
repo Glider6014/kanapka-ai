@@ -6,6 +6,8 @@ import {
   withApiErrorHandling,
 } from "@/lib/apiUtils";
 import { RecipeType } from "@/models/Recipe";
+import Fridge from "@/models/Fridge";
+import { validateIngredients } from "@/lib/ingredients/validateNames";
 
 export const POST = withApiErrorHandling(async (req: NextRequest) => {
   await connectDB();
@@ -25,6 +27,36 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
     return new Response(
       JSON.stringify({ error: "'ingredients' and 'count' are required." }),
       { status: 400 }
+    );
+  }
+
+  // First validate all ingredients
+  const validationResults = await validateIngredients(ingredients);
+  const invalidIngredients = validationResults.filter((r) => !r.isValid);
+
+  if (invalidIngredients.length > 0) {
+    return new Response(
+      JSON.stringify({
+        error: "Some ingredients are invalid",
+        invalidIngredients: invalidIngredients.map((r) => r.ingredient),
+      }),
+      { status: 400 }
+    );
+  }
+
+  // Validate ingredients against fridge contents
+  const missingIngredients = await Fridge.validateUserIngredients(
+    ingredients,
+    session.user.id
+  );
+  if (missingIngredients.length > 0) {
+    return new Response(
+      JSON.stringify({
+        error: `Missing ingredients in your fridges`,
+        code: "MISSING_INGREDIENTS",
+        missingIngredients,
+      }),
+      { status: 422 }
     );
   }
 
