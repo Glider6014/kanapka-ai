@@ -1,21 +1,34 @@
-import Header from '@/components/profile/Header';
-import Stats from '@/components/profile/Stats';
-import { Navbar } from '@/components/Navbar';
-import UserRecipes from '@/components/profile/UserRecipes';
-import connectDB from '@/lib/connectToDatabase';
-import User from '@/models/User';
+import Header from "@/components/profile/Header";
+import Stats from "@/components/profile/Stats";
+import { Navbar } from "@/components/Navbar";
+import UserRecipes from "@/components/profile/UserRecipes";
+import connectDB from "@/lib/connectToDatabase";
+import User from "@/models/User";
+import { Logo } from "@/components/Logo";
+import { ObjectId } from "mongodb";
+
+function notFound() {
+  return (
+    <div className="container mx-auto py-8 flex justify-center">
+      <div className="text-center pt-10">
+        <Logo className="text-5xl md:text-9xl" />
+        <p className="mt-4 text-2xl font-bold text-black">User not found</p>
+      </div>
+    </div>
+  );
+}
 
 const ProfilePage = async ({ params }: { params: { id: string } }) => {
   await connectDB();
   const { id } = params;
-  
-  const user = await User.findById(id);
-  if (!user) {
-    return <div>User not found</div>;
+  if (!ObjectId.isValid(id)) {
+    return notFound();
   }
+  const user = await User.findById(new ObjectId(id));
 
-    // console.log("Raw user:", user);
-
+  if (!user) {
+    return notFound();
+  }
 
   return (
     <div className="container mx-auto py-4 px-2 sm:px-4">
@@ -39,6 +52,6 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
       </div>
     </div>
   );
-}
+};
 
 export default ProfilePage;
