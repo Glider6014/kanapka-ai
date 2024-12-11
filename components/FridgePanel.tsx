@@ -176,12 +176,12 @@ export const FridgePanel = ({
             const prevKey = keys[index - 1];
             inputRefs.current[prevKey].value = "";
             handleIngredientChange(prevKey, "");
-            inputRefs.current[prevKey]?.focus(); // Move focus to the previous input
+            inputRefs.current[prevKey]?.focus();
           }
         } else {
           input.value = "";
           handleIngredientChange(key, "");
-          inputRefs.current[key]?.focus(); // Keep focus on the current input
+          inputRefs.current[key]?.focus();
         }
       } else if (
         event.key === "Backspace" &&
@@ -192,7 +192,7 @@ export const FridgePanel = ({
         const index = keys.indexOf(key);
         if (index > 0) {
           const prevKey = keys[index - 1];
-          inputRefs.current[prevKey]?.focus(); // Move focus to the previous input
+          inputRefs.current[prevKey]?.focus();
           event.preventDefault();
         }
       } else if (event.key === "Enter" && input.value.trim() !== "") {
@@ -206,15 +206,37 @@ export const FridgePanel = ({
         const index = keys.indexOf(key);
         if (index < keys.length - 1) {
           const nextKey = keys[index + 1];
-          inputRefs.current[nextKey]?.focus(); // Move focus to the next input
+          inputRefs.current[nextKey]?.focus();
         }
       } else if (event.key === "ArrowUp") {
         const keys = Object.keys(inputRefs.current).map(Number);
         const index = keys.indexOf(key);
         if (index > 0) {
           const prevKey = keys[index - 1];
-          inputRefs.current[prevKey]?.focus(); // Move focus to the previous input
+          inputRefs.current[prevKey]?.focus();
           event.preventDefault();
+        }
+      } else if (event.key === "ArrowLeft") {
+        const selectionStart = input.selectionStart;
+        if (selectionStart === 0) {
+          const keys = Object.keys(inputRefs.current).map(Number);
+          const index = keys.indexOf(key);
+          if (index > 0) {
+            const prevKey = keys[index - 1];
+            inputRefs.current[prevKey]?.focus();
+            event.preventDefault();
+          }
+        }
+      } else if (event.key === "ArrowRight") {
+        const selectionEnd = input.selectionEnd;
+        if (selectionEnd === input.value.length) {
+          const keys = Object.keys(inputRefs.current).map(Number);
+          const index = keys.indexOf(key);
+          if (index < keys.length - 1) {
+            const nextKey = keys[index + 1];
+            inputRefs.current[nextKey]?.focus();
+            event.preventDefault();
+          }
         }
       }
     },
