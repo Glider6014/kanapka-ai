@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 type Recipe = {
   _id: string;
@@ -14,35 +22,40 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [recipesPerPage] = useState(12);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 12;
+  
+  const fetchRecipes = async (page: number) => {
+    setLoading(true);
+    try {
+      const offset = (page - 1) * limit;
+      const response = await fetch(
+        `/api/recipes?offset=${offset}&limit=${limit}&createdBy=${userId}`
+      );
+      const data = await response.json();
+
+      setRecipes(data.results || []);
+      setTotalPages(Math.ceil(data.count / limit));
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const response = await fetch(`/api/profile/${userId}`);
-        const data = await response.json();
-        setRecipes(data.recipes || []);
-      } catch (error) {
-        console.error("Error fetching recipes:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchRecipes(currentPage);
+  }, [currentPage]);
 
-    fetchRecipes();
-  }, [userId]);
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
-  const indexOfLastRecipe = currentPage * recipesPerPage;
-  const indexOfFirstRecipe = indexOfLastRecipe - recipesPerPage;
-  const currentRecipes = recipes.slice(indexOfFirstRecipe, indexOfLastRecipe);
+  const handlePageChange = (page: number) => {
+    if (page > 0 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   if (loading) {
     return <div>Loading recipes...</div>;
   }
-
-  const totalPages = Math.ceil(recipes.length / recipesPerPage);
 
   return (
     <>
@@ -51,35 +64,35 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
       ) : (
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentRecipes.map((recipe) => (
-              <div key={recipe._id} className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+            {recipes.map((recipe) => (
+              <div
+                key={recipe._id}
+                className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center"
+              >
                 <Link href={`/recipes/${recipe._id}`}>
-                  <h3 className="text-lg font-semibold text-gray-800 text-center">{recipe.name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 text-center">
+                    {recipe.name}
+                  </h3>
                 </Link>
-                <p className="text-sm text-gray-600 text-center">{recipe.description}</p>
+                <p className="text-sm text-gray-600 text-center">
+                  {recipe.description}
+                </p>
               </div>
             ))}
           </div>
 
           <Pagination className="mt-5">
-            <PaginationContent>
+            <PaginationContent className="cursor-pointer">
               <PaginationItem>
                 <PaginationPrevious
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (currentPage > 1) paginate(currentPage - 1);
-                  }}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  aria-disabled={currentPage === 1}
                 />
               </PaginationItem>
               {[...Array(totalPages)].map((_, index) => (
                 <PaginationItem key={index}>
                   <PaginationLink
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      paginate(index + 1);
-                    }}
+                    onClick={() => handlePageChange(index + 1)}
                     isActive={currentPage === index + 1}
                   >
                     {index + 1}
@@ -88,11 +101,8 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
               ))}
               <PaginationItem>
                 <PaginationNext
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (currentPage < totalPages) paginate(currentPage + 1);
-                  }}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  aria-disabled={currentPage === totalPages}
                 />
               </PaginationItem>
             </PaginationContent>
