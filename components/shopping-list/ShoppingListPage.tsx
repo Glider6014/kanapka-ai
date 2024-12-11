@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Navbar } from "../Navbar";
 import { Checkbox } from "@/components/ui/checkbox";
+import { MainNavbar } from "../home-page/MainNavbar";
 
 type ShoppingItem = {
   _id: string;
@@ -70,8 +71,8 @@ export function ShoppingListPage() {
   };
 
   return (
-    <div className="min-h-screen">
-      <Navbar />
+    <div className="min-h-screen py-4">
+      <MainNavbar />
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-6">Shopping List</h1>
 

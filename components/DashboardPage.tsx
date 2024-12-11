@@ -5,6 +5,7 @@ import { useState } from "react";
 import { RecipeType } from "@/models/Recipe";
 import { FridgesPanel } from "@/components/FridgesPanel";
 import { Navbar } from "./Navbar";
+import { MainNavbar } from "./home-page/MainNavbar";
 
 // Remove the restoreRecipeType utility since we're getting complete recipe data
 
@@ -64,8 +65,8 @@ export function DashboardPage() {
   };
 
   return (
-    <div className="container mx-auto overflow-hidden">
-      <Navbar />
+    <div className="container mx-auto py-4 overflow-hidden">
+      <MainNavbar />
       <div className="flex flex-col md:flex-row gap-4">
         <FridgesPanel
           searchRecipes={handleSearchRecipes}

@@ -6,6 +6,7 @@ import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import { Logo } from "@/components/Logo";
 import { ObjectId } from "mongodb";
+import { MainNavbar } from "@/components/home-page/MainNavbar";
 
 function notFound() {
   return (
@@ -32,7 +33,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="container mx-auto py-4 px-2 sm:px-4">
-      <Navbar />
+      <MainNavbar />
       <div className="p-4 sm:p-6">
         <div className="max-w-full sm:max-w-4xl mx-auto">
           <Header
