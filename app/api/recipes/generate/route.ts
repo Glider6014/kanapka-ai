@@ -13,16 +13,19 @@ const handlePOST = async (req: NextRequest) => {
   const body = await req.json().catch(() => null);
 
   if (!body) {
-    return new NextResponse(JSON.stringify({ error: "Invalid JSON body" }), {
-      status: 400,
-    });
+    return NextResponse.json(
+      { error: "Invalid JSON body" },
+      {
+        status: 400,
+      }
+    );
   }
 
   const { ingredients, count }: { ingredients: string[]; count: number } = body;
 
   if (!ingredients?.length || !count) {
-    return new NextResponse(
-      JSON.stringify({ error: "'ingredients' and 'count' are required." }),
+    return NextResponse.json(
+      { error: "'ingredients' and 'count' are required." },
       { status: 400 }
     );
   }
@@ -32,11 +35,11 @@ const handlePOST = async (req: NextRequest) => {
   const invalidIngredients = validationResults.filter((r) => !r.isValid);
 
   if (invalidIngredients.length > 0) {
-    return new Response(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         error: "Some ingredients are invalid",
         invalidIngredients: invalidIngredients.map((r) => r.ingredient),
-      }),
+      },
       { status: 400 }
     );
   }
@@ -47,12 +50,12 @@ const handlePOST = async (req: NextRequest) => {
     session.user.id
   );
   if (missingIngredients.length > 0) {
-    return new Response(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         error: `Missing ingredients in your fridges`,
         code: "MISSING_INGREDIENTS",
         missingIngredients,
-      }),
+      },
       { status: 422 }
     );
   }
