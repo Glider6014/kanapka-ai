@@ -3,8 +3,9 @@ import bcrypt from "bcryptjs";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import { signUpFormSchema } from "@/lib/formSchemas/authFormSchemas";
+import { processApiHandler } from "@/lib/apiUtils";
 
-export async function POST(req: NextRequest) {
+const POST = async (req: NextRequest) => {
   await connectDB();
 
   const body = await req.json().catch(() => null);
@@ -45,4 +46,8 @@ export async function POST(req: NextRequest) {
     { message: "User created successfully", user },
     { status: 201 }
   );
-}
+};
+
+export default {
+  POST: processApiHandler(POST),
+};
