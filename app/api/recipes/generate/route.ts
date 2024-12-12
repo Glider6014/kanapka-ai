@@ -6,10 +6,34 @@ import { RecipeType } from "@/models/Recipe";
 import Fridge from "@/models/Fridge";
 import { validateIngredients } from "@/lib/ingredients/validateNames";
 import { RecipeGeneratorHistory } from "@/models/RecipeGeneratorHistory";
+import { UserSubscription } from "@/lib/subscriptions";
 
 const handlePOST = async (req: NextRequest) => {
   await connectDB();
   const session = await getServerSessionProcessed();
+
+  if (session.user.subscriptionType === UserSubscription.FREE) {
+    const useCountFromLast24Hours = await RecipeGeneratorHistory.countDocuments(
+      {
+        createdBy: session.user.id,
+        createdAt: {
+          $gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000), // 24 hours ago
+        },
+      }
+    );
+
+    if (useCountFromLast24Hours >= 10) {
+      return NextResponse.json(
+        {
+          error:
+            "You have reached your free daily limit of 10 recipes. Upgrade to plus for unlimited access.",
+        },
+        {
+          status: 422,
+        }
+      );
+    }
+  }
 
   const body = await req.json().catch(() => null);
 

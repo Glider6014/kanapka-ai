@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { planMeals } from "@/lib/mealsPlannerAgent/agent";
-import { getServerSession } from "next-auth";
-import authOptions from "@/lib/nextauth";
-import { processApiHandler } from "@/lib/apiUtils";
+import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
+import { UserSubscription } from "@/lib/subscriptions";
 
 const handlePOST = async (req: NextRequest) => {
   const { preferences, targetDate } = await req.json();
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionProcessed();
+
+  if (session.user.subscriptionType === UserSubscription.FREE) {
+    return NextResponse.json(
+      {
+        error:
+          "You are using the free plan. Please upgrade to a paid plan to access this feature.",
+      },
+      { status: 422 }
+    );
+  }
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
