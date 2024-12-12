@@ -1,21 +1,21 @@
-import Header from '@/components/profile/Header';
-import Stats from '@/components/profile/Stats';
-import { Navbar } from '@/components/Navbar';
-import UserRecipes from '@/components/profile/UserRecipes';
-import connectDB from '@/lib/connectToDatabase';
-import User from '@/models/User';
+import Header from "@/components/profile/Header";
+import Stats from "@/components/profile/Stats";
+import { Navbar } from "@/components/Navbar";
+import UserRecipes from "@/components/profile/UserRecipes";
+import connectDB from "@/lib/connectToDatabase";
+import User from "@/models/User";
+import { Context } from "@/lib/apiUtils";
 
-const ProfilePage = async ({ params }: { params: { id: string } }) => {
+const ProfilePage = async ({ params }: Context) => {
   await connectDB();
   const { id } = params;
-  
+
   const user = await User.findById(id);
   if (!user) {
     return <div>User not found</div>;
   }
 
-    // console.log("Raw user:", user);
-
+  // console.log("Raw user:", user);
 
   return (
     <div className="container mx-auto py-4 px-2 sm:px-4">
@@ -39,6 +39,6 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
       </div>
     </div>
   );
-}
+};
 
 export default ProfilePage;

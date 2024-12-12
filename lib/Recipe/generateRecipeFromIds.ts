@@ -111,23 +111,23 @@ export async function generateRecipeFromIds(
       ingredients: ingredientsText,
     });
 
-    const validation = singleRecipeSchema.safeParse(JSON.parse(result));
+    const validationResult = singleRecipeSchema.safeParse(JSON.parse(result));
 
-    if (!validation.success) {
-      console.error("Recipe validation failed:", validation.error);
+    if (!validationResult.success) {
+      console.error("Recipe validation failed:", validationResult.error);
       return null;
     }
     const recipe = new Recipe({
-      name: validation.data.name,
-      description: validation.data.description,
-      ingredients: validation.data.ingredients.map((ing) => ({
+      name: validationResult.data.name,
+      description: validationResult.data.description,
+      ingredients: validationResult.data.ingredients.map((ing) => ({
         ingredient: new Types.ObjectId(ing.ingredientId),
         amount: ing.amount,
       })),
-      steps: validation.data.steps,
-      prepTime: validation.data.prepTime,
-      cookTime: validation.data.cookTime,
-      difficulty: validation.data.difficulty,
+      steps: validationResult.data.steps,
+      prepTime: validationResult.data.prepTime,
+      cookTime: validationResult.data.cookTime,
+      difficulty: validationResult.data.difficulty,
       createdBy: new Types.ObjectId(userId),
     });
     recipe.save();

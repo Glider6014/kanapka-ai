@@ -1,53 +1,48 @@
 import {
-  withApiErrorHandling,
-  getServerSessionOrCauseUnathorizedError,
+  processApiHandler,
+  getServerSessionProcessed,
+  Context,
 } from "@/lib/apiUtils";
 import connectDB from "@/lib/connectToDatabase";
 import { UserPermissions } from "@/lib/permissions";
 import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
-import { permission } from "process";
 
-type Params = { params: { id: string } };
+const handlePOST = async (req: NextRequest, { params }: Context) => {
+  await connectDB();
 
-export const POST = withApiErrorHandling(
-  async (req: NextRequest, { params }: Params) => {
-    await connectDB();
+  await getServerSessionProcessed([UserPermissions.writeUsers]);
 
-    await getServerSessionOrCauseUnathorizedError([UserPermissions.writeUsers]);
+  const body = await req.json();
 
-    const body = await req.json();
+  const user = await User.findById(params.id);
 
-    const user = await User.findById(params.id);
-
-    if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
-    }
-
-    user.permissions = body.permissions;
-
-    await user.save();
-
-    return NextResponse.json({
-      permissions: user.permissions,
-    });
+  if (!user) {
+    return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
-);
 
-export const DELETE = withApiErrorHandling(
-  async (_req: NextRequest, { params }: Params) => {
-    await connectDB();
+  user.permissions = body.permissions;
 
-    await getServerSessionOrCauseUnathorizedError([
-      UserPermissions.deleteUsers,
-    ]);
+  await user.save();
 
-    const user = await User.findByIdAndDelete(params.id);
+  return NextResponse.json({
+    permissions: user.permissions,
+  });
+};
 
-    if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
-    }
+const handleDELETE = async (_req: NextRequest, { params }: Context) => {
+  await connectDB();
 
-    return NextResponse.json({ message: "User deleted" });
+  await getServerSessionProcessed([UserPermissions.deleteUsers]);
+
+  const user = await User.findByIdAndDelete(params.id);
+
+  if (!user) {
+    return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
-);
+
+  return NextResponse.json({ message: "User deleted" });
+};
+
+export const POST = processApiHandler(handlePOST);
+export const DELETE = processApiHandler(handleDELETE);

@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  withApiErrorHandling,
-  getServerSessionOrCauseUnathorizedError,
-} from "@/lib/apiUtils";
+import { processApiHandler, getServerSessionProcessed } from "@/lib/apiUtils";
 import Fridge from "@/models/Fridge";
 import connectDB from "@/lib/connectToDatabase";
 import { z } from "zod";
 
-export const GET = withApiErrorHandling(async () => {
+const handleGET = async () => {
   await connectDB();
 
-  const session = await getServerSessionOrCauseUnathorizedError();
+  const session = await getServerSessionProcessed();
 
   const userId = session.user.id;
   const fridges = await Fridge.find({
@@ -29,32 +26,36 @@ export const GET = withApiErrorHandling(async () => {
   }
 
   return NextResponse.json(fridges);
-});
+};
 
 const fridgePostForm = z.object({
   name: z.string(),
 });
 
-export const POST = withApiErrorHandling(async (req: NextRequest) => {
+const handlePOST = async (req: NextRequest) => {
   await connectDB();
 
-  const session = await getServerSessionOrCauseUnathorizedError();
-  const body = await req.json().catch(() => ({}));
-  const result = fridgePostForm.safeParse(body);
+  const session = await getServerSessionProcessed();
 
-  if (!result.success) {
+  const body = await req.json().catch(() => ({}));
+  const validationResult = fridgePostForm.safeParse(body);
+
+  if (!validationResult.success) {
     return NextResponse.json(
-      { error: "Invalid input", issues: result.error.issues },
+      { error: "Invalid input", issues: validationResult.error.issues },
       { status: 400 }
     );
   }
 
   const fridge = new Fridge({
-    name: result.data.name,
+    name: validationResult.data.name,
     owner: session.user.id,
   });
 
   await fridge.save();
 
   return NextResponse.json(fridge, { status: 201 });
-});
+};
+
+export const GET = processApiHandler(handleGET);
+export const POST = processApiHandler(handlePOST);

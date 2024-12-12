@@ -1,21 +1,24 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import { signUpFormSchema } from "@/lib/formSchemas/authFormSchemas";
+import { processApiHandler } from "@/lib/apiUtils";
 
-export async function POST(request: Request) {
+const handlePOST = async (req: NextRequest) => {
   await connectDB();
 
-  const body = await request.json().catch(() => null);
+  const body = await req.json().catch(() => null);
+  const validationResult = signUpFormSchema.safeParse(body);
 
-  const result = signUpFormSchema.safeParse(body);
-
-  if (!result.success) {
-    return NextResponse.json({ error: result.error.message }, { status: 400 });
+  if (!validationResult.success) {
+    return NextResponse.json(
+      { error: validationResult.error.message },
+      { status: 400 }
+    );
   }
 
-  const { username, displayName, email, password } = result.data;
+  const { username, displayName, email, password } = validationResult.data;
 
   if (
     await User.exists({
@@ -43,4 +46,6 @@ export async function POST(request: Request) {
     { message: "User created successfully", user },
     { status: 201 }
   );
-}
+};
+
+export const POST = processApiHandler(handlePOST);
