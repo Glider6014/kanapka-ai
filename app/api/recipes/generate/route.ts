@@ -5,6 +5,7 @@ import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
 import { RecipeType } from "@/models/Recipe";
 import Fridge from "@/models/Fridge";
 import { validateIngredients } from "@/lib/ingredients/validateNames";
+import { RecipeGeneratorHistory } from "@/models/RecipeGeneratorHistory";
 
 const handlePOST = async (req: NextRequest) => {
   await connectDB();
@@ -92,6 +93,11 @@ const handlePOST = async (req: NextRequest) => {
           });
           controller.enqueue(encoder.encode(`data: ${chunk}\n\n`));
         }
+
+        await RecipeGeneratorHistory.create({
+          createdBy: session.user.id,
+          ingredients: ingredients,
+        });
       } catch (error) {
         console.error("Stream error:", error);
         controller.enqueue(
