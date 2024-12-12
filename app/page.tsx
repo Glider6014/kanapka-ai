@@ -14,7 +14,7 @@ import PromoBanner from '@/components/home-page/PromoBanner';
 export default function Home() {
   return (
     <>
-      <div className='container mx-auto py-4'>
+      <div className="w-full md:px-4 py-4">
         <MainNavbar />
       </div>
       <div className='w-full'>

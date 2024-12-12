@@ -72,7 +72,9 @@ export function ShoppingListPage() {
 
   return (
     <div className="min-h-screen py-4">
-      <MainNavbar />
+      <div className="w-full md:px-4">
+        <MainNavbar />
+      </div>
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-6">Shopping List</h1>
 

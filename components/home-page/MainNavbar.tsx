@@ -47,7 +47,7 @@ export const MainNavbar = () => {
   const { data: session } = useSession();
 
   return (
-    <div className="relative flex items-center justify-between pl-4 pr-5 md:px-0 py-0 md:py-2 max-w-6xl mx-auto">
+    <div className="relative flex items-center justify-between pl-4 pr-5 md:px-0 py-0 md:py-2 max-w-full mx-auto">
       <div className="flex items-center space-x-4">
         <Logo className="text-3xl md:text-4xl" />
         <NavigationMenu className="hidden lg:flex items-center space-x-4">

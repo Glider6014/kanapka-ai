@@ -70,7 +70,7 @@ const plans = [
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="mb-20 mt-20 font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
+      <h1 className="mb-10 font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
         Choose the right plan for your fridge
       </h1>
 
