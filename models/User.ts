@@ -1,4 +1,5 @@
 import { UserPermissions, userPermissionsList } from "@/lib/permissions";
+import { userSubscriptionsList, UserSubscription } from "@/lib/subscriptions";
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 
 const UserSchema = new Schema({
@@ -18,6 +19,12 @@ const UserSchema = new Schema({
   bio: { type: String, required: true },
   avatar: { type: String, required: true },
   bgc: { type: String, required: true },
+  subscriptionType: {
+    type: String,
+    enum: userSubscriptionsList,
+    required: true,
+    default: UserSubscription.FREE,
+  },
   // following: { type: Number, default: 0 },
   // followers: { type: Number, default: 0 },
 });

@@ -23,6 +23,7 @@ async function getUserWithoutPassword(userId: string) {
     username: user.username,
     displayName: user.displayName,
     permissions: user.permissions,
+    subscriptionType: user.subscriptionType,
   };
 }
 
@@ -69,6 +70,7 @@ const authOptions: NextAuthOptions = {
           username: user.username,
           displayName: user.displayName,
           permissions: user.permissions,
+          subscriptionType: user.subscriptionType,
         };
       },
     }),
