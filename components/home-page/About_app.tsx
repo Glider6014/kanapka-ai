@@ -9,7 +9,7 @@ const AboutApp = () => {
       title: "Recipe Board",
       description:
         "Kanapka AI recipe boards keep your meals organized and your culinary adventures moving forward. At a glance, see everything from “ingredients on hand” to “aww yeah, delicious success!”",
-      image: "about_app.webp",
+      image: "about_app.jpg",
     },
     {
       title: "List",

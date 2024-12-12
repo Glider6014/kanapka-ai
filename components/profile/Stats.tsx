@@ -2,12 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
 
 const Stats = ({ userId }: { userId: string }) => {
   const [generatedRecipesCount, setGeneratedRecipesCount] = useState<number | null>(null);
@@ -42,17 +36,27 @@ const Stats = ({ userId }: { userId: string }) => {
       </h2> */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-lg p-4 text-center shadow-md">
-          <span className="block text-sm text-gray-500 uppercase">Generated Recipes</span>
-          <span className="block text-2xl font-bold text-blue-500 mt-2">
-            {generatedRecipesCount !== null ? generatedRecipesCount : "Loading..."}
+          <span className="block text-sm text-gray-500 uppercase">
+            Generated Recipes
+          </span>
+          <span className="block text-2xl font-bold text-start-prim-primary mt-2">
+            {generatedRecipesCount !== null
+              ? generatedRecipesCount
+              : "Loading..."}
           </span>
         </div>
-        {isOwner && (<div className="bg-white rounded-lg p-4 text-center shadow-md">
-          <span className="block text-sm text-gray-500 uppercase">Favorite Recipes</span>
-          <span className="block text-2xl font-bold text-blue-500 mt-2">
-            {favoriteRecipesCount !== null ? favoriteRecipesCount : "Loading..."}
-          </span>
-        </div>)}
+        {isOwner && (
+          <div className="bg-white rounded-lg p-4 text-center shadow-md">
+            <span className="block text-sm text-gray-500 uppercase">
+              Favorite Recipes
+            </span>
+            <span className="block text-2xl font-bold text-start-prim-primary mt-2">
+              {favoriteRecipesCount !== null
+                ? favoriteRecipesCount
+                : "Loading..."}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

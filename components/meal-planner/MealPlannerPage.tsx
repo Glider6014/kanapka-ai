@@ -5,6 +5,7 @@ import GenerateMealsModal from '@/components/meal-planner/GenerateMealsModal';
 import { CustomEvent } from '@/types/calendar';
 import { Navbar } from '../Navbar';
 import { Button } from '../ui/button';
+import { MainNavbar } from '../home-page/MainNavbar';
 
 const Calendar = dynamic(
   () => import('@/components/meal-planner/BigCalendar'),
@@ -128,21 +129,21 @@ export function MealPlannerPage() {
   }
 
   return (
-    <div className='h-screen'>
-      <div className='md:px-4'>
-        <Navbar/>
+    <div className="h-screen">
+      <div className="md:px-4 py-4">
+        <MainNavbar />
       </div>
-      <header className='p-4 bg-gradient-to-r from-start-prim to-end-prim text-white flex justify-between items-center'>
-        <h1 className='text-xl font-bold'>Meal Planner Calendar</h1>
+      <header className="p-4 bg-gradient-to-r from-start-prim to-end-prim text-white flex justify-between items-center">
+        <h1 className="text-xl font-bold">Meal Planner Calendar</h1>
         <Button
-          className='text-white bg-black hover:bg-gray-800 rounded'
+          className="text-white bg-black hover:bg-gray-800 rounded"
           onClick={() => setIsModalOpen(true)}
-          variant={'default'}
+          variant={"default"}
         >
           Generate Meals
         </Button>
       </header>
-      <main className='h-full'>
+      <main className="h-full">
         <Calendar
           events={events}
           setEvents={setEvents}

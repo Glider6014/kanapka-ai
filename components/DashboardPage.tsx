@@ -5,6 +5,7 @@ import { useState } from "react";
 import { RecipeType } from "@/models/Recipe";
 import { FridgesPanel } from "@/components/FridgesPanel";
 import { Navbar } from "./Navbar";
+import { MainNavbar } from "./home-page/MainNavbar";
 
 export function DashboardPage() {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
@@ -67,8 +68,11 @@ export function DashboardPage() {
   };
 
   return (
+    <>
+    <div className="w-full md:px-4 py-4">
+        <MainNavbar />
+    </div>
     <div className="container mx-auto overflow-hidden">
-      <Navbar />
       <div className="flex flex-col md:flex-row gap-4">
         <FridgesPanel
           searchRecipes={handleSearchRecipes}
@@ -85,8 +89,9 @@ export function DashboardPage() {
               {isSearching ? "Generating recipes..." : "No recipes to display"}
             </div>
           )}
-        </div>
+         </div>
+       </div>
       </div>
-    </div>
+    </>
   );
 }
