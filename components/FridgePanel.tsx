@@ -44,11 +44,14 @@ export const FridgePanel = ({
   const [isSaved, setIsSaved] = useState(true);
   const [isTryingToSearch, setIsTryingToSearch] = useState(false);
   const [keyPressed, setKeyPressed] = useState<string | null>(null);
+  const [invalidIngredients, setInvalidIngredients] = useState<string[]>([]);
 
   const saveIngredients = useCallback(() => {
     setIsSaving(true);
+    setInvalidIngredients([]); // Reset invalid ingredients
 
     // TODO: Make it parrallel and add waiting animation to each input
+
     for (const [_, input] of Object.entries(inputRefs.current)) {
       input.disabled = true;
     }
@@ -64,8 +67,11 @@ export const FridgePanel = ({
     })
       .then(async (res) => {
         if (!res.ok) {
-          alert(`Failed to save ingredients: ${(await res.json()).error}`);
-          throw new Error("Failed to save ingredients");
+          const data = await res.json();
+          if (data.invalidIngredients) {
+            setInvalidIngredients(data.invalidIngredients);
+          }
+          throw new Error(data.error || "Failed to save ingredients");
         }
         return res;
       })
@@ -282,6 +288,8 @@ export const FridgePanel = ({
               onAdd={handleAdd}
               onKeyDown={(e) => handleKeyDown(Number(key), e)}
               onKeyUp={handleKeyUp}
+              error={invalidIngredients.includes(ingredient)} // Add error prop
+              errorMessage="This ingredient is not valid or appropriate"
             />
           )
         )}

@@ -6,26 +6,29 @@ import { RecipeType } from "@/models/Recipe";
 import { FridgesPanel } from "@/components/FridgesPanel";
 import { Navbar } from "./Navbar";
 
-// Remove the restoreRecipeType utility since we're getting complete recipe data
-
 export function DashboardPage() {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string>("");
 
   const handleSearchRecipes = async (ingredients: string[]) => {
     setIsSearching(true);
     setRecipes([]);
+    setSearchError("");
 
     try {
       const response = await fetch("/api/recipes/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ingredients, count: 5 }),
+        body: JSON.stringify({
+          ingredients: ingredients.filter((i) => i.length > 0),
+          count: 5,
+        }),
       });
 
       if (!response.ok || !response.body) {
         const error = await response.json();
-        alert(`Failed to search recipes: ${error.error}`);
+        setSearchError(error.error || "Failed to search recipes");
         return;
       }
 
@@ -73,7 +76,9 @@ export function DashboardPage() {
           isSearchRecipesButtonDisabled={isSearching}
         />
         <div className="w-full md:w-3/5 mt-4 md:mt-0">
-          {recipes.length > 0 ? (
+          {searchError ? (
+            <div className="text-center text-red-500">{searchError}</div>
+          ) : recipes.length > 0 ? (
             <RecipesList recipes={recipes} hasFilters={false} />
           ) : (
             <div className="text-center text-gray-500">

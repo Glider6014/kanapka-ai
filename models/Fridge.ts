@@ -45,12 +45,37 @@ FridgeSchema.methods.isMember = function (
   return this.members.some((member) => member._id.toString() === userId);
 };
 
+FridgeSchema.statics.validateUserIngredients = async function (
+  ingredients: string[],
+  userId: string
+): Promise<string[]> {
+  const userFridges = await this.find({
+    $or: [{ owner: userId }, { members: userId }],
+  });
+
+  const availableIngredients = new Set(
+    userFridges.flatMap((fridge: { ingredients: any }) => fridge.ingredients)
+  );
+
+  return ingredients.filter(
+    (ingredient) => !availableIngredients.has(ingredient)
+  );
+};
+
 export type FridgeType = InferSchemaType<typeof FridgeSchema> & {
   isOwner: (sessionOrUserOrId: string | UserType | Session) => boolean;
   isMember: (sessionOrUserOrId: string | UserType | Session) => boolean;
 };
 
+export type FridgeModel = Model<FridgeType> & {
+  validateUserIngredients(
+    ingredients: string[],
+    userId: string
+  ): Promise<string[]>;
+};
+
 const Fridge =
-  (models.Fridge as Model<FridgeType>) || model("Fridge", FridgeSchema);
+  (models.Fridge as FridgeModel) ||
+  model<FridgeType, FridgeModel>("Fridge", FridgeSchema);
 
 export default Fridge;
