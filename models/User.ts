@@ -7,6 +7,8 @@ const UserSchema = new Schema({
   displayName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  emailVerified: { type: Boolean, default: false },
+  verificationToken: String,
   permissions: {
     type: [String],
     enum: userPermissionsList,

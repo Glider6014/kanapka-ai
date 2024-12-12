@@ -51,8 +51,13 @@ const authOptions: NextAuthOptions = {
             { username: credentials.emailOrUsername },
           ],
         });
+
         if (!user) {
           throw new Error("No user found with this email");
+        }
+
+        if (!user.emailVerified) {
+          throw new Error("Please verify your email before signing in");
         }
 
         const isValid = await bcrypt.compare(
@@ -69,6 +74,7 @@ const authOptions: NextAuthOptions = {
           username: user.username,
           displayName: user.displayName,
           permissions: user.permissions,
+          emailVerified: user.emailVerified,
         };
       },
     }),
