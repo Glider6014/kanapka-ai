@@ -3,6 +3,7 @@ import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { StateGraph, MessagesAnnotation } from "@langchain/langgraph";
 import { tools } from "./tools";
+import { MealPlannerHistory } from "@/models/MealPlannerHistory";
 
 const toolNode = new ToolNode(tools);
 
@@ -132,6 +133,11 @@ Remember to use the exact IDs returned by each tool!`;
     if (!lastMessage?.content) {
       throw new Error("No response received from the model.");
     }
+
+    await MealPlannerHistory.create({
+      createdBy: userId,
+      preferences: preferences,
+    });
 
     return typeof lastMessage.content === "string"
       ? lastMessage.content
