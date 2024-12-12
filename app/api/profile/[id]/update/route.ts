@@ -18,7 +18,6 @@ function canEditUser(user: UserType, session: Session) {
 }
 
 const postRequestSchema = z.object({
-  userId: z.string(),
   updateData: z.object({
     displayName: z.string().optional(),
     bio: z.string().optional(),
