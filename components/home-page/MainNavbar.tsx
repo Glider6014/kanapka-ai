@@ -16,8 +16,9 @@ import {
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
-import { useSession } from "next-auth/react";
-import UserDropdownMenu from "@/components/UserDropDownMenu";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import UserDropDownMenu from "../UserDropDownMenu";
 
 const components = [
   {
@@ -45,6 +46,11 @@ const components = [
 export const MainNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: session } = useSession();
+  const router = useRouter();
+
+  const logout = async () => {
+    await signOut({ callbackUrl: "/" });
+  };
 
   return (
     <div className="relative flex items-center justify-between pl-4 pr-5 md:px-0 py-0 md:py-2 max-w-full mx-auto">
@@ -103,7 +109,9 @@ export const MainNavbar = () => {
 
       <div className="hidden lg:flex items-center space-x-4 z-50">
         {session?.user?.id ? (
-          <UserDropdownMenu />
+          <div className="flex items-center space-x-4">
+            <UserDropDownMenu />
+          </div>
         ) : (
           <>
             <Button
@@ -136,26 +144,45 @@ export const MainNavbar = () => {
       </button>
 
       {isMobileMenuOpen && (
-        <div className="absolute top-16 left-0 right-0 bg-white shadow-md p-4 lg:hidden z-10">
+        <div className="absolute top-12 left-0 right-0 bg-white shadow-md p-4 lg:hidden z-10">
           <ul className="space-y-4">
-            <li>
-              <Button
-                variant="outline"
-                className="bg-black hover:bg-black hover:text-white text-white font-bold hover:rounded-none w-full md:w-auto"
-                onClick={() => (window.location.href = "/user/signin")}
-              >
-                LOGIN
-              </Button>
-            </li>
-            <li>
-              <Button
-                variant="outline"
-                className="text-white hover:rounded-none font-bold bg-gradient-to-r from-purple-700 to-orange-500 w-full md:w-auto hover:text-white"
-                onClick={() => (window.location.href = "/user/signup")}
-              >
-                Get started for free
-              </Button>
-            </li>
+            {session?.user?.id ? (
+              <>
+                <li>
+                  <button
+                    className="block text-gray-800 hover:text-black"
+                    onClick={() => router.push(`/profile/${session?.user?.id}`)}
+                  >
+                    Profile
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="block text-gray-800 hover:text-black"
+                    onClick={() => router.push(`/settings`)}
+                  >
+                    Settings
+                  </button>
+                </li>
+              </>
+            ) : (
+              <>
+                <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4">
+                  <Link href="/user/signin" passHref>
+                    <span className="block text-gray-800 hover:text-black">
+                      Login
+                    </span>
+                  </Link>
+                </div>
+                <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4">
+                  <Link href="/user/signup" passHref>
+                    <span className="block text-gray-800 hover:text-black">
+                      Get started for free
+                    </span>
+                  </Link>
+                </div>
+              </>
+            )}
             <li>
               <Link href="/community" passHref>
                 <span className="block text-gray-800 hover:text-black">
@@ -179,6 +206,21 @@ export const MainNavbar = () => {
                 </Link>
               </li>
             ))}
+
+            {session?.user?.id ? (
+              <>
+                <li>
+                  <button
+                    className="block text-gray-800 hover:text-black"
+                    onClick={logout}
+                  >
+                    Logout
+                  </button>
+                </li>
+              </>
+            ) : (
+              <></>
+            )}
           </ul>
         </div>
       )}
@@ -210,4 +252,5 @@ const ListItem = React.forwardRef<
     </li>
   );
 });
+
 ListItem.displayName = "ListItem";
