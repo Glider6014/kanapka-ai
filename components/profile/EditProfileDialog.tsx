@@ -29,7 +29,7 @@ import { Pencil } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
 type EditProfileDialogProps = {
-  user: {  
+  user: {
     displayName: string;
     bio: string;
     avatar: string;
@@ -50,7 +50,7 @@ const FormSchema = z.object({
 const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
-  
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: user,
@@ -58,29 +58,28 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     try {
-      const response = await fetch("/api/profile/update", {
+      const response = await fetch(`/api/profile/${session?.user?.id}/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            userId: session?.user?.id,
-            updateData: {
-              displayName: values.displayName,
-              avatar: values.avatar,
-              bgc: values.bgc,
-              bio: values.bio,
-            },
-          }),
+          updateData: {
+            displayName: values.displayName,
+            avatar: values.avatar,
+            bgc: values.bgc,
+            bio: values.bio,
+          },
+        }),
       });
-  
+
       const data = await response.json();
-  
+
       if (!response.ok) {
         console.error("Profile update error:", data.message);
         return;
       }
-      
+
       console.log("Profile updated successfully:", data);
       setOpen(false);
       window.location.reload();
@@ -125,7 +124,10 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
                 <FormItem>
                   <FormLabel>Avatar</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="https://example.com/avatar.jpg" />
+                    <Input
+                      {...field}
+                      placeholder="https://example.com/avatar.jpg"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -138,7 +140,10 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
                 <FormItem>
                   <FormLabel>Background</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="https://example.com/background.jpg" />
+                    <Input
+                      {...field}
+                      placeholder="https://example.com/background.jpg"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -151,7 +156,10 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
                 <FormItem>
                   <FormLabel>Bio</FormLabel>
                   <FormControl>
-                    <Textarea {...field} placeholder="Tell us a little bit about yourself." />
+                    <Textarea
+                      {...field}
+                      placeholder="Tell us a little bit about yourself."
+                    />
                   </FormControl>
                   <FormDescription>
                     Your bio can be between 10 and 160 characters.

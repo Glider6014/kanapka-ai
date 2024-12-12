@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/connectToDatabase";
 import Recipe, { RecipeType } from "@/models/Recipe";
 import { z } from "zod";
+import { processApiHandler } from "@/lib/apiUtils";
 
 export const GetRecipesSchema = z.object({
   // Pagination
@@ -60,7 +61,7 @@ function createQuery(params: GetRecipesSchemaType) {
   return query;
 }
 
-export async function GET(req: NextRequest) {
+const handleGET = async (req: NextRequest) => {
   await connectDB();
 
   const searchParams = Object.fromEntries(req.nextUrl.searchParams.entries());
@@ -80,4 +81,6 @@ export async function GET(req: NextRequest) {
   };
 
   return NextResponse.json(response);
-}
+};
+
+export const GET = processApiHandler(handleGET);

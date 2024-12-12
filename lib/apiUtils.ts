@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/nextauth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export class ApiError extends Error {
   status: number;
@@ -18,12 +18,19 @@ export class UnauthorizedError extends ApiError {
   }
 }
 
-// @ts-expect-error parameter 'handler' implicitly has an 'any' type
-export function withApiErrorHandling(handler) {
-  // @ts-expect-error parameter 'args' implicitly has an 'any' type
-  return async (...args) => {
+export type Context = {
+  params: Record<string, string>;
+};
+
+export type ApiHandler = (
+  req: NextRequest,
+  context: Context
+) => Promise<NextResponse>;
+
+export function processApiHandler(handler: ApiHandler) {
+  return async (req: NextRequest, context: Context) => {
     try {
-      return await handler(...args);
+      return await handler(req, context);
     } catch (error) {
       if (error instanceof ApiError) {
         return NextResponse.json(
@@ -38,9 +45,7 @@ export function withApiErrorHandling(handler) {
   };
 }
 
-export async function getServerSessionOrCauseUnathorizedError(
-  permissions?: string[]
-) {
+export async function getServerSessionProcessed(permissions?: string[]) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {

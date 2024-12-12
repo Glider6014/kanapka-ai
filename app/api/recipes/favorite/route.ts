@@ -1,20 +1,18 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
-import {
-  getServerSessionOrCauseUnathorizedError,
-  withApiErrorHandling,
-} from "@/lib/apiUtils";
+import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
 
-// List all favorites
-export const GET = withApiErrorHandling(async () => {
+const handleGET = async () => {
   await connectDB();
 
-  const session = await getServerSessionOrCauseUnathorizedError();
+  const session = await getServerSessionProcessed();
 
   const user = await User.findById(session.user.id)
     .populate("favorites")
     .select("favorites");
 
   return NextResponse.json({ favorites: user?.favorites || [] });
-});
+};
+
+export const GET = processApiHandler(handleGET);

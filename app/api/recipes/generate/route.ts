@@ -1,30 +1,62 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateRecipes } from "@/lib/Recipe/generateRecipes";
 import connectDB from "@/lib/connectToDatabase";
-import {
-  getServerSessionOrCauseUnathorizedError,
-  withApiErrorHandling,
-} from "@/lib/apiUtils";
+import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
 import { RecipeType } from "@/models/Recipe";
+import Fridge from "@/models/Fridge";
+import { validateIngredients } from "@/lib/ingredients/validateNames";
 
-export const POST = withApiErrorHandling(async (req: NextRequest) => {
+const handlePOST = async (req: NextRequest) => {
   await connectDB();
-  const session = await getServerSessionOrCauseUnathorizedError();
+  const session = await getServerSessionProcessed();
 
   const body = await req.json().catch(() => null);
 
   if (!body) {
-    return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
-      status: 400,
-    });
+    return NextResponse.json(
+      { error: "Invalid JSON body" },
+      {
+        status: 400,
+      }
+    );
   }
 
   const { ingredients, count }: { ingredients: string[]; count: number } = body;
 
   if (!ingredients?.length || !count) {
-    return new Response(
-      JSON.stringify({ error: "'ingredients' and 'count' are required." }),
+    return NextResponse.json(
+      { error: "'ingredients' and 'count' are required." },
       { status: 400 }
+    );
+  }
+
+  // First validate all ingredients
+  const validationResults = await validateIngredients(ingredients);
+  const invalidIngredients = validationResults.filter((r) => !r.isValid);
+
+  if (invalidIngredients.length > 0) {
+    return NextResponse.json(
+      {
+        error: "Some ingredients are invalid",
+        invalidIngredients: invalidIngredients.map((r) => r.ingredient),
+      },
+      { status: 400 }
+    );
+  }
+
+  // Validate ingredients against fridge contents
+  const missingIngredients = await Fridge.validateUserIngredients(
+    ingredients,
+    session.user.id
+  );
+  if (missingIngredients.length > 0) {
+    return NextResponse.json(
+      {
+        error: `Missing ingredients in your fridges`,
+        code: "MISSING_INGREDIENTS",
+        missingIngredients,
+      },
+      { status: 422 }
     );
   }
 
@@ -75,11 +107,13 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
     },
   });
 
-  return new Response(stream, {
+  return new NextResponse(stream, {
     headers: {
       "Content-Type": "text/event-stream",
       Connection: "keep-alive",
       "Cache-Control": "no-cache, no-transform",
     },
   });
-});
+};
+
+export const POST = processApiHandler(handlePOST);

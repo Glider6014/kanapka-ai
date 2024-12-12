@@ -2,14 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { isValidObjectId } from "mongoose";
 import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
+import { Context, processApiHandler } from "@/lib/apiUtils";
 
-export type GETParams = {
-  params: {
-    id: string;
-  };
-};
-
-export async function GET(req: NextRequest, { params }: GETParams) {
+const handleGET = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const { id } = params;
@@ -28,4 +23,6 @@ export async function GET(req: NextRequest, { params }: GETParams) {
   }
 
   return NextResponse.json(recipe);
-}
+};
+
+export const GET = processApiHandler(handleGET);

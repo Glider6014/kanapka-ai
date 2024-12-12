@@ -1,6 +1,5 @@
 import Header from "@/components/profile/Header";
 import Stats from "@/components/profile/Stats";
-import { Navbar } from "@/components/Navbar";
 import UserRecipes from "@/components/profile/UserRecipes";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
@@ -19,7 +18,7 @@ function notFound() {
   );
 }
 
-const ProfilePage = async ({ params }: { params: { id: string } }) => {
+const ProfilePage = async ({ params }: Context) => {
   await connectDB();
   const { id } = params;
   if (!ObjectId.isValid(id)) {

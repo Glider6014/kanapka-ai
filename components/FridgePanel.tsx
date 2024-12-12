@@ -43,11 +43,15 @@ export const FridgePanel = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(true);
   const [isTryingToSearch, setIsTryingToSearch] = useState(false);
+  const [keyPressed, setKeyPressed] = useState<string | null>(null);
+  const [invalidIngredients, setInvalidIngredients] = useState<string[]>([]);
 
   const saveIngredients = useCallback(() => {
     setIsSaving(true);
+    setInvalidIngredients([]); // Reset invalid ingredients
 
     // TODO: Make it parrallel and add waiting animation to each input
+
     for (const [_, input] of Object.entries(inputRefs.current)) {
       input.disabled = true;
     }
@@ -63,8 +67,11 @@ export const FridgePanel = ({
     })
       .then(async (res) => {
         if (!res.ok) {
-          alert(`Failed to save ingredients: ${(await res.json()).error}`);
-          throw new Error("Failed to save ingredients");
+          const data = await res.json();
+          if (data.invalidIngredients) {
+            setInvalidIngredients(data.invalidIngredients);
+          }
+          throw new Error(data.error || "Failed to save ingredients");
         }
         return res;
       })
@@ -163,6 +170,92 @@ export const FridgePanel = ({
     setIsTryingToSearch(true);
   };
 
+  const handleKeyDown = useCallback(
+    (key: number, event: React.KeyboardEvent<HTMLInputElement>) => {
+      const input = inputRefs.current[key];
+      if (event.key === "Delete" && keyPressed !== event.key) {
+        setKeyPressed(event.key);
+        if (input && input.value.trim() === "") {
+          const keys = Object.keys(inputRefs.current).map(Number);
+          const index = keys.indexOf(key);
+          if (index > 0) {
+            const prevKey = keys[index - 1];
+            inputRefs.current[prevKey].value = "";
+            handleIngredientChange(prevKey, "");
+            inputRefs.current[prevKey]?.focus();
+          }
+        } else {
+          input.value = "";
+          handleIngredientChange(key, "");
+          inputRefs.current[key]?.focus();
+        }
+      } else if (
+        event.key === "Backspace" &&
+        input &&
+        input.value.trim() === ""
+      ) {
+        const keys = Object.keys(inputRefs.current).map(Number);
+        const index = keys.indexOf(key);
+        if (index > 0) {
+          const prevKey = keys[index - 1];
+          inputRefs.current[prevKey]?.focus();
+          event.preventDefault();
+        }
+      } else if (event.key === "Enter" && input.value.trim() !== "") {
+        refreshIngredients(true);
+        const nextEmptyInput = Object.values(inputRefs.current).find(
+          (input) => input && input.value.trim() === ""
+        );
+        nextEmptyInput?.focus();
+      } else if (event.key === "ArrowDown") {
+        const keys = Object.keys(inputRefs.current).map(Number);
+        const index = keys.indexOf(key);
+        if (index < keys.length - 1) {
+          const nextKey = keys[index + 1];
+          inputRefs.current[nextKey]?.focus();
+        }
+      } else if (event.key === "ArrowUp") {
+        const keys = Object.keys(inputRefs.current).map(Number);
+        const index = keys.indexOf(key);
+        if (index > 0) {
+          const prevKey = keys[index - 1];
+          inputRefs.current[prevKey]?.focus();
+          event.preventDefault();
+        }
+      } else if (event.key === "ArrowLeft") {
+        const selectionStart = input.selectionStart;
+        if (selectionStart === 0) {
+          const keys = Object.keys(inputRefs.current).map(Number);
+          const index = keys.indexOf(key);
+          if (index > 0) {
+            const prevKey = keys[index - 1];
+            inputRefs.current[prevKey]?.focus();
+            event.preventDefault();
+          }
+        }
+      } else if (event.key === "ArrowRight") {
+        const selectionEnd = input.selectionEnd;
+        if (selectionEnd === input.value.length) {
+          const keys = Object.keys(inputRefs.current).map(Number);
+          const index = keys.indexOf(key);
+          if (index < keys.length - 1) {
+            const nextKey = keys[index + 1];
+            inputRefs.current[nextKey]?.focus();
+            event.preventDefault();
+          }
+        }
+      }
+    },
+    [keyPressed, handleIngredientChange, refreshIngredients]
+  );
+
+  const handleKeyUp = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      setKeyPressed(null);
+    },
+    []
+  );
+
   useEffect(() => {
     if (!isTryingToSearch) return;
 
@@ -193,6 +286,10 @@ export const FridgePanel = ({
               isDeleteButtonDisabled={isSaving}
               onFocus={handleOnFocusChange}
               onAdd={handleAdd}
+              onKeyDown={(e) => handleKeyDown(Number(key), e)}
+              onKeyUp={handleKeyUp}
+              error={invalidIngredients.includes(ingredient)} // Add error prop
+              errorMessage="This ingredient is not valid or appropriate"
             />
           )
         )}

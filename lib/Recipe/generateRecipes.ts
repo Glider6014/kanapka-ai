@@ -62,13 +62,13 @@ Return the results as: { "recipeIds": ["id1", "id2", ...] }`
     const lastMessage = agentMessages[agentMessages.length - 1];
 
     const parsedOutput = await parser.parse(lastMessage.content);
-    const validation = outputSchema.safeParse(JSON.parse(parsedOutput));
+    const validationResult = outputSchema.safeParse(JSON.parse(parsedOutput));
 
-    if (!validation.success) {
+    if (!validationResult.success) {
       throw new Error("Invalid response format from agent.");
     }
 
-    const { recipeIds } = validation.data;
+    const { recipeIds } = validationResult.data;
 
     for (const recipeId of recipeIds) {
       const recipe = await Recipe.findById(recipeId);
