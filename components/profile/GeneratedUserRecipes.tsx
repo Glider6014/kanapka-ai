@@ -22,19 +22,19 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 12;
+  const limitRecipesPerPage = 12;
 
   const fetchRecipes = async (page: number) => {
     setLoading(true);
     try {
-      const offset = (page - 1) * limit;
+      const offset = (page - 1) * limitRecipesPerPage;
       const response = await fetch(
-        `/api/recipes?offset=${offset}&limit=${limit}&createdBy=${userId}`
+        `/api/recipes?offset=${offset}&limit=${limitRecipesPerPage}&createdBy=${userId}`
       );
       const data = await response.json();
 
       setRecipes(data.results || []);
-      setTotalPages(Math.ceil(data.count / limit));
+      setTotalPages(Math.ceil(data.count / limitRecipesPerPage));
     } catch (error) {
       console.error("Error fetching recipes:", error);
     } finally {

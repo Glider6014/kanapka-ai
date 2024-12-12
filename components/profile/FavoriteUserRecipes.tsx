@@ -22,7 +22,7 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 12;
+  const limitRecipesPerPage = 12;
 
   const fetchFavoriteRecipes = async (page: number) => {
     try {
@@ -31,7 +31,7 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
 
       setFavoriteRecipes(data.favoriteRecipes || []);
       setTotalPages(
-        Math.max(1, Math.ceil(data.favoriteRecipes.length / limit))
+        Math.max(1, Math.ceil(data.favoriteRecipes.length / limitRecipesPerPage))
       );
     } catch (error) {
       console.error("Error fetching favorite recipes:", error);
@@ -51,8 +51,8 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
   };
 
   const paginatedRecipes = favoriteRecipes.slice(
-    (currentPage - 1) * limit,
-    currentPage * limit
+    (currentPage - 1) * limitRecipesPerPage,
+    currentPage * limitRecipesPerPage
   );
 
   if (loading) {
