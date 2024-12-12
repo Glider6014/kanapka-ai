@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { KeyboardEvent, forwardRef } from "react";
+import { KeyboardEvent, forwardRef, useState, useRef } from "react";
 
 type InputIngredientProps = {
   value: string;
@@ -12,6 +12,8 @@ type InputIngredientProps = {
   onBlur?: () => void;
   inputRef?: (el: HTMLInputElement | null) => void;
   isDeleteButtonDisabled?: boolean;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   error?: boolean;
   errorMessage?: string;
 };
@@ -27,48 +29,65 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
       onBlur,
       inputRef,
       isDeleteButtonDisabled,
+      onKeyDown,
+      onKeyUp,
       error,
       errorMessage = "Invalid ingredient",
     },
     ref
   ) => {
-    const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
+    const [keyPressed, setKeyPressed] = useState<string | null>(null);
+    const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter" && value.trim() !== "") {
         onAdd?.();
+        const nextEmptyInput = Object.values(inputRefs.current).find(
+          (input) => input && input.value.trim() === ""
+        );
+        nextEmptyInput?.focus();
+      }
+      if (keyPressed !== e.key) {
+        setKeyPressed(e.key);
+        onKeyDown?.(e);
       }
     };
 
+    const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
+      setKeyPressed(null);
+      onKeyUp?.(e);
+    };
+
     return (
-      <div className="w-full mb-4">
-        <div className="flex items-center gap-2 w-full">
-          <div className="relative flex-grow">
-            <Input
-              type="text"
-              placeholder="Enter ingredient..."
-              className={`w-full ${
-                error ? "border-red-500 focus-visible:ring-red-500" : ""
-              }`}
-              value={value}
-              onChange={onChange}
-              onFocus={onFocus}
-              onBlur={onBlur}
-              onKeyPress={handleKeyPress}
-              ref={(el) => {
-                if (ref) {
-                  if (typeof ref === "function") {
-                    ref(el);
-                  } else {
-                    ref.current = el;
-                  }
+      <div className="flex flex-col gap-2 mb-4 w-full">
+        <div className="flex items-center gap-2">
+          <Input
+            type="text"
+            placeholder="Enter ingredient..."
+            className={`w-full ${
+              error ? "border-red-500 focus-visible:ring-red-500" : ""
+            }`}
+            value={value}
+            onChange={onChange}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onKeyDown={handleKeyDown}
+            onKeyUp={handleKeyUp}
+            ref={(el) => {
+              if (ref) {
+                if (typeof ref === "function") {
+                  ref(el);
+                } else {
+                  ref.current = el;
                 }
-                if (inputRef) inputRef(el);
-              }}
-            />
-          </div>
+              }
+              if (inputRef) inputRef(el);
+            }}
+          />
           {value.trim() !== "" && (
             <Button
               variant="destructive"
-              className="p-2 rounded-md h-9 w-11"
+              className={`p-2 rounded-md ${error ? "h-9 w-11" : "h-9 w-11"}`}
               onClick={onRemove}
               disabled={isDeleteButtonDisabled}
             >
@@ -76,7 +95,7 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
             </Button>
           )}
         </div>
-        {error && <p className="text-sm text-red-500 mt-1">{errorMessage}</p>}
+        {error && <p className="text-sm text-red-500 pl-1">{errorMessage}</p>}
       </div>
     );
   }

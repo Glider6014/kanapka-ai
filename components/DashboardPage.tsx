@@ -79,7 +79,7 @@ export function DashboardPage() {
           {searchError ? (
             <div className="text-center text-red-500">{searchError}</div>
           ) : recipes.length > 0 ? (
-            <RecipesList recipes={recipes} />
+            <RecipesList recipes={recipes} hasFilters={false} />
           ) : (
             <div className="text-center text-gray-500">
               {isSearching ? "Generating recipes..." : "No recipes to display"}
