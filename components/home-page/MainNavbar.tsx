@@ -89,13 +89,13 @@ export const MainNavbar = () => {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            <NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <Link href="/" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Community
                 </NavigationMenuLink>
               </Link>
-            </NavigationMenuItem>
+            </NavigationMenuItem> */}
             <NavigationMenuItem>
               <Link href="/pricing" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -183,13 +183,13 @@ export const MainNavbar = () => {
                 </div>
               </>
             )}
-            <li>
+            {/* <li>
               <Link href="/community" passHref>
                 <span className="block text-gray-800 hover:text-black">
                   Community
                 </span>
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link href="/pricing" passHref>
                 <span className="block text-gray-800 hover:text-black">
@@ -208,16 +208,11 @@ export const MainNavbar = () => {
             ))}
 
             {session?.user?.id ? (
-              <>
-                <li>
-                  <button
-                    className="block text-gray-800 hover:text-black"
-                    onClick={logout}
-                  >
-                    Logout
-                  </button>
-                </li>
-              </>
+              <li>
+                <button className="block text-red-500" onClick={logout}>
+                  Logout
+                </button>
+              </li>
             ) : (
               <></>
             )}

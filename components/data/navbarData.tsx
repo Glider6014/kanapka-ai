@@ -33,6 +33,11 @@ export const NavbarData = () => {
       href: "/meal-planner",
       className: standardStyle,
     },
+    {
+      label: "Shopping list",
+      href: "/shopping-list",
+      className: standardStyle,
+    },
     // {
     //   label: "Logout",
     //   className: standardStyle,

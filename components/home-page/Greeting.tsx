@@ -10,7 +10,10 @@ export default function Greeting() {
           </h1>
           <p className="text-lg md:text-3xl mb-8">For big or small.</p>
           <form className="flex flex-col md:flex-row gap-4">
-            <Link href="/user/signup" className="bg-black font-bold text-white px-6 py-2 rounded-md transition">
+            <Link
+              href="/user/signup"
+              className="bg-black font-bold text-center text-white px-6 py-2 rounded-md transition"
+            >
               Sign up - it's free!
             </Link>
           </form>

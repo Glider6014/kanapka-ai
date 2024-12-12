@@ -15,10 +15,12 @@ import { Logo } from "@/components/Logo";
 import { useRouter } from "next/navigation";
 import { NavbarData } from "@/components/data/navbarData";
 import UserDropDownMenu from "./UserDropDownMenu";
+import { useSession } from "next-auth/react";
 
 export const Navbar = () => {
   const router = useRouter();
   const navbarItems = NavbarData();
+  const { data: session } = useSession();
 
   return (
     <nav className="my-4 flex flex-col md:flex-row items-center justify-between mx-4 md:mx-0 gap-4 z-50">
@@ -28,18 +30,18 @@ export const Navbar = () => {
           <DropdownMenu>
             <DropdownMenuList className="flex flex-col gap-2 w-full">
               {navbarItems.map((item, index) => (
-          <DropdownMenuItem key={index} className="w-full">
-            <DropdownMenuLink
-              href={item.href ?? "#"}
-              className={`w-full ${item.className}`}
-              onClick={(e) => {
-                e.preventDefault();
-                router.push(item.href);
-              }}
-            >
-              {item.label.toUpperCase()}
-            </DropdownMenuLink>
-          </DropdownMenuItem>
+                <DropdownMenuItem key={index} className="w-full">
+                  <DropdownMenuLink
+                    href={item.href ?? "#"}
+                    className={`w-full ${item.className}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      router.push(item.href);
+                    }}
+                  >
+                    {item.label.toUpperCase()}
+                  </DropdownMenuLink>
+                </DropdownMenuItem>
               ))}
             </DropdownMenuList>
           </DropdownMenu>
