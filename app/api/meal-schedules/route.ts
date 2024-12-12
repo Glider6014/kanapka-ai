@@ -29,6 +29,9 @@ const handleGET = async () => {
     const endDate = new Date(startDate);
     endDate.setMinutes(startDate.getMinutes() + (schedule.duration || 0));
 
+    const recipe = schedule.recipeId;
+    if (!recipe) return null;
+
     return {
       id: schedule._id.toString(),
       title: schedule.recipeId.name,
@@ -40,7 +43,9 @@ const handleGET = async () => {
     };
   });
 
-  return NextResponse.json({ events });
+  const filteredEvents = events.filter((e) => e);
+
+  return NextResponse.json({ events: filteredEvents });
 };
 
 export const GET = processApiHandler(handleGET);
