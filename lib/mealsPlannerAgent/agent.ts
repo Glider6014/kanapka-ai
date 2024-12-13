@@ -1,20 +1,20 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { ToolNode } from "@langchain/langgraph/prebuilt";
-import { StateGraph, MessagesAnnotation } from "@langchain/langgraph";
-import { tools } from "./tools";
-import { MealPlannerHistory } from "@/models/MealPlannerHistory";
+import { ChatOpenAI } from '@langchain/openai';
+import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { ToolNode } from '@langchain/langgraph/prebuilt';
+import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
+import { tools } from './tools';
+import { MealPlannerHistory } from '@/models/MealPlannerHistory';
 
 const toolNode = new ToolNode(tools);
 
 const model = new ChatOpenAI({
-  modelName: "gpt-4o-mini",
+  modelName: 'gpt-4o-mini',
   temperature: 0,
 }).bindTools(tools);
 
 function shouldContinue({ messages }: typeof MessagesAnnotation.State) {
   const lastMessage = messages[messages.length - 1];
-  return lastMessage?.additional_kwargs?.tool_calls ? "tools" : "__end__";
+  return lastMessage?.additional_kwargs?.tool_calls ? 'tools' : '__end__';
 }
 
 async function callModel(state: typeof MessagesAnnotation.State) {
@@ -23,24 +23,24 @@ async function callModel(state: typeof MessagesAnnotation.State) {
       if (msg instanceof HumanMessage) {
         return new HumanMessage({
           content:
-            typeof msg.content === "string"
+            typeof msg.content === 'string'
               ? msg.content
               : Array.isArray(msg.content) && msg.content.length > 0
-              ? msg.content[0].type === "text"
+              ? msg.content[0].type === 'text'
                 ? msg.content[0].text
                 : JSON.stringify(msg.content[0])
-              : "",
+              : '',
         });
       }
 
       if (msg instanceof SystemMessage) {
         return new SystemMessage({
           content:
-            typeof msg.content === "string"
+            typeof msg.content === 'string'
               ? msg.content
-              : Array.isArray(msg.content) && msg.content[0]?.type === "text"
+              : Array.isArray(msg.content) && msg.content[0]?.type === 'text'
               ? msg.content[0].text
-              : "",
+              : '',
         });
       }
 
@@ -50,17 +50,17 @@ async function callModel(state: typeof MessagesAnnotation.State) {
     const response = await model.invoke(formattedMessages);
     return { messages: [response] };
   } catch (error) {
-    console.error("Error in model invocation:", error);
+    console.error('Error in model invocation:', error);
     throw error;
   }
 }
 
 const workflow = new StateGraph(MessagesAnnotation)
-  .addNode("agent", callModel)
-  .addEdge("__start__", "agent")
-  .addNode("tools", toolNode)
-  .addEdge("tools", "agent")
-  .addConditionalEdges("agent", shouldContinue);
+  .addNode('agent', callModel)
+  .addEdge('__start__', 'agent')
+  .addNode('tools', toolNode)
+  .addEdge('tools', 'agent')
+  .addConditionalEdges('agent', shouldContinue);
 
 const app = workflow.compile();
 
@@ -70,7 +70,7 @@ export const planMeals = async (
   targetDate: string
 ) => {
   if (!preferences?.trim()) {
-    throw new Error("Meal preferences are required to generate a meal plan.");
+    throw new Error('Meal preferences are required to generate a meal plan.');
   }
 
   try {
@@ -106,15 +106,15 @@ Remember to use the exact IDs returned by each tool!`;
       new SystemMessage({
         content: [
           {
-            type: "text",
-            text: "You are a meal planning assistant. Follow the steps precisely and use the provided tools in order.",
+            type: 'text',
+            text: 'You are a meal planning assistant. Follow the steps precisely and use the provided tools in order.',
           },
         ],
       }),
       new HumanMessage({
         content: [
           {
-            type: "text",
+            type: 'text',
             text: userPrompt,
           },
         ],
@@ -131,7 +131,7 @@ Remember to use the exact IDs returned by each tool!`;
 
     const lastMessage = finalState.messages[finalState.messages.length - 1];
     if (!lastMessage?.content) {
-      throw new Error("No response received from the model.");
+      throw new Error('No response received from the model.');
     }
 
     await MealPlannerHistory.create({
@@ -139,11 +139,11 @@ Remember to use the exact IDs returned by each tool!`;
       preferences: preferences,
     });
 
-    return typeof lastMessage.content === "string"
+    return typeof lastMessage.content === 'string'
       ? lastMessage.content
       : JSON.stringify(lastMessage.content);
   } catch (error) {
-    console.error("Error in meal planning:", error);
-    return "An error occurred during meal planning. Please try again later.";
+    console.error('Error in meal planning:', error);
+    return 'An error occurred during meal planning. Please try again later.';
   }
 };

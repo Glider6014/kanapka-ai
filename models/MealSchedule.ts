@@ -1,5 +1,5 @@
-import mongoose, { Schema } from "mongoose";
-import "./Recipe";
+import mongoose, { Schema } from 'mongoose';
+import './Recipe';
 
 const mealScheduleSchema = new Schema(
   {
@@ -11,7 +11,7 @@ const mealScheduleSchema = new Schema(
     recipeId: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "Recipe",
+      ref: 'Recipe',
     },
     date: {
       type: Date,
@@ -27,9 +27,9 @@ const mealScheduleSchema = new Schema(
   }
 );
 
-mealScheduleSchema.pre("save", async function (next) {
+mealScheduleSchema.pre('save', async function (next) {
   if (this.isNew) {
-    const Recipe = mongoose.model("Recipe");
+    const Recipe = mongoose.model('Recipe');
     const recipe = await Recipe.findById(this.recipeId);
     if (recipe) {
       this.duration = recipe.prepTime + recipe.cookTime;
@@ -40,4 +40,4 @@ mealScheduleSchema.pre("save", async function (next) {
 
 export const MealSchedule =
   mongoose.models.MealSchedule ||
-  mongoose.model("MealSchedule", mealScheduleSchema);
+  mongoose.model('MealSchedule', mealScheduleSchema);

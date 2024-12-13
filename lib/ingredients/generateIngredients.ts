@@ -1,68 +1,68 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";
-import { z } from "zod";
-import connectDB from "@/lib/connectToDatabase";
-import Ingredient, { IngredientType } from "@/models/Ingredient";
+import { ChatOpenAI } from '@langchain/openai';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
+import { StringOutputParser } from '@langchain/core/output_parsers';
+import { z } from 'zod';
+import connectDB from '@/lib/connectToDatabase';
+import Ingredient, { IngredientType } from '@/models/Ingredient';
 
 const ingredientSchema = z.object({
   name: z.string({
-    required_error: "Name is required",
+    required_error: 'Name is required',
   }),
-  unit: z.enum(["g", "ml", "piece"], {
-    required_error: "Unit is required",
+  unit: z.enum(['g', 'ml', 'piece'], {
+    required_error: 'Unit is required',
     invalid_type_error: "Invalid unit type. Must be 'g', 'ml', or 'piece'",
   }),
   nutrition: z.object({
     calories: z
       .number({
-        required_error: "Calories value is required",
-        invalid_type_error: "Calories must be a number",
+        required_error: 'Calories value is required',
+        invalid_type_error: 'Calories must be a number',
       })
-      .nonnegative("Calories cannot be negative"),
+      .nonnegative('Calories cannot be negative'),
     protein: z
       .number({
-        required_error: "Protein value is required",
-        invalid_type_error: "Protein must be a number",
+        required_error: 'Protein value is required',
+        invalid_type_error: 'Protein must be a number',
       })
-      .nonnegative("Protein cannot be negative"),
+      .nonnegative('Protein cannot be negative'),
     fats: z
       .number({
-        required_error: "Fats value is required",
-        invalid_type_error: "Fats must be a number",
+        required_error: 'Fats value is required',
+        invalid_type_error: 'Fats must be a number',
       })
-      .nonnegative("Fats cannot be negative"),
+      .nonnegative('Fats cannot be negative'),
     carbs: z
       .number({
-        required_error: "Carbs value is required",
-        invalid_type_error: "Carbs must be a number",
+        required_error: 'Carbs value is required',
+        invalid_type_error: 'Carbs must be a number',
       })
-      .nonnegative("Carbs cannot be negative"),
+      .nonnegative('Carbs cannot be negative'),
     fiber: z
       .number({
-        required_error: "Fiber value is required",
-        invalid_type_error: "Fiber must be a number",
+        required_error: 'Fiber value is required',
+        invalid_type_error: 'Fiber must be a number',
       })
-      .nonnegative("Fiber cannot be negative"),
+      .nonnegative('Fiber cannot be negative'),
     sugar: z
       .number({
-        required_error: "Sugar value is required",
-        invalid_type_error: "Sugar must be a number",
+        required_error: 'Sugar value is required',
+        invalid_type_error: 'Sugar must be a number',
       })
-      .nonnegative("Sugar cannot be negative"),
+      .nonnegative('Sugar cannot be negative'),
     sodium: z
       .number({
-        required_error: "Sodium value is required",
-        invalid_type_error: "Sodium must be a number",
+        required_error: 'Sodium value is required',
+        invalid_type_error: 'Sodium must be a number',
       })
-      .nonnegative("Sodium cannot be negative"),
+      .nonnegative('Sodium cannot be negative'),
   }),
 });
 
 const parser = new StringOutputParser();
 
 const model = new ChatOpenAI({
-  modelName: "gpt-4o-mini",
+  modelName: 'gpt-4o-mini',
   temperature: 0,
   openAIApiKey: process.env.OPENAI_API_KEY,
   cache: true,
@@ -114,7 +114,7 @@ export async function generateIngredient(
     await connectDB();
 
     const existingIngredient = await Ingredient.findOne({
-      name: { $regex: new RegExp(`^${ingredientName}$`, "i") },
+      name: { $regex: new RegExp(`^${ingredientName}$`, 'i') },
     });
 
     if (existingIngredient) {
@@ -130,7 +130,7 @@ export async function generateIngredient(
 
     if (!validationResult.success) {
       console.error(
-        "Validation errors:",
+        'Validation errors:',
         validationResult.error.flatten().fieldErrors
       );
       return null;
@@ -146,9 +146,9 @@ export async function generateIngredient(
     return newIngredient;
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error("Validation errors:", error.flatten().fieldErrors);
+      console.error('Validation errors:', error.flatten().fieldErrors);
     } else {
-      console.error("Error generating/saving ingredient:", error);
+      console.error('Error generating/saving ingredient:', error);
     }
     return null;
   }

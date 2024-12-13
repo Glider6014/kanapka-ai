@@ -1,5 +1,5 @@
-import { Schema, InferSchemaType, Model, model, models } from "mongoose";
-import { Unit } from "@/types/Unit";
+import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
+import { Unit } from '@/types/Unit';
 
 const IngredientSchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true, required: true },
@@ -28,6 +28,6 @@ export type IngredientType = InferSchemaType<typeof IngredientSchema>;
 
 const Ingredient =
   (models.Ingredient as Model<IngredientType>) ||
-  model("Ingredient", IngredientSchema);
+  model('Ingredient', IngredientSchema);
 
 export default Ingredient;

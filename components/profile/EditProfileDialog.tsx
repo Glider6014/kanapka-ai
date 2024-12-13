@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useSession } from 'next-auth/react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -23,10 +23,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Pencil } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Pencil } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 
 type EditProfileDialogProps = {
   user: {
@@ -38,13 +38,13 @@ type EditProfileDialogProps = {
 };
 
 const FormSchema = z.object({
-  displayName: z.string().min(1, "Name cannot be empty."),
-  avatar: z.string().url("Avatar must be a valid URL.").optional(),
-  bgc: z.string().url("Avatar must be a valid URL.").optional(),
+  displayName: z.string().min(1, 'Name cannot be empty.'),
+  avatar: z.string().url('Avatar must be a valid URL.').optional(),
+  bgc: z.string().url('Avatar must be a valid URL.').optional(),
   bio: z
     .string()
-    .min(10, "Bio must be at least 10 characters.")
-    .max(160, "Bio must not be longer than 160 characters."),
+    .min(10, 'Bio must be at least 10 characters.')
+    .max(160, 'Bio must not be longer than 160 characters.'),
 });
 
 const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
@@ -59,9 +59,9 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     try {
       const response = await fetch(`/api/profile/${session?.user?.id}/update`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           updateData: {
@@ -76,26 +76,26 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        console.error("Profile update error:", data.message);
+        console.error('Profile update error:', data.message);
         return;
       }
 
-      console.log("Profile updated successfully:", data);
+      console.log('Profile updated successfully:', data);
       setOpen(false);
       window.location.reload();
     } catch (error) {
-      console.error("An unexpected error occurred:", error);
+      console.error('An unexpected error occurred:', error);
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Pencil className="w-4 h-4" />
+        <Button variant='outline'>
+          <Pencil className='w-4 h-4' />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
@@ -103,10 +103,10 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
             <FormField
               control={form.control}
-              name="displayName"
+              name='displayName'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
@@ -119,14 +119,14 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
             />
             <FormField
               control={form.control}
-              name="avatar"
+              name='avatar'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Avatar</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="https://example.com/avatar.jpg"
+                      placeholder='https://example.com/avatar.jpg'
                     />
                   </FormControl>
                   <FormMessage />
@@ -135,14 +135,14 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
             />
             <FormField
               control={form.control}
-              name="bgc"
+              name='bgc'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Background</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="https://example.com/background.jpg"
+                      placeholder='https://example.com/background.jpg'
                     />
                   </FormControl>
                   <FormMessage />
@@ -151,14 +151,14 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
             />
             <FormField
               control={form.control}
-              name="bio"
+              name='bio'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Bio</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder="Tell us a little bit about yourself."
+                      placeholder='Tell us a little bit about yourself.'
                     />
                   </FormControl>
                   <FormDescription>
@@ -169,7 +169,7 @@ const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
               )}
             />
             <DialogFooter>
-              <Button type="submit">Save changes</Button>
+              <Button type='submit'>Save changes</Button>
             </DialogFooter>
           </form>
         </Form>

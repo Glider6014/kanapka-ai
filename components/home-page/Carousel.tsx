@@ -1,82 +1,82 @@
-import * as React from "react"
- 
-import { Card, CardContent } from "@/components/ui/card"
+import * as React from 'react';
+
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"
+} from '@/components/ui/carousel';
 
 export function CustomCarousel() {
   const items = [
     {
-      title: "Creation of recipes",
+      title: 'Creation of recipes',
       description:
-        "Uporządkuj zadania, pilnuj terminów i koordynuj działania członków zespołu dzięki Trello.",
-      icon: "🍔",
-      bgColor: "bg-red-500",
+        'Uporządkuj zadania, pilnuj terminów i koordynuj działania członków zespołu dzięki Trello.',
+      icon: '🍔',
+      bgColor: 'bg-red-500',
     },
     {
-      title: "Spotkania",
+      title: 'Spotkania',
       description:
-        "Zwiększ jakość spotkań swojego zespołu, aby były bardziej produktywne i przyjemne.",
-      icon: "📂",
-      bgColor: "bg-blue-500",
+        'Zwiększ jakość spotkań swojego zespołu, aby były bardziej produktywne i przyjemne.',
+      icon: '📂',
+      bgColor: 'bg-blue-500',
     },
     {
-      title: "Onboarding",
+      title: 'Onboarding',
       description:
-        "Ułatw onboarding w nowej firmie lub projekcie dzięki wizualnej prezentacji.",
-      icon: "🍃",
-      bgColor: "bg-green-500",
+        'Ułatw onboarding w nowej firmie lub projekcie dzięki wizualnej prezentacji.',
+      icon: '🍃',
+      bgColor: 'bg-green-500',
     },
     {
-      title: "Zarządzanie zadaniami",
+      title: 'Zarządzanie zadaniami',
       description:
-        "Śledź zadania, uzupełniaj i łącz w całość jak elementy układanki.",
-      icon: "📝",
-      bgColor: "bg-yellow-500",
+        'Śledź zadania, uzupełniaj i łącz w całość jak elementy układanki.',
+      icon: '📝',
+      bgColor: 'bg-yellow-500',
     },
     {
-      title: "Zarządzanie projektami",
+      title: 'Zarządzanie projektami',
       description:
-        "Uporządkuj zadania, pilnuj terminów i koordynuj działania członków zespołu dzięki Trello.",
-      icon: "📁", 
-      bgColor: "bg-red-500",
+        'Uporządkuj zadania, pilnuj terminów i koordynuj działania członków zespołu dzięki Trello.',
+      icon: '📁',
+      bgColor: 'bg-red-500',
     },
     {
-      title: "Spotkania",
+      title: 'Spotkania',
       description:
-        "Zwiększ jakość spotkań swojego zespołu, aby były bardziej produktywne i przyjemne.",
-      icon: "📂",
-      bgColor: "bg-blue-500",
+        'Zwiększ jakość spotkań swojego zespołu, aby były bardziej produktywne i przyjemne.',
+      icon: '📂',
+      bgColor: 'bg-blue-500',
     },
     {
-      title: "Onboarding",
+      title: 'Onboarding',
       description:
-        "Ułatw onboarding w nowej firmie lub projekcie dzięki wizualnej prezentacji.",
-      icon: "🍃",
-      bgColor: "bg-green-500",
+        'Ułatw onboarding w nowej firmie lub projekcie dzięki wizualnej prezentacji.',
+      icon: '🍃',
+      bgColor: 'bg-green-500',
     },
     {
-      title: "Zarządzanie zadaniami",
+      title: 'Zarządzanie zadaniami',
       description:
-        "Śledź zadania, uzupełniaj i łącz w całość jak elementy układanki.",
-      icon: "📝",
-      bgColor: "bg-yellow-500",
+        'Śledź zadania, uzupełniaj i łącz w całość jak elementy układanki.',
+      icon: '📝',
+      bgColor: 'bg-yellow-500',
     },
   ];
 
   return (
-    <Carousel className="w-full">
-      <CarouselContent className="-ml-1">
+    <Carousel className='w-full'>
+      <CarouselContent className='-ml-1'>
         {Array.from({ length: 5 }).map((_, index) => (
-          <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/3">
-            <div className="p-1">
+          <CarouselItem key={index} className='pl-1 md:basis-1/2 lg:basis-1/3'>
+            <div className='p-1'>
               <Card>
-                <CardContent className="flex aspect-square items-center justify-center p-6">
+                <CardContent className='flex aspect-square items-center justify-center p-6'>
                   {/* <span className="text-2xl font-semibold">{index + 1}</span> */}
                 </CardContent>
               </Card>
@@ -87,7 +87,7 @@ export function CustomCarousel() {
       <CarouselPrevious />
       <CarouselNext />
     </Carousel>
-  )
+  );
 }
 
 //   return (

@@ -1,9 +1,9 @@
-"use client";
-import React, { useState, useRef, useEffect } from "react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { CircleUserRound, LogOut, Settings } from "lucide-react";
+'use client';
+import React, { useState, useRef, useEffect } from 'react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { CircleUserRound, LogOut, Settings } from 'lucide-react';
 
 type User = {
   id: string;
@@ -32,9 +32,9 @@ const AvatarDropdown: React.FC = () => {
       } else {
         const canvas = canvasRef.current;
         if (canvas) {
-          const context = canvas.getContext("2d");
+          const context = canvas.getContext('2d');
           if (context) {
-            const nickname = session.user.username || "User";
+            const nickname = session.user.username || 'User';
             const firstLetter = nickname.charAt(0).toUpperCase();
             const gradient = context.createLinearGradient(
               0,
@@ -42,14 +42,14 @@ const AvatarDropdown: React.FC = () => {
               canvas.width,
               0
             );
-            gradient.addColorStop(0, "#7e22ce");
-            gradient.addColorStop(1, "#800080");
+            gradient.addColorStop(0, '#7e22ce');
+            gradient.addColorStop(1, '#800080');
             context.fillStyle = gradient;
             context.fillRect(0, 0, canvas.width, canvas.height);
-            context.fillStyle = "#FFF";
-            context.font = "bold 24px Arial";
-            context.textAlign = "center";
-            context.textBaseline = "middle";
+            context.fillStyle = '#FFF';
+            context.font = 'bold 24px Arial';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
             context.fillText(
               firstLetter,
               canvas.width / 2,
@@ -67,7 +67,7 @@ const AvatarDropdown: React.FC = () => {
   }, [session]);
 
   const logout = async () => {
-    await signOut({ callbackUrl: "/" });
+    await signOut({ callbackUrl: '/' });
   };
 
   const handleOutsideClick = (event: MouseEvent) => {
@@ -80,21 +80,21 @@ const AvatarDropdown: React.FC = () => {
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener('mousedown', handleOutsideClick);
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, []);
 
   if (!user) return null;
 
   return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
+    <div className='relative inline-block text-left' ref={dropdownRef}>
       <button
-        className="flex items-center justify-center focus:outline-none"
+        className='flex items-center justify-center focus:outline-none'
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        <Avatar className="h-10 w-10">
+        <Avatar className='h-10 w-10'>
           <AvatarImage src={user.avatar} alt={`@${user.username}`} />
           <AvatarFallback>
             {user.username.charAt(0).toUpperCase()}
@@ -102,23 +102,23 @@ const AvatarDropdown: React.FC = () => {
         </Avatar>
         <canvas
           ref={canvasRef}
-          className="hidden"
+          className='hidden'
           width={40}
           height={40}
         ></canvas>
       </button>
-        {isOpen && (
-            <div className="absolute right-0 mt-2 w-48 z-50 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
-              <ul className="py-1">
-                <li>
-                  <button
-                    className="block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100"
-                    onClick={() => router.push(`/profile/${session?.user?.id}`)}
-                  >
-                    <CircleUserRound className="inline h-4 w-4 mr-2" /> Profile
-                  </button>
-                </li>
-                {/* <li>
+      {isOpen && (
+        <div className='absolute right-0 mt-2 w-48 z-50 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5'>
+          <ul className='py-1'>
+            <li>
+              <button
+                className='block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100'
+                onClick={() => router.push(`/profile/${session?.user?.id}`)}
+              >
+                <CircleUserRound className='inline h-4 w-4 mr-2' /> Profile
+              </button>
+            </li>
+            {/* <li>
                   <button
                     className="block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100"
                     onClick={() => router.push("/settings/profile")}
@@ -126,18 +126,18 @@ const AvatarDropdown: React.FC = () => {
                     <Settings className="inline h-4 w-4 mr-2" /> Settings
                   </button>
                 </li> */}
-                <li>
-                  <button
-                    className="block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100"
-                    onClick={logout}
-                  >
-                    <LogOut className="inline h-4 w-4 mr-2" /> Logout
-                  </button>
-                </li>
-              </ul>
-            </div>
-        )}
-      </div>
+            <li>
+              <button
+                className='block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100'
+                onClick={logout}
+              >
+                <LogOut className='inline h-4 w-4 mr-2' /> Logout
+              </button>
+            </li>
+          </ul>
+        </div>
+      )}
+    </div>
   );
 };
 

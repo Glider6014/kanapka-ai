@@ -1,4 +1,4 @@
-import { Schema, InferSchemaType, Model, model, models } from "mongoose";
+import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
 
 const ShoppingListSchema = new Schema(
   {
@@ -15,7 +15,7 @@ const ShoppingListSchema = new Schema(
       {
         ingredient: {
           type: Schema.Types.ObjectId,
-          ref: "Ingredient",
+          ref: 'Ingredient',
           required: true,
         },
         amount: {
@@ -42,6 +42,6 @@ export type ShoppingListType = InferSchemaType<typeof ShoppingListSchema>;
 
 const ShoppingList =
   (models.ShoppingList as Model<ShoppingListType>) ||
-  model("ShoppingList", ShoppingListSchema);
+  model('ShoppingList', ShoppingListSchema);
 
 export default ShoppingList;

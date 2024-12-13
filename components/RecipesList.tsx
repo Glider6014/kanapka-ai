@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { FC, useState, useEffect } from "react";
-import Link from "next/link";
+import { FC, useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   Table,
   TableBody,
@@ -9,12 +9,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { RecipeType } from "@/models/Recipe";
-import { HeartOff } from "lucide-react";
-import { Heart } from "lucide-react";
-import { useSession } from "next-auth/react";
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { RecipeType } from '@/models/Recipe';
+import { HeartOff } from 'lucide-react';
+import { Heart } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 type RecipesListProps = {
   recipes: RecipeType[];
@@ -23,20 +23,20 @@ type RecipesListProps = {
 
 export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [filter, setFilter] = useState<"all" | "favorites" | "mine">("all");
+  const [filter, setFilter] = useState<'all' | 'favorites' | 'mine'>('all');
 
   const { data: session } = useSession();
 
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const response = await fetch("/api/recipes/favorite");
+        const response = await fetch('/api/recipes/favorite');
         const data = await response.json();
         if (response.ok) {
           setFavorites(data.favorites.map((fav: { _id: string }) => fav._id));
         }
       } catch (error) {
-        console.error("Failed to fetch favorites", error);
+        console.error('Failed to fetch favorites', error);
       }
     };
 
@@ -47,7 +47,7 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
     try {
       const isFavorite = favorites.includes(id);
       const response = await fetch(`/api/recipes/${id}/favorite`, {
-        method: isFavorite ? "DELETE" : "POST",
+        method: isFavorite ? 'DELETE' : 'POST',
       });
       if (response.ok) {
         setFavorites((prevFavorites) =>
@@ -56,18 +56,18 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
             : [...prevFavorites, id]
         );
       } else {
-        console.error("Failed to update favorite status");
+        console.error('Failed to update favorite status');
       }
     } catch (error) {
-      console.error("Failed to update favorite status", error);
+      console.error('Failed to update favorite status', error);
     }
   };
 
   const filteredRecipes = recipes.filter((recipe) => {
-    if (filter === "favorites") {
+    if (filter === 'favorites') {
       return favorites.includes(recipe._id.toString());
     }
-    if (filter === "mine") {
+    if (filter === 'mine') {
       return recipe.createdBy.toString() === session?.user?.id;
     }
     return true;
@@ -78,29 +78,29 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
   }
 
   return (
-    <div className="mt-8 transform -translate-y-[30px] z-30">
+    <div className='mt-8 transform -translate-y-[30px] z-30'>
       <div
         className={`flex justify-center py-2 px-2 md:px-0 space-x-2 ${
-          hasFilters ? "block" : "hidden"
+          hasFilters ? 'block' : 'hidden'
         }`}
       >
-        <Button className="w-1/3" onClick={() => setFilter("all")}>
+        <Button className='w-1/3' onClick={() => setFilter('all')}>
           All
         </Button>
-        <Button className="w-1/3" onClick={() => setFilter("favorites")}>
+        <Button className='w-1/3' onClick={() => setFilter('favorites')}>
           Favorites
         </Button>
-        <Button className="w-1/3" onClick={() => setFilter("mine")}>
+        <Button className='w-1/3' onClick={() => setFilter('mine')}>
           My Recipes
         </Button>
       </div>
       <Table>
         <TableHeader>
-          <TableRow className="bg-gray-100 hover:bg-gray-100">
-            <TableHead className="w-16">FAVORITE</TableHead>
+          <TableRow className='bg-gray-100 hover:bg-gray-100'>
+            <TableHead className='w-16'>FAVORITE</TableHead>
             <TableHead>RECIPE NAME</TableHead>
             <TableHead>DIFFICULTY</TableHead>
-            <TableHead className="md:max-w-16">
+            <TableHead className='md:max-w-16'>
               TOTAL PREPARATION TIME
             </TableHead>
           </TableRow>
@@ -108,9 +108,9 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
         <TableBody>
           {filteredRecipes.map((recipe) => (
             <TableRow key={recipe._id?.toString()}>
-              <TableCell className="w-16">
+              <TableCell className='w-16'>
                 <button
-                  className="flex justify-center items-center w-full h-full"
+                  className='flex justify-center items-center w-full h-full'
                   onClick={() => toggleFavorite(recipe._id.toString()!)}
                 >
                   {favorites.includes(recipe._id.toString()!) ? (
@@ -121,8 +121,8 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
                 </button>
               </TableCell>
               <TableCell>
-                <Link href={`/recipes/${recipe._id}`} target="_blank">
-                  <Button variant="link">{recipe.name}</Button>
+                <Link href={`/recipes/${recipe._id}`} target='_blank'>
+                  <Button variant='link'>{recipe.name}</Button>
                 </Link>
               </TableCell>
               <TableCell>{recipe.difficulty}</TableCell>

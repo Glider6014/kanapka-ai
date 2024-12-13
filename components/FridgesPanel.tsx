@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { FridgeType } from "@/models/Fridge";
-import { FridgePanel } from "./FridgePanel";
+import { useEffect, useState } from 'react';
+import { FridgeType } from '@/models/Fridge';
+import { FridgePanel } from './FridgePanel';
 
 type FridgesPanelProps = {
   setIngredients?: React.Dispatch<React.SetStateAction<string[]>>;
@@ -21,10 +21,10 @@ export const FridgesPanel = ({
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
-    fetch("/api/fridges")
+    fetch('/api/fridges')
       .then((res) => {
         if (!res.ok) {
-          throw new Error("Failed to fetch fridges");
+          throw new Error('Failed to fetch fridges');
         }
         return res;
       })
@@ -42,13 +42,13 @@ export const FridgesPanel = ({
   };
 
   return (
-    <div className="w-full md:w-2/5">
-      <div className="flex border-b">
+    <div className='w-full md:w-2/5'>
+      <div className='flex border-b'>
         {fridges.map((fridge, index) => (
           <button
             key={fridge._id.toString()}
             className={`px-4 py-2 ${
-              activeTab === index ? "border-b-2 border-end-prim" : ""
+              activeTab === index ? 'border-b-2 border-end-prim' : ''
             }`}
             onClick={() => handleTabClick(index)}
           >
@@ -56,7 +56,7 @@ export const FridgesPanel = ({
           </button>
         ))}
       </div>
-      <div className="p-4">
+      <div className='p-4'>
         {fridges.map(
           (fridge, index) =>
             activeTab === index && (

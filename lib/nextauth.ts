@@ -1,20 +1,20 @@
-import type { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import connectDB from "@/lib/connectToDatabase";
-import User from "@/models/User";
-import { getServerSession } from "next-auth";
+import type { NextAuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import bcrypt from 'bcryptjs';
+import connectDB from '@/lib/connectToDatabase';
+import User from '@/models/User';
+import { getServerSession } from 'next-auth';
 
 const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
 
 if (!NEXTAUTH_SECRET) {
-  throw new Error("You must provide a NEXTAUTH_SECRET environment variable");
+  throw new Error('You must provide a NEXTAUTH_SECRET environment variable');
 }
 
 async function getUserWithoutPassword(userId: string) {
   await connectDB();
 
-  const user = await User.findById(userId).select("-password");
+  const user = await User.findById(userId).select('-password');
   if (!user) return null;
 
   return {
@@ -30,18 +30,18 @@ async function getUserWithoutPassword(userId: string) {
 const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
         emailOrUsername: {
-          label: "Email or Username",
-          type: "text",
-          placeholder: "Enter email or username",
+          label: 'Email or Username',
+          type: 'text',
+          placeholder: 'Enter email or username',
         },
-        password: { label: "Password", type: "password" },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.emailOrUsername || !credentials?.password) {
-          throw new Error("Email and password required");
+          throw new Error('Email and password required');
         }
 
         await connectDB();
@@ -53,7 +53,7 @@ const authOptions: NextAuthOptions = {
           ],
         });
         if (!user) {
-          throw new Error("No user found with this email");
+          throw new Error('No user found with this email');
         }
 
         const isValid = await bcrypt.compare(
@@ -61,7 +61,7 @@ const authOptions: NextAuthOptions = {
           user.password
         );
         if (!isValid) {
-          throw new Error("Invalid password");
+          throw new Error('Invalid password');
         }
 
         return {
@@ -76,7 +76,7 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
@@ -86,7 +86,7 @@ const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       const user = await getUserWithoutPassword(token.id);
-      if (!user) throw new Error("User no longer exists");
+      if (!user) throw new Error('User no longer exists');
 
       session.user = user;
 
@@ -94,8 +94,8 @@ const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/user/signin",
-    error: "/user/error",
+    signIn: '/user/signin',
+    error: '/user/error',
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

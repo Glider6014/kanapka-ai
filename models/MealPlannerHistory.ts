@@ -1,11 +1,11 @@
-import { Schema, InferSchemaType, Model, model, models } from "mongoose";
+import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
 
 const MealPlannerHistorySchema = new Schema(
   {
     _id: { type: Schema.Types.ObjectId, auto: true, required: true },
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     preferences: {
@@ -31,4 +31,4 @@ export type MealPlannerHistoryType = InferSchemaType<
 
 export const MealPlannerHistory =
   (models.MealPlannerHistory as Model<MealPlannerHistoryType>) ||
-  model("MealPlannerHistory", MealPlannerHistorySchema);
+  model('MealPlannerHistory', MealPlannerHistorySchema);

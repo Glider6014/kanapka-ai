@@ -1,10 +1,10 @@
-import { Schema, InferSchemaType, Model, model, models } from "mongoose";
-import { UserType } from "./User";
-import { Session } from "next-auth";
+import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
+import { UserType } from './User';
+import { Session } from 'next-auth';
 
 const UserSubSchema = {
   type: Schema.Types.ObjectId,
-  ref: "User",
+  ref: 'User',
   required: true,
 };
 
@@ -21,7 +21,7 @@ const FridgeSchema = new Schema({
 });
 
 function extractUserId(sessionOrUserOrId: string | UserType | Session) {
-  return typeof sessionOrUserOrId === "string"
+  return typeof sessionOrUserOrId === 'string'
     ? sessionOrUserOrId
     : (sessionOrUserOrId as Session)?.user?.id ||
         (sessionOrUserOrId as UserType)?._id;
@@ -76,6 +76,6 @@ export type FridgeModel = Model<FridgeType> & {
 
 const Fridge =
   (models.Fridge as FridgeModel) ||
-  model<FridgeType, FridgeModel>("Fridge", FridgeSchema);
+  model<FridgeType, FridgeModel>('Fridge', FridgeSchema);
 
 export default Fridge;

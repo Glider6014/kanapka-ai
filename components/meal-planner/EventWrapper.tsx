@@ -1,7 +1,7 @@
-import { CustomEvent } from "@/types/calendar";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import ContextMenu from "./ContextMenu";
+import { CustomEvent } from '@/types/calendar';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import ContextMenu from './ContextMenu';
 
 interface EventWrapperProps {
   event: CustomEvent;
@@ -19,7 +19,7 @@ const EventWrapper: React.FC<EventWrapperProps> = ({ event, onDelete }) => {
     const hours = Math.floor(durationInMinutes / 60);
     const minutes = durationInMinutes % 60;
     return hours > 0
-      ? `${hours}h${minutes > 0 ? ` ${minutes}m` : ""}`
+      ? `${hours}h${minutes > 0 ? ` ${minutes}m` : ''}`
       : `${minutes}m`;
   };
 
@@ -43,15 +43,15 @@ const EventWrapper: React.FC<EventWrapperProps> = ({ event, onDelete }) => {
   return (
     <>
       <div
-        className="h-full w-full p-0.5 text-white cursor-pointer"
+        className='h-full w-full p-0.5 text-white cursor-pointer'
         onClick={handleClick}
         onContextMenu={handleContextMenu}
       >
-        <div className="flex justify-between items-center h-full">
-          <span className="flex-1 font-medium text-sm truncate mr-2">
+        <div className='flex justify-between items-center h-full'>
+          <span className='flex-1 font-medium text-sm truncate mr-2'>
             {event.title}
           </span>
-          <span className="flex-shrink-0 text-xs bg-black/10 px-1.5 rounded">
+          <span className='flex-shrink-0 text-xs bg-black/10 px-1.5 rounded'>
             {formatDuration(event.duration || 0)}
           </span>
         </div>

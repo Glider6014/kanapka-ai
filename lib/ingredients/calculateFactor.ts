@@ -1,4 +1,4 @@
-import { Unit } from "@/types/Unit";
+import { Unit } from '@/types/Unit';
 
 export default function calculateFactor(unit: Unit, amount: number): number {
   if (unit === Unit.GRAM || unit === Unit.MILLILITER) {

@@ -1,8 +1,8 @@
-import { Schema, InferSchemaType, Model, model, models } from "mongoose";
-import Ingredient from "./Ingredient";
-import { NutritionTotals } from "../types/NutritionTotals";
-import calculateFactor from "@/lib/ingredients/calculateFactor";
-import { Unit } from "../types/Unit";
+import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
+import Ingredient from './Ingredient';
+import { NutritionTotals } from '../types/NutritionTotals';
+import calculateFactor from '@/lib/ingredients/calculateFactor';
+import { Unit } from '../types/Unit';
 
 type RecipeIngredient = {
   ingredient: Schema.Types.ObjectId;
@@ -17,7 +17,7 @@ const RecipeSchema = new Schema({
     {
       ingredient: {
         type: Schema.Types.ObjectId,
-        ref: "Ingredient",
+        ref: 'Ingredient',
         required: true,
       },
       amount: { type: Number, required: true },
@@ -28,13 +28,13 @@ const RecipeSchema = new Schema({
   cookTime: { type: Number, required: true },
   difficulty: {
     type: String,
-    enum: ["Easy", "Medium", "Hard"],
+    enum: ['Easy', 'Medium', 'Hard'],
     required: true,
-    default: "Easy",
+    default: 'Easy',
   },
   createdBy: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'User',
     required: true,
   },
   createdAt: { type: Date, default: Date.now, required: true },
@@ -95,6 +95,6 @@ export type RecipeType = InferSchemaType<typeof RecipeSchema> & {
 
 const Recipe =
   (models.Recipe as Model<RecipeType>) ||
-  model<RecipeType>("Recipe", RecipeSchema);
+  model<RecipeType>('Recipe', RecipeSchema);
 
 export default Recipe;

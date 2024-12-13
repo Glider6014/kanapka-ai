@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 import {
   Pagination,
   PaginationContent,
@@ -9,7 +9,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from '@/components/ui/pagination';
 
 type Recipe = {
   _id: string;
@@ -36,7 +36,7 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
       setRecipes(data.results || []);
       setTotalPages(Math.ceil(data.count / limitRecipesPerPage));
     } catch (error) {
-      console.error("Error fetching recipes:", error);
+      console.error('Error fetching recipes:', error);
     } finally {
       setLoading(false);
     }
@@ -71,29 +71,29 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
   return (
     <>
       {recipes.length === 0 ? (
-        <p className="text-gray-600">No recipes found.</p>
+        <p className='text-gray-600'>No recipes found.</p>
       ) : (
         <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
             {recipes.map((recipe) => (
               <div
                 key={recipe._id}
-                className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center"
+                className='bg-white p-4 rounded-lg shadow-lg flex flex-col items-center'
               >
                 <Link href={`/recipes/${recipe._id}`}>
-                  <h3 className="text-lg font-semibold text-gray-800 text-center">
+                  <h3 className='text-lg font-semibold text-gray-800 text-center'>
                     {recipe.name}
                   </h3>
                 </Link>
-                <p className="text-sm text-gray-600 text-center">
+                <p className='text-sm text-gray-600 text-center'>
                   {recipe.description}
                 </p>
               </div>
             ))}
           </div>
 
-          <Pagination className="mt-5 overflow-x-auto">
-            <PaginationContent className="cursor-pointer">
+          <Pagination className='mt-5 overflow-x-auto'>
+            <PaginationContent className='cursor-pointer'>
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => handlePageChange(currentPage - 1)}

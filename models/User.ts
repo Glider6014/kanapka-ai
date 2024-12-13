@@ -1,6 +1,6 @@
-import { UserPermissions, userPermissionsList } from "@/lib/permissions";
-import { userSubscriptionsList, UserSubscription } from "@/lib/subscriptions";
-import { Schema, InferSchemaType, Model, model, models } from "mongoose";
+import { UserPermissions, userPermissionsList } from '@/lib/permissions';
+import { userSubscriptionsList, UserSubscription } from '@/lib/subscriptions';
+import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
 
 const UserSchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true, required: true },
@@ -14,11 +14,11 @@ const UserSchema = new Schema({
     required: true,
     default: [UserPermissions.readRecipes],
   },
-  favorites: [{ type: Schema.Types.ObjectId, ref: "Recipe", required: true }],
+  favorites: [{ type: Schema.Types.ObjectId, ref: 'Recipe', required: true }],
   createdAt: { type: Date, default: Date.now, required: true },
-  bio: { type: String, default: "" },
-  avatar: { type: String, default: "https://github.com/shadcn.png" },
-  bgc: { type: String, default: "" },
+  bio: { type: String, default: '' },
+  avatar: { type: String, default: 'https://github.com/shadcn.png' },
+  bgc: { type: String, default: '' },
   subscriptionType: {
     type: String,
     enum: userSubscriptionsList,
@@ -36,6 +36,6 @@ UserSchema.index({ username: 1 });
 
 export type UserType = InferSchemaType<typeof UserSchema>;
 
-const User = (models.User as Model<UserType>) || model("User", UserSchema);
+const User = (models.User as Model<UserType>) || model('User', UserSchema);
 
 export default User;

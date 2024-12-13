@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { FridgeType } from "@/models/Fridge";
-import InputIngredient from "./InputIngredient";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Button } from "./ui/button";
+import { FridgeType } from '@/models/Fridge';
+import InputIngredient from './InputIngredient';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Button } from './ui/button';
 
 type FridgePanelProps = {
   setIngredients?: React.Dispatch<React.SetStateAction<string[]>>;
@@ -23,7 +23,7 @@ function createRecordFromList(list: string[]): Record<string, string> {
   });
 
   if (lastKey === 0) {
-    record[0] = "";
+    record[0] = '';
   }
 
   return record;
@@ -57,9 +57,9 @@ export const FridgePanel = ({
     }
 
     fetch(`/api/fridges/${fridge._id}/ingredients`, {
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         ingredients: Object.values(ingredients),
@@ -71,7 +71,7 @@ export const FridgePanel = ({
           if (data.invalidIngredients) {
             setInvalidIngredients(data.invalidIngredients);
           }
-          throw new Error(data.error || "Failed to save ingredients");
+          throw new Error(data.error || 'Failed to save ingredients');
         }
         return res;
       })
@@ -114,9 +114,9 @@ export const FridgePanel = ({
       }
 
       if (
-        removeAllEmpty ? newIngredients[highestKey]?.trim() !== "" : !hasEmpty
+        removeAllEmpty ? newIngredients[highestKey]?.trim() !== '' : !hasEmpty
       ) {
-        newIngredients[highestKey >= 0 ? highestKey + 1 : 0] = "";
+        newIngredients[highestKey >= 0 ? highestKey + 1 : 0] = '';
       }
 
       const ingredientsLength = Object.keys(ingredients).length;
@@ -173,26 +173,26 @@ export const FridgePanel = ({
   const handleKeyDown = useCallback(
     (key: number, event: React.KeyboardEvent<HTMLInputElement>) => {
       const input = inputRefs.current[key];
-      if (event.key === "Delete" && keyPressed !== event.key) {
+      if (event.key === 'Delete' && keyPressed !== event.key) {
         setKeyPressed(event.key);
-        if (input && input.value.trim() === "") {
+        if (input && input.value.trim() === '') {
           const keys = Object.keys(inputRefs.current).map(Number);
           const index = keys.indexOf(key);
           if (index > 0) {
             const prevKey = keys[index - 1];
-            inputRefs.current[prevKey].value = "";
-            handleIngredientChange(prevKey, "");
+            inputRefs.current[prevKey].value = '';
+            handleIngredientChange(prevKey, '');
             inputRefs.current[prevKey]?.focus();
           }
         } else {
-          input.value = "";
-          handleIngredientChange(key, "");
+          input.value = '';
+          handleIngredientChange(key, '');
           inputRefs.current[key]?.focus();
         }
       } else if (
-        event.key === "Backspace" &&
+        event.key === 'Backspace' &&
         input &&
-        input.value.trim() === ""
+        input.value.trim() === ''
       ) {
         const keys = Object.keys(inputRefs.current).map(Number);
         const index = keys.indexOf(key);
@@ -201,20 +201,20 @@ export const FridgePanel = ({
           inputRefs.current[prevKey]?.focus();
           event.preventDefault();
         }
-      } else if (event.key === "Enter" && input.value.trim() !== "") {
+      } else if (event.key === 'Enter' && input.value.trim() !== '') {
         refreshIngredients(true);
         const nextEmptyInput = Object.values(inputRefs.current).find(
-          (input) => input && input.value.trim() === ""
+          (input) => input && input.value.trim() === ''
         );
         nextEmptyInput?.focus();
-      } else if (event.key === "ArrowDown") {
+      } else if (event.key === 'ArrowDown') {
         const keys = Object.keys(inputRefs.current).map(Number);
         const index = keys.indexOf(key);
         if (index < keys.length - 1) {
           const nextKey = keys[index + 1];
           inputRefs.current[nextKey]?.focus();
         }
-      } else if (event.key === "ArrowUp") {
+      } else if (event.key === 'ArrowUp') {
         const keys = Object.keys(inputRefs.current).map(Number);
         const index = keys.indexOf(key);
         if (index > 0) {
@@ -222,7 +222,7 @@ export const FridgePanel = ({
           inputRefs.current[prevKey]?.focus();
           event.preventDefault();
         }
-      } else if (event.key === "ArrowLeft") {
+      } else if (event.key === 'ArrowLeft') {
         const selectionStart = input.selectionStart;
         if (selectionStart === 0) {
           const keys = Object.keys(inputRefs.current).map(Number);
@@ -233,7 +233,7 @@ export const FridgePanel = ({
             event.preventDefault();
           }
         }
-      } else if (event.key === "ArrowRight") {
+      } else if (event.key === 'ArrowRight') {
         const selectionEnd = input.selectionEnd;
         if (selectionEnd === input.value.length) {
           const keys = Object.keys(inputRefs.current).map(Number);
@@ -269,8 +269,8 @@ export const FridgePanel = ({
   }, [isTryingToSearch, isSaved, ingredients, saveIngredients, searchRecipes]);
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-col flex-grow">
+    <div className='flex flex-col'>
+      <div className='flex flex-col flex-grow'>
         {Object.entries(ingredients).map(
           ([key, ingredient]: [string, string]) => (
             <InputIngredient
@@ -289,15 +289,15 @@ export const FridgePanel = ({
               onKeyDown={(e) => handleKeyDown(Number(key), e)}
               onKeyUp={handleKeyUp}
               error={invalidIngredients.includes(ingredient)} // Add error prop
-              errorMessage="This ingredient is not valid or appropriate"
+              errorMessage='This ingredient is not valid or appropriate'
             />
           )
         )}
       </div>
-      <div className="my-4 flex flex-col md:flex-row justify-between gap-2">
+      <div className='my-4 flex flex-col md:flex-row justify-between gap-2'>
         <Button
-          variant="outline"
-          className="w-full md:w-1/2"
+          variant='outline'
+          className='w-full md:w-1/2'
           disabled={isSaving}
           onClick={saveIngredients}
         >
@@ -306,7 +306,7 @@ export const FridgePanel = ({
 
         {isSearchRecipesButtonVisible && (
           <Button
-            className="w-full md:w-1/2"
+            className='w-full md:w-1/2'
             disabled={
               isSearchRecipesButtonDisabled || isSaving || isTryingToSearch
             }
