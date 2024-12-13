@@ -25,14 +25,16 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
   const limitRecipesPerPage = 12;
 
   const fetchFavoriteRecipes = async (page: number) => {
+    setLoading(true);
     try {
-      const response = await fetch(`/api/profile/${userId}`);
+      const offset = (page - 1) * limitRecipesPerPage;
+      const response = await fetch(
+        `/api/recipes?offset=${offset}&limit=${limitRecipesPerPage}&createdBy=${userId}`
+      );
       const data = await response.json();
 
-      setFavoriteRecipes(data.favoriteRecipes || []);
-      setTotalPages(
-        Math.max(1, Math.ceil(data.favoriteRecipes.length / limitRecipesPerPage))
-      );
+      setFavoriteRecipes(data.results || []);
+      setTotalPages(Math.ceil(data.count / limitRecipesPerPage));
     } catch (error) {
       console.error("Error fetching favorite recipes:", error);
     } finally {
@@ -50,10 +52,17 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
     }
   };
 
-  const paginatedRecipes = favoriteRecipes.slice(
-    (currentPage - 1) * limitRecipesPerPage,
-    currentPage * limitRecipesPerPage
-  );
+  const getPageRange = () => {
+    const range = 3;
+    const start = Math.max(1, currentPage - range);
+    const end = Math.min(totalPages, currentPage + range);
+
+    const pages = [];
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
 
   if (loading) {
     return <div>Loading favorite recipes...</div>;
@@ -66,7 +75,7 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
       ) : (
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {paginatedRecipes.map((recipe) => (
+            {favoriteRecipes.map((recipe) => (
               <div
                 key={recipe._id}
                 className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center"
@@ -83,26 +92,24 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
             ))}
           </div>
 
-          <Pagination className="mt-5">
-            <PaginationContent className="cursor-pointer flex space-x-2">
+          <Pagination className="mt-5 overflow-x-auto">
+            <PaginationContent className="cursor-pointer">
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => handlePageChange(currentPage - 1)}
                   aria-disabled={currentPage === 1}
                 />
               </PaginationItem>
-
-              {[...Array(totalPages)].map((_, index) => (
-                <PaginationItem key={index}>
+              {getPageRange().map((page) => (
+                <PaginationItem key={page}>
                   <PaginationLink
-                    onClick={() => handlePageChange(index + 1)}
-                    isActive={currentPage === index + 1}
+                    onClick={() => handlePageChange(page)}
+                    isActive={currentPage === page}
                   >
-                    {index + 1}
+                    {page}
                   </PaginationLink>
                 </PaginationItem>
               ))}
-
               <PaginationItem>
                 <PaginationNext
                   onClick={() => handlePageChange(currentPage + 1)}
