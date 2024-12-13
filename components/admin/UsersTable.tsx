@@ -147,12 +147,12 @@ function UserRow({
         </ul>
       </td>
       <td className="px-2 py-2 whitespace-nowrap w-4">
-        <button
+        {/* <button
           onClick={() => 0}
           className="text-white p-3 bg-red-500 hover:bg-red-600 rounded-md"
         >
           <Trash2 className="w-5 h-5" />
-        </button>
+        </button> */}
       </td>
     </tr>
   );

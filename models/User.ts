@@ -16,9 +16,9 @@ const UserSchema = new Schema({
   },
   favorites: [{ type: Schema.Types.ObjectId, ref: "Recipe", required: true }],
   createdAt: { type: Date, default: Date.now, required: true },
-  bio: { type: String },
-  avatar: { type: String },
-  bgc: { type: String },
+  bio: { type: String, default: "" },
+  avatar: { type: String, default: "https://github.com/shadcn.png" },
+  bgc: { type: String, default: "" },
   subscriptionType: {
     type: String,
     enum: userSubscriptionsList,
