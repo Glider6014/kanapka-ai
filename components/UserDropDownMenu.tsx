@@ -129,10 +129,10 @@ const AvatarDropdown: React.FC = () => {
             </li>
             <li>
               <button
-                className="block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100"
+                className="block w-full px-4 py-2 text-sm text-red-600 text-left hover:bg-gray-100"
                 onClick={logout}
               >
-                <LogOut className="inline h-4 w-4 mr-2" /> Logout
+                <LogOut className="inline h-4 w-4 mr-2 text-red-600" /> Logout
               </button>
             </li>
           </ul>
