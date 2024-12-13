@@ -56,7 +56,7 @@ export const FridgePanel = ({
       input.disabled = true;
     }
 
-    fetch(`/api/fridges/${fridge._id}/ingredients`, {
+    fetch(`/api/fridges/${fridge.id}/ingredients`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

@@ -46,7 +46,7 @@ export const FridgesPanel = ({
       <div className='flex border-b'>
         {fridges.map((fridge, index) => (
           <button
-            key={fridge._id.toString()}
+            key={fridge.id}
             className={`px-4 py-2 ${
               activeTab === index ? 'border-b-2 border-end-prim' : ''
             }`}
@@ -61,7 +61,7 @@ export const FridgesPanel = ({
           (fridge, index) =>
             activeTab === index && (
               <FridgePanel
-                key={fridge._id.toString()}
+                key={fridge.id}
                 fridge={fridge}
                 setIngredients={setIngredients}
                 isSearchRecipesButtonVisible={isSearchRecipesButtonVisible}

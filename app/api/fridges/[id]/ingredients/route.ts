@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 import {
   processApiHandler,
   getServerSessionProcessed,
   Context,
-} from "@/lib/apiUtils";
-import Fridge from "@/models/Fridge";
-import { z } from "zod";
-import connectDB from "@/lib/connectToDatabase";
-import { generateIngredient } from "@/lib/ingredients/generateIngredients";
-import { validateIngredients } from "@/lib/ingredients/validateNames";
+} from '@/lib/apiUtils';
+import Fridge from '@/models/Fridge';
+import { z } from 'zod';
+import connectDB from '@/lib/connectToDatabase';
+import { generateIngredient } from '@/lib/ingredients/generateIngredients';
+import { validateIngredients } from '@/lib/ingredients/validateNames';
 
 const ingredientsForm = z.object({
   ingredients: z.array(z.string().trim()),
@@ -23,11 +23,11 @@ const handleGET = async (req: NextRequest, { params }: Context) => {
   const fridge = await Fridge.findById(fridgeId);
 
   if (!fridge) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
-  if (!(fridge.isOwner(session) || fridge.isMember(session))) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!(fridge.isOwner(session.user.id) || fridge.isMember(session.user.id))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   return NextResponse.json({ ingredients: fridge.ingredients });
@@ -40,11 +40,11 @@ const handlePUT = async (req: NextRequest, { params }: Context) => {
   const fridge = await Fridge.findById(fridgeId);
 
   if (!fridge) {
-    return NextResponse.json({ error: "Fridge not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Fridge not found' }, { status: 404 });
   }
 
-  if (!(fridge.isOwner(session) || fridge.isMember(session))) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!(fridge.isOwner(session.user.id) || fridge.isMember(session.user.id))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const body = await req.json().catch(() => ({}));
@@ -52,7 +52,7 @@ const handlePUT = async (req: NextRequest, { params }: Context) => {
 
   if (!validationResult.success) {
     return NextResponse.json(
-      { error: "Invalid input", issues: validationResult.error.issues },
+      { error: 'Invalid input', issues: validationResult.error.issues },
       { status: 400 }
     );
   }
@@ -66,7 +66,7 @@ const handlePUT = async (req: NextRequest, { params }: Context) => {
   if (invalidIngredients.length > 0) {
     return NextResponse.json(
       {
-        error: "Invalid ingredients detected",
+        error: 'Invalid ingredients detected',
         invalidIngredients: invalidIngredients.map((r) => r.ingredient),
       },
       { status: 400 }
