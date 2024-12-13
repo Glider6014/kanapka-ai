@@ -114,7 +114,7 @@ const AvatarDropdown: React.FC = () => {
             <li>
               <button
                 className="block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100"
-                onClick={() => router.push(`/profile/${user.id}`)}
+                onClick={() => router.push(`/profile/${session?.user?.id}`)}
               >
                 <CircleUserRound className="inline h-4 w-4 mr-2" /> Profile
               </button>
