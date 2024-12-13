@@ -1,72 +1,85 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 export default function Subscription() {
-const plans = [
-  {
-    title: "Kanapka Basic",
-    price: "Free",
-    description: "",
-    features: [
-      "Access to basic recipe generator",
-      "Save up to 10 recipes",
-      "Limited ingredient database",
-      "Community support",
-    ],
-    button: "Select plan",
-    isPopular: false,
-  },
-  {
-    title: "Kanapka Plus",
-    price: "$5/month",
-    description:
-      "",
-    features: [
-      "Unlimited recipe generations",
-      "Save unlimited recipes",
-      "Extended ingredient database",
-      "Nutritional information",
-      "Meal planning",
-      "Priority support",
-    ],
-    button: "Select plan",
-    isPopular: true,
-  },
-  {
-    title: "Kanapka Gold",
-    price: "$10/month",
-    description:
-      "",
-    features: [
-      "Advanced recipe customization",
-      "Exclusive seasonal ingredients",
-      "Access to professional chef recipes",
-      "Dietary preferences and restrictions",
-      "Recipe sharing with friends",
-      "Detailed meal prep guides",
-      "Nutritional analytics",
-      "Recipe collaboration",
-    ],
-    button: "Select plan",
-    isPopular: true,
-  },
-  {
-    title: "Kanapka Premium",
-    price: "$15/month",
-    description:
-      "",
-    features: [
-      "Personalized diet plans",
-      "One-on-one sessions with nutritionists",
-      "Early access to new features",
-      "Exclusive cooking workshops",
-      "Advanced recipe sharing and collaboration tools",
-      "Integrations with smart kitchen devices",
-      "Priority customer support",
-    ],
-    button: "Contact sales",
-    isPopular: true,
-  },
-];
+  const router = useRouter();
+
+  const plans = [
+    {
+      title: "Kanapka Basic",
+      price: "Free",
+      description: "",
+      features: [
+        "Access to basic recipe generator",
+        "Save up to 10 recipes",
+        "Limited ingredient database",
+        "Community support",
+      ],
+      button: "Select plan",
+      isPopular: false,
+    },
+    {
+      title: "Kanapka Plus",
+      price: "$5/month",
+      description: "",
+      features: [
+        "Unlimited recipe generations",
+        "Save unlimited recipes",
+        "Extended ingredient database",
+        "Nutritional information",
+        "Meal planning",
+        "Priority support",
+      ],
+      button: "Select plan",
+      isPopular: true,
+    },
+    {
+      title: "Kanapka Gold",
+      price: "$10/month",
+      description: "",
+      features: [
+        "Advanced recipe customization",
+        "Exclusive seasonal ingredients",
+        "Access to professional chef recipes",
+        "Dietary preferences and restrictions",
+        "Recipe sharing with friends",
+        "Detailed meal prep guides",
+        "Nutritional analytics",
+        "Recipe collaboration",
+      ],
+      button: "Select plan",
+      isPopular: true,
+    },
+    {
+      title: "Kanapka Premium",
+      price: "$15/month",
+      description: "",
+      features: [
+        "Personalized diet plans",
+        "One-on-one sessions with nutritionists",
+        "Early access to new features",
+        "Exclusive cooking workshops",
+        "Advanced recipe sharing and collaboration tools",
+        "Integrations with smart kitchen devices",
+        "Priority customer support",
+      ],
+      button: "Contact sales",
+      isPopular: true,
+    },
+  ];
+
+  const handleSubscription = (plan: string) => {
+    if (plan !== "Kanapka Plus") return;
+
+    fetch("/api/upgrade", {
+      method: "POST",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        router.push(data.checkoutUrl);
+      });
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -92,6 +105,7 @@ const plans = [
                   ? "bg-black text-white hover:bg-gradient-to-r from-purple-700 to-orange-500"
                   : "bg-gray-100 hover:bg-gradient-to-r from-purple-700 to-orange-500 hover:text-white"
               }`}
+              onClick={() => handleSubscription(plan.title)}
             >
               {plan.button}
             </button>

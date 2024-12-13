@@ -7,7 +7,7 @@ import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-const handlePOST = async (_req: NextRequest) => {
+const handleGET = async (_req: NextRequest) => {
   await connectDB();
 
   const session = await getServerSessionProcessed();
@@ -24,7 +24,7 @@ const handlePOST = async (_req: NextRequest) => {
 
   if (checkout.payment_status != "paid") {
     return NextResponse.json(
-      { error: "Your subscription is not paid" },
+      { message: "Your subscription is not paid" },
       { status: 400 }
     );
   }
@@ -32,7 +32,10 @@ const handlePOST = async (_req: NextRequest) => {
   user.subscriptionType = UserSubscription.PLUS;
   await user.save();
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({
+    message: "Upgrade confirmed successfully",
+    success: true,
+  });
 };
 
-export const POST = processApiHandler(handlePOST);
+export const GET = processApiHandler(handleGET);

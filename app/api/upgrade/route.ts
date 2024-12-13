@@ -20,7 +20,7 @@ const handlePOST = async (_req: NextRequest) => {
   const product = await stripe.products.create({
     name: "Plus Subscription",
     description: "Unlock unlimited access to all features",
-    images: ["localhost:3000/favicon.ico"],
+    images: ["https://i.imgur.com/XeCUkMO.png"],
   });
 
   const priceObject = await stripe.prices.create({
@@ -30,7 +30,7 @@ const handlePOST = async (_req: NextRequest) => {
   });
 
   const checkoutSession = await stripe.checkout.sessions.create({
-    payment_method_types: ["card", "blik"],
+    payment_method_types: ["card"],
     line_items: [
       {
         price: priceObject.id,
@@ -38,8 +38,8 @@ const handlePOST = async (_req: NextRequest) => {
       },
     ],
     mode: "payment",
-    success_url: `localhost:3000/upgrade-confirmed`,
-    cancel_url: `localhost:3000/pricing`,
+    success_url: `http://localhost:3000/user/upgrade-confirmed`,
+    cancel_url: `http://localhost:3000/pricing`,
   });
 
   user.stripeCheckoutSessionId = checkoutSession.id;

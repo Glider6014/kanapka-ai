@@ -1,4 +1,10 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 export default function SubscriptionTable() {
+  const router = useRouter();
+
   const plans = [
     {
       title: "Basic",
@@ -36,6 +42,16 @@ export default function SubscriptionTable() {
     { name: "Exclusive Workshops", plans: [false, false, false, true] },
   ];
 
+  const handleSubscription = (plan: string) => {
+    if (plan !== "Plus") return;
+
+    fetch("/api/upgrade")
+      .then((res) => res.json())
+      .then((data) => {
+        router.push(data.checkoutUrl);
+      });
+  };
+
   return (
     <div className="max-w mx-auto px-4 py-12">
       <h2 className="text-3xl font-bold text-left mb-8">Compare Our Plans</h2>
@@ -51,7 +67,10 @@ export default function SubscriptionTable() {
                 >
                   <h3 className="text-lg font-medium">{plan.title}</h3>
                   <p className="text-2xl font-bold mt-2">{plan.price}</p>
-                  <button className="mt-4 py-2 px-4 border border-black rounded-md hover:bg-black hover:text-white hover:rounded-none hover:border">
+                  <button
+                    className="mt-4 py-2 px-4 border border-black rounded-md hover:bg-black hover:text-white hover:rounded-none hover:border"
+                    onClick={() => handleSubscription(plan.title)}
+                  >
                     {plan.button}
                   </button>
                 </th>
