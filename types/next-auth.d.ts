@@ -8,6 +8,7 @@ declare module "next-auth" {
     username: string;
     displayName: string;
     permissions: string[];
+    subscriptionType: string;
   }
 
   interface Session extends DefaultSession {
@@ -17,6 +18,7 @@ declare module "next-auth" {
       username: string;
       displayName: string;
       permissions: string[];
+      subscriptionType: string;
     } & DefaultSession["user"];
   }
 }
@@ -28,5 +30,6 @@ declare module "next-auth/jwt" {
     username: string;
     displayName: string;
     permissions: string[];
+    subscriptionType: string;
   }
 }
