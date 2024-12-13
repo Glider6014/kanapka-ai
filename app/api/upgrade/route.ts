@@ -1,15 +1,15 @@
 import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
 import connectDB from "@/lib/connectToDatabase";
-import { UserSubscription } from "@/lib/subscriptions";
 import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
 
-const handlePOST = async (req: NextRequest) => {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+
+const handlePOST = async (_req: NextRequest) => {
   await connectDB();
 
   const session = await getServerSessionProcessed();
-
-  const { promoCode } = await req.json();
 
   const user = await User.findById(session.user.id);
 
@@ -17,17 +17,35 @@ const handlePOST = async (req: NextRequest) => {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  if (promoCode === process.env.PROMO_CODE) {
-    user.subscriptionType = UserSubscription.PLUS;
-    await user.save();
+  const product = await stripe.products.create({
+    name: "Plus Subscription",
+    description: "Unlock unlimited access to all features",
+    images: ["localhost:3000/favicon.ico"],
+  });
 
-    return NextResponse.json(
-      { message: "Subscription upgraded to plus" },
-      { status: 200 }
-    );
-  } else {
-    return NextResponse.json({ error: "Invalid promo code" }, { status: 400 });
-  }
+  const priceObject = await stripe.prices.create({
+    product: product.id,
+    unit_amount: 500, // Price in cents
+    currency: "usd",
+  });
+
+  const checkoutSession = await stripe.checkout.sessions.create({
+    payment_method_types: ["card", "blik"],
+    line_items: [
+      {
+        price: priceObject.id,
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    success_url: `localhost:3000/upgrade-confirmed`,
+    cancel_url: `localhost:3000/pricing`,
+  });
+
+  user.stripeCheckoutSessionId = checkoutSession.id;
+  await user.save();
+
+  return NextResponse.json({ checkoutUrl: checkoutSession.url });
 };
 
 export const POST = processApiHandler(handlePOST);

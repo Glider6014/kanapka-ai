@@ -25,6 +25,7 @@ const UserSchema = new Schema({
     required: true,
     default: UserSubscription.FREE,
   },
+  stripeCheckoutSessionId: { type: String },
   // following: { type: Number, default: 0 },
   // followers: { type: Number, default: 0 },
 });
