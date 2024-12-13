@@ -69,7 +69,7 @@ export function DashboardPage() {
 
   return (
     <>
-      <div className="container mx-auto overflow-hidden">
+      <div className="container mx-auto">
         <Navbar />
       </div>
       <div className="container mx-auto overflow-hidden">
