@@ -100,6 +100,18 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
                   aria-disabled={currentPage === 1}
                 />
               </PaginationItem>
+
+              {currentPage > 3 && (
+                <PaginationItem>
+                  <PaginationLink
+                    onClick={() => handlePageChange(1)}
+                    isActive={currentPage === 1}
+                  >
+                    1
+                  </PaginationLink>
+                </PaginationItem>
+              )}
+
               {getPageRange().map((page) => (
                 <PaginationItem key={page}>
                   <PaginationLink
@@ -110,6 +122,18 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
                   </PaginationLink>
                 </PaginationItem>
               ))}
+
+              {currentPage < totalPages - 3 && (
+                <PaginationItem>
+                  <PaginationLink
+                    onClick={() => handlePageChange(totalPages)}
+                    isActive={currentPage === totalPages}
+                  >
+                    {totalPages}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
+
               <PaginationItem>
                 <PaginationNext
                   onClick={() => handlePageChange(currentPage + 1)}

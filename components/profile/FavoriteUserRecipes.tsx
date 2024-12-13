@@ -21,17 +21,17 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
   const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const limitRecipesPerPage = 12;
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchFavoriteRecipes = async (page: number) => {
+  const fetchFavoriteRecipes = async () => {
     try {
       const response = await fetch(`/api/profile/${userId}`);
       const data = await response.json();
 
       setFavoriteRecipes(data.favoriteRecipes || []);
       setTotalPages(
-        Math.max(1, Math.ceil(data.favoriteRecipes.length / limitRecipesPerPage))
+        Math.ceil((data.favoriteRecipes || []).length / limitRecipesPerPage)
       );
     } catch (error) {
       console.error("Error fetching favorite recipes:", error);
@@ -41,8 +41,9 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
   };
 
   useEffect(() => {
-    fetchFavoriteRecipes(currentPage);
-  }, [currentPage]);
+    setLoading(true);
+    fetchFavoriteRecipes();
+  }, [userId]);
 
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) {
@@ -50,9 +51,23 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
     }
   };
 
-  const paginatedRecipes = favoriteRecipes.slice(
-    (currentPage - 1) * limitRecipesPerPage,
-    currentPage * limitRecipesPerPage
+  const getPageRange = () => {
+    const range = 3;
+    const start = Math.max(1, currentPage - range);
+    const end = Math.min(totalPages, currentPage + range);
+
+    const pages = [];
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
+  const indexOfLastRecipe = currentPage * limitRecipesPerPage;
+  const indexOfFirstRecipe = indexOfLastRecipe - limitRecipesPerPage;
+  const currentRecipes = favoriteRecipes.slice(
+    indexOfFirstRecipe,
+    indexOfLastRecipe
   );
 
   if (loading) {
@@ -66,7 +81,7 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
       ) : (
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {paginatedRecipes.map((recipe) => (
+            {currentRecipes.map((recipe) => (
               <div
                 key={recipe._id}
                 className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center"
@@ -83,8 +98,8 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
             ))}
           </div>
 
-          <Pagination className="mt-5">
-            <PaginationContent className="cursor-pointer flex space-x-2">
+          <Pagination className="mt-5 overflow-x-auto">
+            <PaginationContent className="cursor-pointer">
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => handlePageChange(currentPage - 1)}
@@ -92,16 +107,38 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
                 />
               </PaginationItem>
 
-              {[...Array(totalPages)].map((_, index) => (
-                <PaginationItem key={index}>
+              {currentPage > 3 && (
+                <PaginationItem>
                   <PaginationLink
-                    onClick={() => handlePageChange(index + 1)}
-                    isActive={currentPage === index + 1}
+                    onClick={() => handlePageChange(1)}
+                    isActive={currentPage === 1}
                   >
-                    {index + 1}
+                    1
+                  </PaginationLink>
+                </PaginationItem>
+              )}
+
+              {getPageRange().map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    onClick={() => handlePageChange(page)}
+                    isActive={currentPage === page}
+                  >
+                    {page}
                   </PaginationLink>
                 </PaginationItem>
               ))}
+
+              {currentPage < totalPages - 3 && (
+                <PaginationItem>
+                  <PaginationLink
+                    onClick={() => handlePageChange(totalPages)}
+                    isActive={currentPage === totalPages}
+                  >
+                    {totalPages}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
 
               <PaginationItem>
                 <PaginationNext

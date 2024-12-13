@@ -149,21 +149,20 @@ export const MainNavbar = () => {
             {session?.user?.id ? (
               <>
                 <li>
-                  <button
-                    className="block text-gray-800 hover:text-black"
-                    onClick={() => router.push(`/profile/${session?.user?.id}`)}
-                  >
-                    Profile
-                  </button>
+                    <Link href={`/profile/${session?.user?.id}`} passHref>
+                      <span className="block text-gray-800 hover:text-black">
+                        Profile
+                      </span>
+                    </Link>
                 </li>
-                <li>
+                {/* <li>
                   <button
                     className="block text-gray-800 hover:text-black"
                     onClick={() => router.push(`/settings`)}
                   >
                     Settings
                   </button>
-                </li>
+                </li> */}
               </>
             ) : (
               <>
@@ -208,11 +207,18 @@ export const MainNavbar = () => {
             ))}
 
             {session?.user?.id ? (
-              <li>
-                <button className="block text-red-500" onClick={logout}>
-                  Logout
-                </button>
-              </li>
+              <>
+                <li>
+                  <Link href="/" passHref>
+                  <span
+                    className="block text-red-500 cursor-pointer"
+                    onClick={logout}
+                  >
+                    Logout
+                  </span>
+                  </Link>
+                </li>
+              </>
             ) : (
               <></>
             )}
