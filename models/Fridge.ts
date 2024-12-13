@@ -1,6 +1,4 @@
 import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
-import { UserType } from './User';
-import { Session } from 'next-auth';
 
 const UserSubSchema = {
   type: Schema.Types.ObjectId,
@@ -20,62 +18,25 @@ const FridgeSchema = new Schema({
   },
 });
 
-function extractUserId(sessionOrUserOrId: string | UserType | Session) {
-  return typeof sessionOrUserOrId === 'string'
-    ? sessionOrUserOrId
-    : (sessionOrUserOrId as Session)?.user?.id ||
-        (sessionOrUserOrId as UserType)?._id;
-}
-
-FridgeSchema.methods.isOwner = function (
-  this: FridgeType,
-  sessionOrUserOrId: string | UserType | Session
-) {
-  const userId = extractUserId(sessionOrUserOrId);
-
+FridgeSchema.methods.isOwner = function (this: FridgeType, userId: string) {
   return this.owner.toString() === userId;
 };
 
-FridgeSchema.methods.isMember = function (
-  this: FridgeType,
-  sessionOrUserOrId: string | UserType | Session
-) {
-  const userId = extractUserId(sessionOrUserOrId);
-
+FridgeSchema.methods.isMember = function (this: FridgeType, userId: string) {
   return this.members.some((member) => member._id.toString() === userId);
 };
 
-FridgeSchema.statics.validateUserIngredients = async function (
-  ingredients: string[],
-  userId: string
-): Promise<string[]> {
-  const userFridges = await this.find({
-    $or: [{ owner: userId }, { members: userId }],
-  });
-
-  const availableIngredients = new Set(
-    userFridges.flatMap((fridge: { ingredients: any }) => fridge.ingredients)
-  );
-
-  return ingredients.filter(
-    (ingredient) => !availableIngredients.has(ingredient)
-  );
+FridgeSchema.methods.canAccess = function (this: FridgeType, userId: string) {
+  return this.isOwner(userId) || this.isMember(userId);
 };
 
 export type FridgeType = InferSchemaType<typeof FridgeSchema> & {
-  isOwner: (sessionOrUserOrId: string | UserType | Session) => boolean;
-  isMember: (sessionOrUserOrId: string | UserType | Session) => boolean;
-};
-
-export type FridgeModel = Model<FridgeType> & {
-  validateUserIngredients(
-    ingredients: string[],
-    userId: string
-  ): Promise<string[]>;
+  isOwner: (_userId: string) => boolean;
+  isMember: (_userId: string) => boolean;
+  canAccess: (_userId: string) => boolean;
 };
 
 const Fridge =
-  (models.Fridge as FridgeModel) ||
-  model<FridgeType, FridgeModel>('Fridge', FridgeSchema);
+  (models.Fridge as Model<FridgeType>) || model('Fridge', FridgeSchema);
 
 export default Fridge;

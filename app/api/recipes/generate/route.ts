@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { generateRecipes } from "@/lib/Recipe/generateRecipes";
-import connectDB from "@/lib/connectToDatabase";
-import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
-import { RecipeType } from "@/models/Recipe";
-import Fridge from "@/models/Fridge";
-import { validateIngredients } from "@/lib/ingredients/validateNames";
-import { RecipeGeneratorHistory } from "@/models/RecipeGeneratorHistory";
-import { UserSubscription } from "@/lib/subscriptions";
+import { NextRequest, NextResponse } from 'next/server';
+import { generateRecipes } from '@/lib/Recipe/generateRecipes';
+import connectDB from '@/lib/connectToDatabase';
+import { getServerSessionProcessed, processApiHandler } from '@/lib/apiUtils';
+import { RecipeType } from '@/models/Recipe';
+import Fridge from '@/models/Fridge';
+import { validateIngredients } from '@/lib/ingredients/validateNames';
+import { RecipeGeneratorHistory } from '@/models/RecipeGeneratorHistory';
+import { UserSubscription } from '@/lib/subscriptions';
 
 const handlePOST = async (req: NextRequest) => {
   await connectDB();
@@ -26,7 +26,7 @@ const handlePOST = async (req: NextRequest) => {
       return NextResponse.json(
         {
           error:
-            "You have reached your free daily limit of 10 recipes. Upgrade to plus for unlimited access.",
+            'You have reached your free daily limit of 10 recipes. Upgrade to plus for unlimited access.',
         },
         {
           status: 422,
@@ -39,7 +39,7 @@ const handlePOST = async (req: NextRequest) => {
 
   if (!body) {
     return NextResponse.json(
-      { error: "Invalid JSON body" },
+      { error: 'Invalid JSON body' },
       {
         status: 400,
       }
@@ -62,26 +62,10 @@ const handlePOST = async (req: NextRequest) => {
   if (invalidIngredients.length > 0) {
     return NextResponse.json(
       {
-        error: "Some ingredients are invalid",
+        error: 'Some ingredients are invalid',
         invalidIngredients: invalidIngredients.map((r) => r.ingredient),
       },
       { status: 400 }
-    );
-  }
-
-  // Validate ingredients against fridge contents
-  const missingIngredients = await Fridge.validateUserIngredients(
-    ingredients,
-    session.user.id
-  );
-  if (missingIngredients.length > 0) {
-    return NextResponse.json(
-      {
-        error: `Missing ingredients in your fridges`,
-        code: "MISSING_INGREDIENTS",
-        missingIngredients,
-      },
-      { status: 422 }
     );
   }
 
@@ -112,7 +96,7 @@ const handlePOST = async (req: NextRequest) => {
 
           const chunk = JSON.stringify(recipeData, (key, value) => {
             // Skip function serialization
-            if (typeof value === "function") return undefined;
+            if (typeof value === 'function') return undefined;
             return value;
           });
           controller.enqueue(encoder.encode(`data: ${chunk}\n\n`));
@@ -123,11 +107,11 @@ const handlePOST = async (req: NextRequest) => {
           ingredients: ingredients,
         });
       } catch (error) {
-        console.error("Stream error:", error);
+        console.error('Stream error:', error);
         controller.enqueue(
           encoder.encode(
             `data: ${JSON.stringify({
-              error: "Failed to generate recipes",
+              error: 'Failed to generate recipes',
             })}\n\n`
           )
         );
@@ -139,9 +123,9 @@ const handlePOST = async (req: NextRequest) => {
 
   return new NextResponse(stream, {
     headers: {
-      "Content-Type": "text/event-stream",
-      Connection: "keep-alive",
-      "Cache-Control": "no-cache, no-transform",
+      'Content-Type': 'text/event-stream',
+      Connection: 'keep-alive',
+      'Cache-Control': 'no-cache, no-transform',
     },
   });
 };
