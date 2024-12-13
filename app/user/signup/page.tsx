@@ -79,7 +79,7 @@ export default function Home() {
       }
 
       await signIn("credentials", {
-        email: values.email,
+        emailOrUsername: values.email,
         password: values.password,
         callbackUrl: "/dashboard",
       });
