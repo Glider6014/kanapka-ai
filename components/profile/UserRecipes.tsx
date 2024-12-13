@@ -35,7 +35,6 @@ const UserRecipes = ({ userId }: { userId: string }) => {
           <FavoriteUserRecipes userId={userId}/>
         </TabsContent>
       )}
-       <FavoriteUserRecipes userId={userId}/>
     </Tabs>
   );
 };
