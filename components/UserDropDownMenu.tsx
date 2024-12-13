@@ -53,14 +53,14 @@ const AvatarDropdown: React.FC = () => {
                     <CircleUserRound className="inline h-4 w-4 mr-2" /> Profile
                   </button>
                 </li>
-                <li>
+                {/* <li>
                   <button
                     className="block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100"
                     onClick={() => router.push("/settings/profile")}
                   >
                     <Settings className="inline h-4 w-4 mr-2" /> Settings
                   </button>
-                </li>
+                </li> */}
                 <li>
                   <button
                     className="block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100"
