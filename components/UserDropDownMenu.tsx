@@ -109,7 +109,7 @@ const AvatarDropdown: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
+        <div className="absolute right-0 mt-2 w-48 z-50 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
           <ul className="py-1">
             <li>
               <button

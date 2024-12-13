@@ -78,7 +78,7 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
   }
 
   return (
-    <div className="mt-8 transform -translate-y-[30px] z-40">
+    <div className="mt-8 transform -translate-y-[30px] z-30">
       <div
         className={`flex justify-center py-2 px-2 md:px-0 space-x-2 ${
           hasFilters ? "block" : "hidden"

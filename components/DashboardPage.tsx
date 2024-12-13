@@ -69,8 +69,8 @@ export function DashboardPage() {
 
   return (
     <>
-      <div className="w-full md:px-4 py-4">
-        <MainNavbar />
+      <div className="container mx-auto overflow-hidden">
+        <Navbar />
       </div>
       <div className="container mx-auto overflow-hidden">
         <div className="flex flex-col md:flex-row gap-4">
