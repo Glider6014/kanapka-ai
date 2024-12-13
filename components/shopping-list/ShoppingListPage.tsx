@@ -5,7 +5,6 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Navbar } from "../Navbar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { MainNavbar } from "../home-page/MainNavbar";
 
 type ShoppingItem = {
   _id: string;
@@ -71,56 +70,51 @@ export function ShoppingListPage() {
   };
 
   return (
-    <div className="min-h-screen py-4">
-      <div className="w-full md:px-4">
-        <MainNavbar />
+    <div className="min-h-screen py-4 flex flex-col">
+      <div className="container mx-auto md:px-3">
+        <Navbar />
       </div>
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-6">Shopping List</h1>
+      <div className="container mx-auto p-4 flex-grow flex">
+        <div className="flex flex-col w-full md:w-2/5 bg-white p-4 rounded-lg shadow">
+          <h2 className="text-lg font-semibold mb-4">Select Date</h2>
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={handleDateSelect}
+            className="rounded-md border flex-grow"
+            fullHeight
+          />
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">Select Date</h2>
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={handleDateSelect}
-              className="rounded-md border"
-            />
-          </div>
+        <div className="flex flex-col w-full md:w-3/5 bg-white p-4 rounded-lg shadow ml-6">
+          <h2 className="text-lg font-semibold mb-4">
+            Shopping List for{" "}
+            {date ? format(date, "MMMM d, yyyy") : "Selected Date"}
+          </h2>
 
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">
-              Shopping List for{" "}
-              {date ? format(date, "MMMM d, yyyy") : "Selected Date"}
-            </h2>
-
-            {loading ? (
-              <div className="text-center py-4">Loading...</div>
-            ) : items.length > 0 ? (
-              <ul className="space-y-2">
-                {items.map((item) => (
-                  <li key={item._id} className="flex items-center gap-2">
-                    <Checkbox
-                      checked={checkedItems.has(item._id)}
-                      onCheckedChange={() => toggleItem(item._id)}
-                    />
-                    <span
-                      className={
-                        checkedItems.has(item._id) ? "line-through" : ""
-                      }
-                    >
-                      {item.name} - {item.amount} {item.unit}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-500">
-                No items in the shopping list for this date.
-              </p>
-            )}
-          </div>
+          {loading ? (
+            <div className="text-center py-4 flex-grow">Loading...</div>
+          ) : items.length > 0 ? (
+            <ul className="space-y-2 flex-grow">
+              {items.map((item) => (
+                <li key={item._id} className="flex items-center gap-2">
+                  <Checkbox
+                    checked={checkedItems.has(item._id)}
+                    onCheckedChange={() => toggleItem(item._id)}
+                  />
+                  <span
+                    className={checkedItems.has(item._id) ? "line-through" : ""}
+                  >
+                    {item.name} - {item.amount} {item.unit}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500 flex-grow">
+              No items in the shopping list for this date.
+            </p>
+          )}
         </div>
       </div>
     </div>

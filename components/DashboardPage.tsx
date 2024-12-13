@@ -69,28 +69,30 @@ export function DashboardPage() {
 
   return (
     <>
-    <div className="w-full md:px-4 py-4">
-        <MainNavbar />
-    </div>
-    <div className="container mx-auto overflow-hidden">
-      <div className="flex flex-col md:flex-row gap-4">
-        <FridgesPanel
-          searchRecipes={handleSearchRecipes}
-          isSearchRecipesButtonVisible={true}
-          isSearchRecipesButtonDisabled={isSearching}
-        />
-        <div className="w-full md:w-3/5 mt-4 md:mt-0">
-          {searchError ? (
-            <div className="text-center text-red-500">{searchError}</div>
-          ) : recipes.length > 0 ? (
-            <RecipesList recipes={recipes} hasFilters={false} />
-          ) : (
-            <div className="text-center text-gray-500">
-              {isSearching ? "Generating recipes..." : "No recipes to display"}
-            </div>
-          )}
-         </div>
-       </div>
+      <div className="container mx-auto">
+        <Navbar />
+      </div>
+      <div className="container mx-auto overflow-hidden">
+        <div className="flex flex-col md:flex-row gap-4">
+          <FridgesPanel
+            searchRecipes={handleSearchRecipes}
+            isSearchRecipesButtonVisible={true}
+            isSearchRecipesButtonDisabled={isSearching}
+          />
+          <div className="w-full md:w-3/5 mt-4 md:mt-0">
+            {searchError ? (
+              <div className="text-center text-red-500">{searchError}</div>
+            ) : recipes.length > 0 ? (
+              <RecipesList recipes={recipes} hasFilters={false} />
+            ) : (
+              <div className="text-center text-gray-500">
+                {isSearching
+                  ? "Generating recipes..."
+                  : "No recipes to display"}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );

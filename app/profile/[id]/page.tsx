@@ -6,6 +6,7 @@ import User from "@/models/User";
 import { Logo } from "@/components/Logo";
 import { ObjectId } from "mongodb";
 import { MainNavbar } from "@/components/home-page/MainNavbar";
+import { Context } from "@/lib/apiUtils";
 
 function notFound() {
   return (

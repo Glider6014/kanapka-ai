@@ -1,4 +1,3 @@
-import { MainNavbar } from "@/components/home-page/MainNavbar";
 import { Navbar } from "@/components/Navbar";
 import { RecipesList } from "@/components/RecipesList";
 import connectDB from "@/lib/connectToDatabase";
@@ -12,11 +11,11 @@ const RecipesPage = async () => {
 
   return (
     <>
-      <div className="w-full md:px-4 py-4">
-        <MainNavbar />
+      <div className="container mx-auto">
+        <Navbar />
       </div>
-      <div className="container py-4 mx-auto overflow-hidden">
-        <h2 className="text-2xl font-bold mb-4 text-center bg-gray-300 p-5 text-gray-700">
+      <div className="container pb-4 mx-auto overflow-hidden z-10">
+        <h2 className="text-2xl font-bold mb-4 text-center bg-gray-300 p-5 text-gray-700 z-10">
           Recipes List
         </h2>
         <RecipesList

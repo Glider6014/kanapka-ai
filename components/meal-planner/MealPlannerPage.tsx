@@ -1,14 +1,13 @@
-'use client';
-import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import GenerateMealsModal from '@/components/meal-planner/GenerateMealsModal';
-import { CustomEvent } from '@/types/calendar';
-import { Navbar } from '../Navbar';
-import { Button } from '../ui/button';
-import { MainNavbar } from '../home-page/MainNavbar';
+"use client";
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import GenerateMealsModal from "@/components/meal-planner/GenerateMealsModal";
+import { CustomEvent } from "@/types/calendar";
+import { Navbar } from "../Navbar";
+import { Button } from "../ui/button";
 
 const Calendar = dynamic(
-  () => import('@/components/meal-planner/BigCalendar'),
+  () => import("@/components/meal-planner/BigCalendar"),
   { ssr: false }
 );
 
@@ -20,14 +19,14 @@ export function MealPlannerPage() {
 
   const fetchMealSchedules = async () => {
     try {
-      const response = await fetch('/api/meal-schedules');
+      const response = await fetch("/api/meal-schedules");
       if (!response.ok) {
-        throw new Error('Failed to fetch meal schedules');
+        throw new Error("Failed to fetch meal schedules");
       }
       const data = await response.json();
       setEvents(data.events);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -52,15 +51,15 @@ export function MealPlannerPage() {
   ) => {
     try {
       const response = await fetch(`/api/meal-schedules/${event.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ date: start }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update meal schedule');
+        throw new Error("Failed to update meal schedule");
       }
 
       // Update local state
@@ -68,7 +67,7 @@ export function MealPlannerPage() {
         prevEvents.map((e) => (e.id === event.id ? { ...e, start, end } : e))
       );
     } catch (error) {
-      console.error('Error updating event:', error);
+      console.error("Error updating event:", error);
       fetchMealSchedules();
     }
   };
@@ -84,9 +83,9 @@ export function MealPlannerPage() {
 
     try {
       const response = await fetch(`/api/meal-schedules/${event.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           date: start,
@@ -95,7 +94,7 @@ export function MealPlannerPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update meal schedule');
+        throw new Error("Failed to update meal schedule");
       }
 
       // Update local state
@@ -107,14 +106,14 @@ export function MealPlannerPage() {
         )
       );
     } catch (error) {
-      console.error('Error updating event:', error);
+      console.error("Error updating event:", error);
       fetchMealSchedules();
     }
   };
 
   if (loading) {
     return (
-      <div className='h-screen flex items-center justify-center'>
+      <div className="h-screen flex items-center justify-center">
         Loading...
       </div>
     );
@@ -122,7 +121,7 @@ export function MealPlannerPage() {
 
   if (error) {
     return (
-      <div className='h-screen flex items-center justify-center text-red-500'>
+      <div className="h-screen flex items-center justify-center text-red-500">
         {error}
       </div>
     );
@@ -130,8 +129,8 @@ export function MealPlannerPage() {
 
   return (
     <div className="h-screen">
-      <div className="md:px-4 py-4">
-        <MainNavbar />
+      <div className="md:px-4">
+        <Navbar />
       </div>
       <header className="p-4 bg-gradient-to-r from-start-prim to-end-prim text-white flex justify-between items-center">
         <h1 className="text-xl font-bold">Meal Planner Calendar</h1>
