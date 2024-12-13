@@ -21,20 +21,18 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
   const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const limitRecipesPerPage = 12;
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchFavoriteRecipes = async (page: number) => {
-    setLoading(true);
+  const fetchFavoriteRecipes = async () => {
     try {
-      const offset = (page - 1) * limitRecipesPerPage;
-      const response = await fetch(
-        `/api/recipes?offset=${offset}&limit=${limitRecipesPerPage}&createdBy=${userId}`
-      );
+      const response = await fetch(`/api/profile/${userId}`);
       const data = await response.json();
 
-      setFavoriteRecipes(data.results || []);
-      setTotalPages(Math.ceil(data.count / limitRecipesPerPage));
+      setFavoriteRecipes(data.favoriteRecipes || []);
+      setTotalPages(
+        Math.ceil((data.favoriteRecipes || []).length / limitRecipesPerPage)
+      );
     } catch (error) {
       console.error("Error fetching favorite recipes:", error);
     } finally {
@@ -43,8 +41,9 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
   };
 
   useEffect(() => {
-    fetchFavoriteRecipes(currentPage);
-  }, [currentPage]);
+    setLoading(true);
+    fetchFavoriteRecipes();
+  }, [userId]);
 
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) {
@@ -64,6 +63,13 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
     return pages;
   };
 
+  const indexOfLastRecipe = currentPage * limitRecipesPerPage;
+  const indexOfFirstRecipe = indexOfLastRecipe - limitRecipesPerPage;
+  const currentRecipes = favoriteRecipes.slice(
+    indexOfFirstRecipe,
+    indexOfLastRecipe
+  );
+
   if (loading) {
     return <div>Loading favorite recipes...</div>;
   }
@@ -75,7 +81,7 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
       ) : (
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {favoriteRecipes.map((recipe) => (
+            {currentRecipes.map((recipe) => (
               <div
                 key={recipe._id}
                 className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center"
