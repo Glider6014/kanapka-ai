@@ -41,7 +41,7 @@ const ProfilePage = async ({ params }: Context) => {
               id: user._id.toString(),
               username: user.username,
               displayName: user.displayName,
-              bio: user.bio || "",
+              bio: user.bio || "Your bio here",
               avatar: user.avatar || "",
               bgc: user.bgc || "",
               createdAt: user.createdAt.toISOString(),
