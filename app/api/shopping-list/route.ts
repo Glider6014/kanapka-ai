@@ -1,16 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/connectToDatabase";
-import { MealSchedule } from "@/models/MealSchedule";
-import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/lib/connectToDatabase';
+import { MealSchedule } from '@/models/MealSchedule';
+import { getServerSessionProcessed, processApiHandler } from '@/lib/apiUtils';
 
 const handleGET = async (req: NextRequest) => {
   const session = await getServerSessionProcessed();
 
   const { searchParams } = new URL(req.url);
-  const date = searchParams.get("date");
+  const date = searchParams.get('date');
 
   if (!date) {
-    return NextResponse.json({ error: "Date is required" }, { status: 400 });
+    return NextResponse.json({ error: 'Date is required' }, { status: 400 });
   }
 
   await connectDB();
@@ -20,8 +20,8 @@ const handleGET = async (req: NextRequest) => {
   const endDate = new Date(startDate);
   endDate.setHours(23, 59, 59, 999);
 
-  console.log("Looking for meals between:", startDate, "and", endDate);
-  console.log("User ID:", session.user?.id);
+  console.log('Looking for meals between:', startDate, 'and', endDate);
+  console.log('User ID:', session.user?.id);
 
   const mealSchedules = await MealSchedule.find({
     userId: session.user?.id,
@@ -30,41 +30,41 @@ const handleGET = async (req: NextRequest) => {
       $lte: endDate,
     },
   }).populate({
-    path: "recipeId",
+    path: 'recipeId',
     populate: {
-      path: "ingredients.ingredient",
-      model: "Ingredient",
+      path: 'ingredients.ingredient',
+      model: 'Ingredient',
     },
   });
 
-  console.log("Raw meal schedules:", JSON.stringify(mealSchedules, null, 2));
+  console.log('Raw meal schedules:', JSON.stringify(mealSchedules, null, 2));
 
   const ingredientsMap = new Map();
 
   mealSchedules.forEach((schedule) => {
     const recipe = schedule.recipeId;
     if (!recipe) {
-      console.log("No recipe found for schedule:", schedule._id);
+      console.log('No recipe found for schedule:', schedule._id);
       return;
     }
 
     if (!Array.isArray(recipe.ingredients)) {
-      console.log("No ingredients array for recipe:", recipe._id);
+      console.log('No ingredients array for recipe:', recipe._id);
       return;
     }
 
     recipe.ingredients.forEach(
       (item: {
-        ingredient: { _id: string; name: string; unit: string };
+        ingredient: { id: string; name: string; unit: string };
         amount: number;
       }) => {
         const ingredient = item.ingredient;
-        if (!ingredient || !ingredient._id) {
-          console.log("Invalid ingredient data in recipe:", recipe._id);
+        if (!ingredient || !ingredient.id) {
+          console.log('Invalid ingredient data in recipe:', recipe._id);
           return;
         }
 
-        const key = ingredient._id.toString();
+        const key = ingredient.id.toString();
         const currentAmount = ingredientsMap.get(key)?.amount || 0;
 
         ingredientsMap.set(key, {
@@ -79,7 +79,7 @@ const handleGET = async (req: NextRequest) => {
 
   const items = Array.from(ingredientsMap.values());
 
-  console.log("Final processed items:", items);
+  console.log('Final processed items:', items);
 
   return NextResponse.json({ items });
 };

@@ -59,7 +59,7 @@ export const ingredientsGenerator = tool(
         const ingredient = await generateIngredient(name);
         if (ingredient && ingredient.nutrition) {
           return {
-            _id: ingredient._id.toString(),
+            id: ingredient.id,
             name: ingredient.name,
             unit: ingredient.unit,
             nutrition: ingredient.nutrition,
@@ -70,11 +70,7 @@ export const ingredientsGenerator = tool(
     );
 
     console.log('generatedIngredients', generatedIngredients);
-    return JSON.stringify(
-      generatedIngredients.filter(
-        (ingredient): ingredient is Ingredient => ingredient !== null
-      )
-    );
+    return JSON.stringify(generatedIngredients.filter((ing) => ing));
   },
   {
     name: 'ingredients_generator',

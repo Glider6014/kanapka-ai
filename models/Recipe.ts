@@ -58,8 +58,8 @@ RecipeSchema.methods.calculateNutrition =
     };
 
     this.ingredients.forEach((recipeIngredient: RecipeIngredient) => {
-      const ingredient = ingredients.find((i) =>
-        i._id.equals(recipeIngredient.ingredient.toString())
+      const ingredient = ingredients.find((ing) =>
+        ing.id.equals(recipeIngredient.ingredient.toString())
       );
       if (ingredient) {
         const factor = calculateFactor(

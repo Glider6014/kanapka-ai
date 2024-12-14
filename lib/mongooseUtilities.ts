@@ -1,6 +1,6 @@
 type withOptional_id = { _id?: string };
 
-export const schemaOptionsWithId = {
+export const schemaOptionsSwitchToId = {
   id: true,
   toJSON: {
     virtuals: true,

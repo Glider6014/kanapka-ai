@@ -103,7 +103,7 @@ export async function generateRecipeFromIds(
       return null;
     }
     const ingredientsText = ingredients
-      .map((ing) => `${ing._id}: ${ing.name} (${ing.unit})`)
+      .map((ing) => `${ing.id}: ${ing.name} (${ing.unit})`)
       .join('\n');
 
     const result = await chain.invoke({
