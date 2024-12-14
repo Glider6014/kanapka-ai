@@ -1,23 +1,28 @@
 import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
-import { Unit } from '@/types/Unit';
 import { schemaOptionsSwitchToId, withId } from '@/lib/mongooseUtilities';
+import { unitsList } from '@/lib/units';
+
+const nutritionSchema = new Schema({
+  calories: { type: Number, required: true, default: 0 },
+  protein: { type: Number, required: true, default: 0 },
+  fats: { type: Number, required: true, default: 0 },
+  carbs: { type: Number, required: true, default: 0 },
+  fiber: { type: Number, required: true, default: 0 },
+  sugar: { type: Number, required: true, default: 0 },
+  sodium: { type: Number, required: true, default: 0 },
+});
 
 const IngredientSchema = new Schema(
   {
     name: { type: String, required: true },
     unit: {
       type: String,
-      enum: Object.values(Unit),
+      enum: unitsList,
       required: true,
     },
     nutrition: {
-      calories: { type: Number, required: true },
-      protein: { type: Number, required: true },
-      fats: { type: Number, required: true },
-      carbs: { type: Number, required: true },
-      fiber: { type: Number, required: true },
-      sugar: { type: Number, required: true },
-      sodium: { type: Number, required: true },
+      type: nutritionSchema,
+      required: true,
     },
   },
   {

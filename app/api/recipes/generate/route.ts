@@ -81,7 +81,7 @@ const handlePOST = async (req: NextRequest) => {
       try {
         for await (const recipe of recipeGenerator) {
           const recipeData: RecipeType = {
-            _id: recipe._id,
+            id: recipe.id,
             name: recipe.name,
             description: recipe.description,
             ingredients: recipe.ingredients,

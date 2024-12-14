@@ -18,7 +18,7 @@ import { useSession } from 'next-auth/react';
 
 type RecipesListProps = {
   recipes: RecipeType[];
-  hasFilters: boolean;
+  hasFilters?: boolean;
 };
 
 export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
@@ -33,7 +33,7 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
         const response = await fetch('/api/recipes/favorite');
         const data = await response.json();
         if (response.ok) {
-          setFavorites(data.favorites.map((fav: { _id: string }) => fav._id));
+          setFavorites(data.favorites.map((fav: { id: string }) => fav.id));
         }
       } catch (error) {
         console.error('Failed to fetch favorites', error);
@@ -65,7 +65,7 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
 
   const filteredRecipes = recipes.filter((recipe) => {
     if (filter === 'favorites') {
-      return favorites.includes(recipe._id.toString());
+      return favorites.includes(recipe.id);
     }
     if (filter === 'mine') {
       return recipe.createdBy.toString() === session?.user?.id;
@@ -107,21 +107,17 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
         </TableHeader>
         <TableBody>
           {filteredRecipes.map((recipe) => (
-            <TableRow key={recipe._id?.toString()}>
+            <TableRow key={recipe.id}>
               <TableCell className='w-16'>
                 <button
                   className='flex justify-center items-center w-full h-full'
-                  onClick={() => toggleFavorite(recipe._id.toString()!)}
+                  onClick={() => toggleFavorite(recipe.id)}
                 >
-                  {favorites.includes(recipe._id.toString()!) ? (
-                    <Heart />
-                  ) : (
-                    <HeartOff />
-                  )}
+                  {favorites.includes(recipe.id!) ? <Heart /> : <HeartOff />}
                 </button>
               </TableCell>
               <TableCell>
-                <Link href={`/recipes/${recipe._id}`} target='_blank'>
+                <Link href={`/recipes/${recipe.id}`} target='_blank'>
                   <Button variant='link'>{recipe.name}</Button>
                 </Link>
               </TableCell>

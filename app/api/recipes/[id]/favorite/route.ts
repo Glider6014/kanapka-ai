@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/connectToDatabase";
-import User from "@/models/User";
-import Recipe from "@/models/Recipe";
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/lib/connectToDatabase';
+import User from '@/models/User';
+import Recipe from '@/models/Recipe';
 import {
   Context,
   getServerSessionProcessed,
   processApiHandler,
-} from "@/lib/apiUtils";
+} from '@/lib/apiUtils';
 
 const handlePOST = async (_req: NextRequest, { params }: Context) => {
   const session = await getServerSessionProcessed();
@@ -16,7 +16,7 @@ const handlePOST = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
 
   if (!(await Recipe.exists({ _id: recipeId }))) {
-    return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Recipe not found' }, { status: 404 });
   }
 
   const user = await User.findByIdAndUpdate(

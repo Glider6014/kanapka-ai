@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/pagination';
 
 type Recipe = {
-  _id: string;
+  id: string;
   name: string;
   description: string;
 };
@@ -77,10 +77,10 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
             {recipes.map((recipe) => (
               <div
-                key={recipe._id}
+                key={recipe.id}
                 className='bg-white p-4 rounded-lg shadow-lg flex flex-col items-center'
               >
-                <Link href={`/recipes/${recipe._id}`}>
+                <Link href={`/recipes/${recipe.id}`}>
                   <h3 className='text-lg font-semibold text-gray-800 text-center'>
                     {recipe.name}
                   </h3>

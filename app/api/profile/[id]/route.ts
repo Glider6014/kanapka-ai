@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { isValidObjectId } from "mongoose";
-import connectDB from "@/lib/connectToDatabase";
-import User from "@/models/User";
-import Recipe from "@/models/Recipe";
-import { Context, processApiHandler } from "@/lib/apiUtils";
+import { NextRequest, NextResponse } from 'next/server';
+import { isValidObjectId } from 'mongoose';
+import connectDB from '@/lib/connectToDatabase';
+import User from '@/models/User';
+import Recipe from '@/models/Recipe';
+import { Context, processApiHandler } from '@/lib/apiUtils';
 
 const handleGET = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
@@ -12,7 +12,7 @@ const handleGET = async (_req: NextRequest, { params }: Context) => {
 
   if (!isValidObjectId(id)) {
     return NextResponse.json(
-      { error: "Invalid user ID format" },
+      { error: 'Invalid user ID format' },
       { status: 400 }
     );
   }
@@ -20,13 +20,13 @@ const handleGET = async (_req: NextRequest, { params }: Context) => {
   const user = await User.findById(id);
 
   if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
 
   const recipes = await Recipe.find({ createdBy: id }).populate(
-    "ingredients.ingredient"
+    'ingredients.ingredient'
   );
-  const favoriteRecipes = await Recipe.find({ _id: { $in: user.favorites } });
+  const favoriteRecipes = await Recipe.where('_id').in(user.favorites);
   const countRecipes = await Recipe.countDocuments({ createdBy: id });
   const countFavoriteRecipes = user.favorites.length;
 

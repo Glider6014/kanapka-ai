@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { RecipeType } from '@/models/Recipe';
 import { FridgesPanel } from '@/components/FridgesPanel';
 import { Navbar } from './Navbar';
-import { MainNavbar } from './home-page/MainNavbar';
 
 export function DashboardPage() {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
@@ -51,7 +50,7 @@ export function DashboardPage() {
             try {
               const recipeData = JSON.parse(json) as RecipeType;
               setRecipes((prev) => {
-                if (prev.some((r) => r._id === recipeData._id)) return prev;
+                if (prev.some((r) => r.id === recipeData.id)) return prev;
                 return [...prev, recipeData];
               });
             } catch (error) {
