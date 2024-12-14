@@ -37,7 +37,7 @@ export function UsersTableRow({
     );
 
     try {
-      const response = await fetch(`/api/admin/users/${user._id}`, {
+      const response = await fetch(`/api/admin/users/${user.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export function UsersTableRow({
     const updatedPermissions = [...userData.permissions, permission];
 
     try {
-      const response = await fetch(`/api/admin/users/${user._id}`, {
+      const response = await fetch(`/api/admin/users/${user.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

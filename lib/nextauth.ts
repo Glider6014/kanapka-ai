@@ -18,7 +18,7 @@ async function getUserWithoutPassword(userId: string) {
   if (!user) return null;
 
   return {
-    id: user._id.toString(),
+    id: user.id,
     email: user.email,
     username: user.username,
     displayName: user.displayName,
@@ -65,7 +65,7 @@ const authOptions: NextAuthOptions = {
         }
 
         return {
-          id: user._id.toString(),
+          id: user.id,
           email: user.email,
           username: user.username,
           displayName: user.displayName,

@@ -49,7 +49,7 @@ const handleGET = async (req: NextRequest) => {
     }
 
     if (!Array.isArray(recipe.ingredients)) {
-      console.log('No ingredients array for recipe:', recipe._id);
+      console.log('No ingredients array for recipe:', recipe.id);
       return;
     }
 
@@ -60,7 +60,7 @@ const handleGET = async (req: NextRequest) => {
       }) => {
         const ingredient = item.ingredient;
         if (!ingredient || !ingredient.id) {
-          console.log('Invalid ingredient data in recipe:', recipe._id);
+          console.log('Invalid ingredient data in recipe:', recipe.id);
           return;
         }
 
@@ -68,7 +68,7 @@ const handleGET = async (req: NextRequest) => {
         const currentAmount = ingredientsMap.get(key)?.amount || 0;
 
         ingredientsMap.set(key, {
-          _id: key,
+          id: key,
           name: ingredient.name,
           amount: currentAmount + item.amount,
           unit: ingredient.unit,

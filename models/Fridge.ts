@@ -28,7 +28,7 @@ FridgeSchema.methods.isOwner = function (this: FridgeType, userId: string) {
 };
 
 FridgeSchema.methods.isMember = function (this: FridgeType, userId: string) {
-  return this.members.some((member) => member._id.toString() === userId);
+  return this.members.some((member) => member.toString() === userId);
 };
 
 export type FridgeType = InferSchemaType<typeof FridgeSchema> &

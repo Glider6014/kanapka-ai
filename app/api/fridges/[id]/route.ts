@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 import {
   processApiHandler,
   getServerSessionProcessed,
   Context,
-} from "@/lib/apiUtils";
-import Fridge from "@/models/Fridge";
-import connectDB from "@/lib/connectToDatabase";
-import { z } from "zod";
-import User from "@/models/User";
+} from '@/lib/apiUtils';
+import Fridge from '@/models/Fridge';
+import connectDB from '@/lib/connectToDatabase';
+import { z } from 'zod';
+import User from '@/models/User';
 
 const handleGET = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
@@ -18,11 +18,11 @@ const handleGET = async (_req: NextRequest, { params }: Context) => {
   const fridge = await Fridge.findById(id);
 
   if (!fridge) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
   if (!fridge.isOwner(session.user.id)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   return NextResponse.json(fridge);
@@ -44,7 +44,7 @@ const handlePUT = async (req: NextRequest, { params }: Context) => {
 
   if (!validationResult.success) {
     return NextResponse.json(
-      { error: "Invalid input", issues: validationResult.error.issues },
+      { error: 'Invalid input', issues: validationResult.error.issues },
       { status: 400 }
     );
   }
@@ -52,11 +52,11 @@ const handlePUT = async (req: NextRequest, { params }: Context) => {
   const fridge = await Fridge.findById(id);
 
   if (!fridge) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
   if (!fridge.isOwner(session.user.id)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   if (validationResult.data.name) fridge.name = validationResult.data.name;
@@ -68,7 +68,7 @@ const handlePUT = async (req: NextRequest, { params }: Context) => {
       const user = await User.findOne({ username });
       if (!user) continue;
 
-      fridge.members.push(user._id);
+      fridge.members.push(user.id);
     }
   }
 
@@ -86,16 +86,16 @@ const handleDELETE = async (_req: NextRequest, { params }: Context) => {
   const fridge = await Fridge.findById(id);
 
   if (!fridge) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
   if (!fridge.isOwner(session.user.id)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   await fridge.deleteOne();
 
-  return NextResponse.json({ message: "Fridge deleted" });
+  return NextResponse.json({ message: 'Fridge deleted' });
 };
 
 export const GET = processApiHandler(handleGET);

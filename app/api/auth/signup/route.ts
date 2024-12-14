@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import connectDB from "@/lib/connectToDatabase";
-import User from "@/models/User";
-import { signUpFormSchema } from "@/lib/formSchemas/authFormSchemas";
-import { processApiHandler } from "@/lib/apiUtils";
+import { NextRequest, NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
+import connectDB from '@/lib/connectToDatabase';
+import User from '@/models/User';
+import { signUpFormSchema } from '@/lib/formSchemas/authFormSchemas';
+import { processApiHandler } from '@/lib/apiUtils';
 
 const handlePOST = async (req: NextRequest) => {
   await connectDB();
@@ -26,7 +26,7 @@ const handlePOST = async (req: NextRequest) => {
     })
   ) {
     return NextResponse.json(
-      { message: "User with this email or username already exists" },
+      { message: 'User with this email or username already exists' },
       { status: 409 }
     );
   }
@@ -40,10 +40,10 @@ const handlePOST = async (req: NextRequest) => {
     password: hashedPassword,
   });
 
-  const user = await User.findById(createdUser._id).select("-password");
+  const user = await User.findById(createdUser.id).select('-password');
 
   return NextResponse.json(
-    { message: "User created successfully", user },
+    { message: 'User created successfully', user },
     { status: 201 }
   );
 };
