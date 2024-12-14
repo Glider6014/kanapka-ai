@@ -6,12 +6,11 @@ import {
   models,
   Document,
 } from 'mongoose';
-import { NutritionTotals } from '../types/NutritionTotals';
 import { schemaOptionsSwitchToId, withId } from '@/lib/mongooseUtilities';
 import { unitToFactor } from '@/lib/units';
 import '@/models/Ingredient';
 import { IngredientType } from '@/models/Ingredient';
-import { emptyNutrition } from '@/lib/nutrition';
+import { emptyNutrition, Nutrition } from '@/lib/nutrition';
 
 const RecipeSchema = new Schema(
   {
@@ -73,8 +72,8 @@ RecipeSchema.methods.calculateNutrition = async function (
     const factor = ing.amount / unitToFactor[ing.unit];
 
     Object.keys(ing.nutrition).forEach((key) => {
-      acc[key as keyof NutritionTotals] +=
-        ing.nutrition[key as keyof NutritionTotals] * factor;
+      acc[key as keyof Nutrition] +=
+        ing.nutrition[key as keyof Nutrition] * factor;
     });
 
     return acc;
@@ -85,7 +84,7 @@ RecipeSchema.methods.calculateNutrition = async function (
 
 export type RecipeType = InferSchemaType<typeof RecipeSchema> &
   withId & {
-    calculateNutrition(): Promise<NutritionTotals>;
+    calculateNutrition(): Promise<Nutrition>;
   };
 
 const Recipe =

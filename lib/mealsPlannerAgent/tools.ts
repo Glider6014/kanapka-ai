@@ -2,10 +2,10 @@ import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { generateIngredient } from '@/lib/ingredients/generateIngredients';
 import { generateRecipeFromIds } from '@/lib/Recipe/generateRecipeFromIds';
-import { NutritionTotals } from '@/types/NutritionTotals';
 import connectDB from '../connectToDatabase';
 import { MealSchedule } from '../../models/MealSchedule';
 import { Types } from 'mongoose';
+import { Nutrition } from '../nutrition';
 
 export interface Ingredient {
   _id: string;
@@ -30,7 +30,7 @@ interface MealSchedule {
 export interface Recipe {
   id: string;
   name: string;
-  nutrition: NutritionTotals;
+  nutrition: Nutrition;
 }
 
 export const ingredientsGenerator = tool(
@@ -126,7 +126,7 @@ export const recipeGenerator = tool(
     const nutrition = await recipe.calculateNutrition();
 
     const recipeData = {
-      id: recipe._id.toString(),
+      id: recipe.id,
       name: recipe.name,
       nutrition,
     };
