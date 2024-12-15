@@ -8,7 +8,6 @@ import mongoose, {
 } from 'mongoose';
 import './Recipe';
 import { schemaOptionsSwitchToId, withId } from '@/lib/mongooseUtilities';
-import { IngredientType } from './Ingredient';
 import { RecipeType, RecipeTypeWithPopulatedIngredients } from './Recipe';
 
 const mealScheduleSchema = new Schema(

@@ -47,11 +47,6 @@ const RecipeSchema = new Schema(
   }
 );
 
-type PopulatedRecipeIngredient = {
-  ingredient: IngredientType;
-  amount: number;
-};
-
 RecipeSchema.methods.calculateNutrition = async function (
   this: Document & RecipeTypeWithPopulatedIngredients
 ) {
@@ -90,7 +85,7 @@ export const Recipe =
 
 // <-- Additional populated types -->
 
-type PopulatedIngredient = {
+type PopulatedRecipeIngredient = {
   ingredient: IngredientType;
   amount: number;
 };
@@ -99,5 +94,5 @@ export type RecipeTypeWithPopulatedIngredients = Omit<
   RecipeType,
   'ingredients'
 > & {
-  ingredients: PopulatedIngredient[];
+  ingredients: PopulatedRecipeIngredient[];
 };
