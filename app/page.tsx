@@ -3,7 +3,7 @@
 import FAQ from '@/components/home-page/FAQ';
 import Newsletter from '@/components/home-page/Newsletter';
 import Footer from '@/components/Footer';
-import { MainNavbar } from '@/components/home-page/MainNavbar';
+import MainNavbar from '@/components/home-page/MainNavbar';
 import Greeting from '@/components/home-page/Greeting';
 import About_app from '@/components/home-page/About_app';
 import Features from '@/components/home-page/Features';
