@@ -1,4 +1,5 @@
 'use client';
+
 import { Logo } from '@/components/Logo';
 import { useSession, signOut } from 'next-auth/react';
 import { useState } from 'react';

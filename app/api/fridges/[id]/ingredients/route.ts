@@ -14,7 +14,7 @@ const ingredientsForm = z.object({
   ingredients: z.array(z.string().trim()),
 });
 
-const handleGET = async (req: NextRequest, { params }: Context) => {
+const handleGET = async (_req: NextRequest, { params }: Context) => {
   await connectDB();
 
   const session = await getServerSessionProcessed();

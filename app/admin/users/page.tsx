@@ -1,4 +1,5 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import { UserType } from '@/models/User';
 import { useRouter } from 'next/navigation';

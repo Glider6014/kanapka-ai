@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { signOut, useSession } from 'next-auth/react';
