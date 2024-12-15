@@ -14,7 +14,7 @@ import PromoBanner from '@/components/home-page/PromoBanner';
 export default function Home() {
   return (
     <>
-      <div className="w-full md:px-4 py-4">
+      <div className='w-full md:px-4 py-4'>
         <MainNavbar />
       </div>
       <div className='w-full'>
@@ -30,10 +30,10 @@ export default function Home() {
       </div>
       <div className='w-full'>
         <PromoBanner />
-        
+
         {/* <People people={people0} isReverse={false} />
         <People people={people1} isReverse={true} /> */}
-        
+
         <FAQ />
         <Newsletter />
         <Footer />

@@ -13,11 +13,11 @@ const Sidebar = () => {
         <Link href='/settings/profile'>
           <span
             className={`block px-4 py-2 rounded-md text-sm font-medium text-gray-700 
-                            ${
-                              isActive('/settings/profile')
-                                ? 'bg-gray-100 border-l-4 border-start-prim'
-                                : 'hover:bg-gray-100'
-                            }`}
+              ${
+                isActive('/settings/profile')
+                  ? 'bg-gray-100 border-l-4 border-start-prim'
+                  : 'hover:bg-gray-100'
+              }`}
           >
             Profile
           </span>
@@ -25,11 +25,11 @@ const Sidebar = () => {
         <Link href='/settings/account'>
           <span
             className={`block px-4 py-2 rounded-md text-sm font-medium text-gray-700 
-                            ${
-                              isActive('/settings/account')
-                                ? 'bg-gray-100 border-l-4 border-start-prim'
-                                : 'hover:bg-gray-100'
-                            }`}
+              ${
+                isActive('/settings/account')
+                  ? 'bg-gray-100 border-l-4 border-start-prim'
+                  : 'hover:bg-gray-100'
+              }`}
           >
             Account
           </span>
@@ -37,11 +37,11 @@ const Sidebar = () => {
         <Link href='/settings/notification'>
           <span
             className={`block px-4 py-2 rounded-md text-sm font-medium text-gray-700 
-                            ${
-                              isActive('/settings/notification')
-                                ? 'bg-gray-100 border-l-4 border-start-prim  '
-                                : 'hover:bg-gray-100'
-                            }`}
+              ${
+                isActive('/settings/notification')
+                  ? 'bg-gray-100 border-l-4 border-start-prim  '
+                  : 'hover:bg-gray-100'
+              }`}
           >
             Notifications
           </span>

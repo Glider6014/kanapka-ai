@@ -2,7 +2,7 @@ import { ChatOpenAI } from '@langchain/openai';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { z } from 'zod';
-import { Recipe }, { RecipeType } from '@/models/Recipe';
+import { Recipe, RecipeType } from '@/models/Recipe';
 import { Ingredient } from '@/models/Ingredient';
 import { Types } from 'mongoose';
 import connectDB from '../connectToDatabase';

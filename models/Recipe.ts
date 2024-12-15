@@ -53,10 +53,7 @@ type PopulatedRecipeIngredient = {
 };
 
 RecipeSchema.methods.calculateNutrition = async function (
-  this: Document &
-    Omit<RecipeType, 'ingredients'> & {
-      ingredients: PopulatedRecipeIngredient[];
-    }
+  this: Document & RecipeTypeWithPopulatedIngredients
 ) {
   if (!this.populated('ingredients.ingredient')) {
     await this.populate('ingredients.ingredient');
@@ -90,3 +87,17 @@ export type RecipeType = InferSchemaType<typeof RecipeSchema> &
 export const Recipe =
   (models.Recipe as Model<RecipeType>) ||
   model<RecipeType>('Recipe', RecipeSchema);
+
+// <-- Additional populated types -->
+
+type PopulatedIngredient = {
+  ingredient: IngredientType;
+  amount: number;
+};
+
+export type RecipeTypeWithPopulatedIngredients = Omit<
+  RecipeType,
+  'ingredients'
+> & {
+  ingredients: PopulatedIngredient[];
+};

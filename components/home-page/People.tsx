@@ -1,4 +1,11 @@
-const People = ({ people, isReverse }) => {
+import { Person } from './PeopleArr';
+
+type PeopleProps = {
+  people: Person[];
+  isReverse?: boolean;
+};
+
+const People = ({ people, isReverse }: PeopleProps) => {
   const peopleList = people.concat(people);
   return (
     <div className='overflow-hidden shadow-sm p-4'>
@@ -25,7 +32,7 @@ const People = ({ people, isReverse }) => {
                     <h3 className='text-xl font-semibold text-gray-900'>
                       {person.name}
                     </h3>
-                    <p className='text-gray-500 text-sm'>{person.zawod}</p>
+                    <p className='text-gray-500 text-sm'>{person.work}</p>
                   </div>
                 </div>
                 <p className='mt-4 text-gray-700 text-base leading-relaxed'>

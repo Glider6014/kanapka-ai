@@ -1,6 +1,6 @@
 import agent from '@/lib/recipeAgent/agent';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
-import { Recipe }, { RecipeType } from '@/models/Recipe';
+import { Recipe, RecipeType } from '@/models/Recipe';
 import { z } from 'zod';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 

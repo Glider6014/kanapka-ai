@@ -8,6 +8,8 @@ import mongoose, {
 } from 'mongoose';
 import './Recipe';
 import { schemaOptionsSwitchToId, withId } from '@/lib/mongooseUtilities';
+import { IngredientType } from './Ingredient';
+import { RecipeType, RecipeTypeWithPopulatedIngredients } from './Recipe';
 
 const mealScheduleSchema = new Schema(
   {
@@ -56,3 +58,19 @@ export type MealScheduleType = InferSchemaType<typeof mealScheduleSchema> &
 export const MealSchedule =
   (models.MealSchedule as Model<MealScheduleType>) ||
   model('MealSchedule', mealScheduleSchema);
+
+// <-- Additional populated types -->
+
+export type MealScheduleTypeWithPopulatedRecipe = Omit<
+  MealScheduleType,
+  'recipeId'
+> & {
+  recipeId: RecipeType;
+};
+
+export type MealScheduleTypeWithPopulatedRecipeWithPopulatedIngredients = Omit<
+  MealScheduleType,
+  'recipeId'
+> & {
+  recipeId: RecipeTypeWithPopulatedIngredients;
+};

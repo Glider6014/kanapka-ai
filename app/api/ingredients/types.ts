@@ -1,4 +1,4 @@
-import type { IngredientType } from "@/models/Ingredient";
+import type { IngredientType } from '@/models/Ingredient';
 
 export type IngredientInput = {
   ingredient: string; // Can contain comma-separated ingredients

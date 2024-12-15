@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/connectToDatabase';
-import { MealSchedule } from '@/models/MealSchedule';
+import {
+  MealSchedule,
+  MealScheduleTypeWithPopulatedRecipeWithPopulatedIngredients,
+} from '@/models/MealSchedule';
 import { getServerSessionProcessed, processApiHandler } from '@/lib/apiUtils';
 
 const handleGET = async (req: NextRequest) => {
@@ -23,7 +26,7 @@ const handleGET = async (req: NextRequest) => {
   console.log('Looking for meals between:', startDate, 'and', endDate);
   console.log('User ID:', session.user?.id);
 
-  const mealSchedules = await MealSchedule.find({
+  const mealSchedules = (await MealSchedule.find({
     userId: session.user?.id,
     date: {
       $gte: startDate,
@@ -35,7 +38,7 @@ const handleGET = async (req: NextRequest) => {
       path: 'ingredients.ingredient',
       model: 'Ingredient',
     },
-  });
+  })) as unknown as MealScheduleTypeWithPopulatedRecipeWithPopulatedIngredients[];
 
   console.log('Raw meal schedules:', JSON.stringify(mealSchedules, null, 2));
 

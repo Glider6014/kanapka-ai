@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/connectToDatabase";
-import { Recipe }, { RecipeType } from "@/models/Recipe";
-import { z } from "zod";
-import { processApiHandler } from "@/lib/apiUtils";
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/lib/connectToDatabase';
+import { Recipe, RecipeType } from '@/models/Recipe';
+import { z } from 'zod';
+import { processApiHandler } from '@/lib/apiUtils';
 
 export const GetRecipesSchema = z.object({
   // Pagination
@@ -10,13 +10,13 @@ export const GetRecipesSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 
   // Sorting
-  sortBy: z.enum(["name", "createdAt", "difficulty", "steps"]).optional(),
+  sortBy: z.enum(['name', 'createdAt', 'difficulty', 'steps']).optional(),
   order: z.union([z.literal(-1), z.literal(1)]).default(1),
 
   // Filters
   ingredients: z
     .preprocess((val) => {
-      if (typeof val === "string") return val.split(",");
+      if (typeof val === 'string') return val.split(',');
       if (Array.isArray(val)) return val;
       return [];
     }, z.array(z.string()))
@@ -45,18 +45,18 @@ function createQuery(params: GetRecipesSchemaType) {
   if (params.sortBy) query.sort({ [params.sortBy]: params.order });
 
   if (params.ingredients?.length)
-    query.where("ingredients.ingredient").in(params.ingredients);
+    query.where('ingredients.ingredient').in(params.ingredients);
 
   if (params.difficulty?.length)
-    query.where("difficulty").in(params.difficulty);
+    query.where('difficulty').in(params.difficulty);
 
-  if (params.createdBy) query.where("createdBy").equals(params.createdBy);
+  if (params.createdBy) query.where('createdBy').equals(params.createdBy);
 
   if (params.createdBefore)
-    query.where("createdAt").lte(params.createdBefore.getTime());
+    query.where('createdAt').lte(params.createdBefore.getTime());
 
   if (params.createdAfter)
-    query.where("createdAt").gte(params.createdAfter.getTime());
+    query.where('createdAt').gte(params.createdAfter.getTime());
 
   return query;
 }

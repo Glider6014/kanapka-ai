@@ -1,3 +1,10 @@
+export type Person = {
+  name: string;
+  work: string;
+  description: string;
+  image: string;
+};
+
 export const people0 = [
   {
     name: 'Anna Kowalska',
