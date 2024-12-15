@@ -6,7 +6,7 @@ export enum Unit {
 
 export const unitsList = Object.values(Unit);
 
-export const unitToFactor: Record<Unit, number> = {
+export const unitToFactor: Record<Unit | string, number> = {
   [Unit.GRAM]: 100,
   [Unit.MILLILITER]: 100,
   [Unit.PIECE]: 1,

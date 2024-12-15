@@ -1,51 +1,46 @@
-import {
-  Schema,
-  InferSchemaType,
-  Model,
-  model,
-  models,
-  Document,
-} from 'mongoose';
-import { schemaOptionsSwitchToId, withId } from '@/lib/mongooseUtilities';
+import { Schema, Model, model, models, Document } from 'mongoose';
 import { unitToFactor } from '@/lib/units';
 import '@/models/Ingredient';
 import { IngredientType } from '@/models/Ingredient';
 import { emptyNutrition, Nutrition } from '@/lib/nutrition';
+import {
+  createBaseToJSON,
+  createBaseToObject,
+  InferBaseSchemaType,
+} from './BaseSchema';
 
-const RecipeSchema = new Schema(
-  {
-    name: { type: String, required: true },
-    description: { type: String, required: true },
-    ingredients: [
-      {
-        ingredient: {
-          type: Schema.Types.ObjectId,
-          ref: 'Ingredient',
-          required: true,
-        },
-        amount: { type: Number, required: true },
+const RecipeSchema = new Schema({
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  ingredients: [
+    {
+      ingredient: {
+        type: Schema.Types.ObjectId,
+        ref: 'Ingredient',
+        required: true,
       },
-    ],
-    steps: [{ type: String, required: true }],
-    prepTime: { type: Number, required: true },
-    cookTime: { type: Number, required: true },
-    difficulty: {
-      type: String,
-      enum: ['Easy', 'Medium', 'Hard'],
-      required: true,
-      default: 'Easy',
+      amount: { type: Number, required: true },
     },
-    createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    createdAt: { type: Date, default: Date.now, required: true },
+  ],
+  steps: [{ type: String, required: true }],
+  prepTime: { type: Number, required: true },
+  cookTime: { type: Number, required: true },
+  difficulty: {
+    type: String,
+    enum: ['Easy', 'Medium', 'Hard'],
+    required: true,
+    default: 'Easy',
   },
-  {
-    ...schemaOptionsSwitchToId,
-  }
-);
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  createdAt: { type: Date, default: Date.now, required: true },
+});
+
+RecipeSchema.set('toJSON', createBaseToJSON());
+RecipeSchema.set('toObject', createBaseToObject());
 
 RecipeSchema.methods.calculateNutrition = async function (
   this: Document & RecipeTypeWithPopulatedIngredients
@@ -64,8 +59,9 @@ RecipeSchema.methods.calculateNutrition = async function (
     const factor = ing.amount / unitToFactor[ing.unit];
 
     Object.keys(ing.nutrition).forEach((key) => {
-      acc[key as keyof Nutrition] +=
-        ing.nutrition[key as keyof Nutrition] * factor;
+      const value = ing.nutrition[key as keyof Nutrition];
+
+      acc[key as keyof Nutrition] += value * factor;
     });
 
     return acc;
@@ -74,10 +70,9 @@ RecipeSchema.methods.calculateNutrition = async function (
   return nutritionTotals;
 };
 
-export type RecipeType = InferSchemaType<typeof RecipeSchema> &
-  withId & {
-    calculateNutrition(): Promise<Nutrition>;
-  };
+export type RecipeType = InferBaseSchemaType<typeof RecipeSchema> & {
+  calculateNutrition: () => Promise<Nutrition>;
+};
 
 export const Recipe =
   (models.Recipe as Model<RecipeType>) ||

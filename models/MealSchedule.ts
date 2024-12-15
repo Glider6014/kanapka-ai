@@ -1,16 +1,16 @@
-import mongoose, {
-  Document,
-  InferSchemaType,
-  model,
-  Model,
-  models,
-  Schema,
-} from 'mongoose';
-import './Recipe';
-import { schemaOptionsSwitchToId, withId } from '@/lib/mongooseUtilities';
-import { RecipeType, RecipeTypeWithPopulatedIngredients } from './Recipe';
+import { Document, model, Model, models, Schema } from 'mongoose';
+import {
+  createBaseToJSON,
+  createBaseToObject,
+  InferBaseSchemaType,
+} from './BaseSchema';
+import {
+  Recipe,
+  RecipeType,
+  RecipeTypeWithPopulatedIngredients,
+} from './Recipe';
 
-const mealScheduleSchema = new Schema(
+const MealScheduleSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -32,16 +32,17 @@ const mealScheduleSchema = new Schema(
     },
   },
   {
-    ...schemaOptionsSwitchToId,
     timestamps: true,
   }
 );
 
-mealScheduleSchema.pre(
+MealScheduleSchema.set('toJSON', createBaseToJSON());
+MealScheduleSchema.set('toObject', createBaseToObject());
+
+MealScheduleSchema.pre(
   'save',
   async function (this: Document & MealScheduleType, next) {
     if (this.isNew) {
-      const Recipe = mongoose.model('Recipe');
       const recipe = await Recipe.findById(this.recipeId);
       if (recipe) {
         this.duration = recipe.prepTime + recipe.cookTime;
@@ -51,12 +52,11 @@ mealScheduleSchema.pre(
   }
 );
 
-export type MealScheduleType = InferSchemaType<typeof mealScheduleSchema> &
-  withId;
+export type MealScheduleType = InferBaseSchemaType<typeof MealScheduleSchema>;
 
 export const MealSchedule =
   (models.MealSchedule as Model<MealScheduleType>) ||
-  model('MealSchedule', mealScheduleSchema);
+  model('MealSchedule', MealScheduleSchema);
 
 // <-- Additional populated types -->
 

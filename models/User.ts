@@ -1,7 +1,11 @@
-import { schemaOptionsSwitchToId, withId } from '@/lib/mongooseUtilities';
 import { UserPermissions, userPermissionsList } from '@/lib/permissions';
 import { userSubscriptionsList, UserSubscription } from '@/lib/subscriptions';
-import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
+import { Schema, Model, model, models } from 'mongoose';
+import {
+  createBaseToJSON,
+  createBaseToObject,
+  InferBaseSchemaType,
+} from './BaseSchema';
 
 const UserSchema = new Schema(
   {
@@ -30,12 +34,14 @@ const UserSchema = new Schema(
     // followers: { type: Number, default: 0 },
   },
   {
-    ...schemaOptionsSwitchToId,
     timestamps: true,
   }
 );
 
-export type UserType = InferSchemaType<typeof UserSchema> & withId;
+UserSchema.set('toJSON', createBaseToJSON());
+UserSchema.set('toObject', createBaseToObject());
+
+export type UserType = InferBaseSchemaType<typeof UserSchema>;
 
 export const User =
   (models.User as Model<UserType>) || model('User', UserSchema);

@@ -1,5 +1,9 @@
-import { schemaOptionsSwitchToId, withId } from '@/lib/mongooseUtilities';
-import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
+import { Schema, Model, model, models } from 'mongoose';
+import {
+  createBaseToJSON,
+  createBaseToObject,
+  InferBaseSchemaType,
+} from './BaseSchema';
 
 const RecipeGeneratorHistorySchema = new Schema(
   {
@@ -24,15 +28,16 @@ const RecipeGeneratorHistorySchema = new Schema(
     // ],
   },
   {
-    ...schemaOptionsSwitchToId,
     timestamps: true,
   }
 );
 
-export type RecipeGeneratorHistoryType = InferSchemaType<
+RecipeGeneratorHistorySchema.set('toJSON', createBaseToJSON());
+RecipeGeneratorHistorySchema.set('toObject', createBaseToObject());
+
+export type RecipeGeneratorHistoryType = InferBaseSchemaType<
   typeof RecipeGeneratorHistorySchema
-> &
-  withId;
+>;
 
 export const RecipeGeneratorHistory =
   (models.RecipeGeneratorHistory as Model<RecipeGeneratorHistoryType>) ||

@@ -123,14 +123,6 @@ export const recipeGenerator = tool(
     console.log('RecipeName, ingredientIds');
     console.log(recipeName, ingredientIds);
 
-    const nutrition = await recipe.calculateNutrition();
-
-    const recipeData = {
-      id: recipe.id,
-      name: recipe.name,
-      nutrition,
-    };
-
     return JSON.stringify({ recipeId: recipe.id });
   },
   {

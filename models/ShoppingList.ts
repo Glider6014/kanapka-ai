@@ -1,4 +1,9 @@
 import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
+import {
+  createBaseToJSON,
+  createBaseToObject,
+  InferBaseSchemaType,
+} from './BaseSchema';
 
 const ShoppingItemSchema = new Schema({
   ingredient: {
@@ -38,7 +43,10 @@ const ShoppingListSchema = new Schema(
   }
 );
 
-export type ShoppingListType = InferSchemaType<typeof ShoppingListSchema>;
+ShoppingListSchema.set('toJSON', createBaseToJSON());
+ShoppingListSchema.set('toObject', createBaseToObject());
+
+export type ShoppingListType = InferBaseSchemaType<typeof ShoppingListSchema>;
 
 export const ShoppingList =
   (models.ShoppingList as Model<ShoppingListType>) ||
