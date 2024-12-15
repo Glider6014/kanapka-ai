@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Table,
@@ -21,7 +21,7 @@ type RecipesListProps = {
   hasFilters?: boolean;
 };
 
-export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
+const RecipesList = ({ recipes, hasFilters }: RecipesListProps) => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [filter, setFilter] = useState<'all' | 'favorites' | 'mine'>('all');
 
@@ -130,3 +130,5 @@ export const RecipesList: FC<RecipesListProps> = ({ recipes, hasFilters }) => {
     </div>
   );
 };
+
+export default RecipesList;

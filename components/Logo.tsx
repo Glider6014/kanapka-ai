@@ -2,7 +2,7 @@ interface LogoProps {
   className: string;
 }
 
-export const Logo: React.FC<LogoProps> = ({ className }) => {
+const Logo = ({ className }: LogoProps) => {
   return (
     <a
       href='/'
@@ -12,3 +12,5 @@ export const Logo: React.FC<LogoProps> = ({ className }) => {
     </a>
   );
 };
+
+export default Logo;

@@ -1,5 +1,5 @@
-import { Navbar } from '@/components/Navbar';
-import { RecipesList } from '@/components/RecipesList';
+import Navbar from '@/components/Navbar';
+import RecipesList from '@/components/RecipesList';
 import connectDB from '@/lib/connectToDatabase';
 import { Recipe } from '@/models/Recipe';
 

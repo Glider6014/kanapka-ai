@@ -7,7 +7,11 @@ import FavoriteUserRecipes from './FavoriteUserRecipes';
 import { Lock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-const UserRecipes = ({ userId }: { userId: string }) => {
+type UserRecipesProps = {
+  userId: string;
+};
+
+const UserRecipes = ({ userId }: UserRecipesProps) => {
   const { data: session } = useSession();
   const isOwner = session?.user?.id == userId;
 

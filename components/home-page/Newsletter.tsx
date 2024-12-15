@@ -21,12 +21,12 @@ const formSchema = z.object({
     .email({
       message: 'Invalid email address.',
     })
-    .nonempty({
+    .min(1, {
       message: 'Email is required.',
     }),
 });
 
-export default function Newsletter() {
+const Newsletter = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,4 +89,6 @@ export default function Newsletter() {
       </div>
     </>
   );
-}
+};
+
+export default Newsletter;

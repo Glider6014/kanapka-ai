@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
-import { Navbar } from '../Navbar';
+import Navbar from '../Navbar';
 import { Checkbox } from '@/components/ui/checkbox';
 
 type ShoppingItem = {
@@ -13,7 +13,7 @@ type ShoppingItem = {
   unit: string;
 };
 
-export function ShoppingListPage() {
+const ShoppingListPage = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
@@ -119,4 +119,6 @@ export function ShoppingListPage() {
       </div>
     </div>
   );
-}
+};
+
+export default ShoppingListPage;

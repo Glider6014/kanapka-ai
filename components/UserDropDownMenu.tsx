@@ -16,7 +16,7 @@ type User = {
   createdAt: string;
 };
 
-const AvatarDropdown: React.FC = () => {
+const AvatarDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);

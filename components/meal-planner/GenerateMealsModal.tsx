@@ -1,4 +1,4 @@
-import { FC, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { format } from 'date-fns';
 
 interface GenerateMealsModalProps {
@@ -40,10 +40,10 @@ const getNextDayDate = (dayName: string): Date => {
   return nextDate;
 };
 
-const GenerateMealsModal: FC<GenerateMealsModalProps> = ({
+const GenerateMealsModal = ({
   onClose,
   onSuccess,
-}) => {
+}: GenerateMealsModalProps) => {
   const [selectedDay, setSelectedDay] = useState<SelectedDayInfo | null>(null);
   const [preferences, setPreferences] = useState('');
   const [loading, setLoading] = useState(false);

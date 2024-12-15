@@ -1,12 +1,12 @@
 'use client';
 
-import { RecipesList } from '@/components/RecipesList';
+import RecipesList from '@/components/RecipesList';
 import { useState } from 'react';
 import { RecipeType } from '@/models/Recipe';
-import { FridgesPanel } from '@/components/FridgesPanel';
-import { Navbar } from './Navbar';
+import Navbar from './Navbar';
+import FridgesPanel from './FridgesPanel';
 
-export function DashboardPage() {
+const DashboardPage = () => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string>('');
@@ -95,4 +95,6 @@ export function DashboardPage() {
       </div>
     </>
   );
-}
+};
+
+export default DashboardPage;

@@ -1,4 +1,4 @@
-import { DashboardPage } from '@/components/DashboardPage';
+import DashboardPage from '@/components/DashboardPage';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 

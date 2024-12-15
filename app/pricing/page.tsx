@@ -2,7 +2,7 @@
 
 import Subscription from '@/components/home-page/Subscription';
 import Footer from '@/components/Footer';
-import { MainNavbar } from '@/components/home-page/MainNavbar';
+import MainNavbar from '@/components/home-page/MainNavbar';
 import SubscriptionTable from '@/components/home-page/Subscription_table';
 import FAQ from '@/components/home-page/FAQ';
 

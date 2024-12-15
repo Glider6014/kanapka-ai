@@ -1,5 +1,5 @@
 import Sidebar from '@/components/Sidebar';
-import { Navbar } from '@/components/Navbar';
+import Navbar from '@/components/Navbar';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 

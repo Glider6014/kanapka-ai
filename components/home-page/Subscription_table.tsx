@@ -1,46 +1,13 @@
 'use client';
 
+import {
+  subscriptionPlans,
+  subscriptionsFeaturesTable,
+} from '@/data/subscriptionPlansAndFeatures';
 import { useRouter } from 'next/navigation';
 
-export default function SubscriptionTable() {
+const SubscriptionTable = () => {
   const router = useRouter();
-
-  const plans = [
-    {
-      title: 'Basic',
-      price: 'Free',
-      button: 'Select Plan',
-    },
-    {
-      title: 'Plus',
-      price: '$5/month',
-      button: 'Select Plan',
-    },
-    {
-      title: 'Gold',
-      price: '$10/month',
-      button: 'Select Plan',
-    },
-    {
-      title: 'Premium',
-      price: '$15/month',
-      button: 'Select Plan',
-    },
-  ];
-
-  const features = [
-    { name: 'Unlimited Recipe Generations', plans: [true, true, true, true] },
-    { name: 'Save Recipes', plans: [true, true, true, true] },
-    { name: 'Extended Ingredient Database', plans: [false, true, true, true] },
-    { name: 'Nutritional Information', plans: [false, true, true, true] },
-    {
-      name: 'Advanced Recipe Customization',
-      plans: [false, false, true, true],
-    },
-    { name: 'Personalized Diet Plans', plans: [false, false, false, true] },
-    { name: 'Priority Customer Support', plans: [false, true, true, true] },
-    { name: 'Exclusive Workshops', plans: [false, false, false, true] },
-  ];
 
   const handleSubscription = (plan: string) => {
     if (plan !== 'Plus') return;
@@ -60,7 +27,7 @@ export default function SubscriptionTable() {
           <thead>
             <tr>
               <th className='w-1/3'></th>
-              {plans.map((plan, index) => (
+              {subscriptionPlans.map((plan, index) => (
                 <th
                   key={index}
                   className={`text-center p-4 border-b border-gray-300`}
@@ -78,7 +45,7 @@ export default function SubscriptionTable() {
             </tr>
           </thead>
           <tbody>
-            {features.map((feature, index) => (
+            {subscriptionsFeaturesTable.map((feature, index) => (
               <tr key={index} className='border-t hover:bg-slate-50'>
                 <td className='p-4 border-r border-gray-300 text-left'>
                   {feature.name}
@@ -99,4 +66,6 @@ export default function SubscriptionTable() {
       </div>
     </div>
   );
-}
+};
+
+export default SubscriptionTable;

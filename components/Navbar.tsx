@@ -12,14 +12,13 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
 } from '@/components/ui/navigation-menu';
-import { Logo } from '@/components/Logo';
 import { useRouter } from 'next/navigation';
-import { NavbarData } from '@/components/data/navbarData';
 import UserDropDownMenu from './UserDropDownMenu';
+import { NavbarLinks } from '@/data/navbarLinks';
+import Logo from './Logo';
 
-export const Navbar = () => {
+const Navbar = () => {
   const router = useRouter();
-  const navbarItems = NavbarData();
 
   return (
     <nav className='my-4 flex flex-col md:flex-row items-center justify-between mx-4 md:mx-0 gap-4 z-50'>
@@ -28,7 +27,7 @@ export const Navbar = () => {
         <div className='md:hidden flex items-center gap-2'>
           <DropdownMenu>
             <DropdownMenuList className='flex flex-col gap-2 w-full'>
-              {navbarItems.map((item, index) => (
+              {NavbarLinks.map((item, index) => (
                 <DropdownMenuItem key={index} className='w-full'>
                   <DropdownMenuLink
                     href={item.href ?? '#'}
@@ -50,7 +49,7 @@ export const Navbar = () => {
       <div className='md:block hidden'>
         <NavigationMenu className='w-full'>
           <NavigationMenuList className='flex flex-col md:flex-row gap-2 w-full'>
-            {navbarItems.map((item, index) => (
+            {NavbarLinks.map((item, index) => (
               <NavigationMenuItem key={index} className='w-full'>
                 <NavigationMenuLink asChild>
                   <a
@@ -73,3 +72,5 @@ export const Navbar = () => {
     </nav>
   );
 };
+
+export default Navbar;

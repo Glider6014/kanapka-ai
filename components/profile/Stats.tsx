@@ -3,7 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
-const Stats = ({ userId }: { userId: string }) => {
+type StatsProps = {
+  userId: string;
+};
+
+const Stats = ({ userId }: StatsProps) => {
   const [generatedRecipesCount, setGeneratedRecipesCount] = useState<
     number | null
   >(null);

@@ -2,13 +2,13 @@
 
 import { UserType } from '@/models/User';
 import { useState } from 'react';
-import { UsersTableRow } from './UsersTableRow';
+import UsersTableRow from './UsersTableRow';
 
 export type UsersTableProps = {
   users: UserType[];
 };
 
-export default function UsersTable({ users }: UsersTableProps) {
+const UsersTable = ({ users }: UsersTableProps) => {
   const [editPermissionsMode, setEditPermissionsMode] = useState(false);
 
   return (
@@ -46,4 +46,6 @@ export default function UsersTable({ users }: UsersTableProps) {
       </table>
     </div>
   );
-}
+};
+
+export default UsersTable;

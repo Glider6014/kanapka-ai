@@ -8,7 +8,7 @@ interface EventWrapperProps {
   onDelete?: (event: CustomEvent) => void;
 }
 
-const EventWrapper: React.FC<EventWrapperProps> = ({ event, onDelete }) => {
+const EventWrapper = ({ event, onDelete }: EventWrapperProps) => {
   const router = useRouter();
   const [contextMenu, setContextMenu] = useState<{
     x: number;

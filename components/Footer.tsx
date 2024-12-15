@@ -2,7 +2,7 @@
 
 import { Facebook, Twitter, Linkedin, Youtube, Instagram } from 'lucide-react';
 
-export default function Footer() {
+const Footer = () => {
   return (
     <>
       <div className='bg-black text-white py-8'>
@@ -80,4 +80,6 @@ export default function Footer() {
       </div>
     </>
   );
-}
+};
+
+export default Footer;

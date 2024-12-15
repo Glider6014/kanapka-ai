@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import GenerateMealsModal from '@/components/meal-planner/GenerateMealsModal';
 import { CustomEvent } from '@/types/calendar';
-import { Navbar } from '../Navbar';
+import Navbar from '../Navbar';
 import { Button } from '../ui/button';
 
 const Calendar = dynamic(
@@ -12,7 +12,7 @@ const Calendar = dynamic(
   { ssr: false }
 );
 
-export function MealPlannerPage() {
+const MealPlannerPage = () => {
   const [events, setEvents] = useState<CustomEvent[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -159,4 +159,6 @@ export function MealPlannerPage() {
       </main>
     </div>
   );
-}
+};
+
+export default MealPlannerPage;

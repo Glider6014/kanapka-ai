@@ -3,10 +3,10 @@ import Stats from '@/components/profile/Stats';
 import UserRecipes from '@/components/profile/UserRecipes';
 import connectDB from '@/lib/connectToDatabase';
 import { User } from '@/models/User';
-import { Logo } from '@/components/Logo';
-import { ObjectId } from 'mongodb';
-import { MainNavbar } from '@/components/home-page/MainNavbar';
+import Logo from '@/components/Logo';
+import MainNavbar from '@/components/home-page/MainNavbar';
 import { Context } from '@/lib/apiUtils';
+import mongoose from 'mongoose';
 
 function notFound() {
   return (
@@ -21,11 +21,14 @@ function notFound() {
 
 const ProfilePage = async ({ params }: Context) => {
   await connectDB();
-  const { id } = params;
-  if (!ObjectId.isValid(id)) {
+
+  const { id: userId } = params;
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     return notFound();
   }
-  const user = await User.findById(new ObjectId(id));
+
+  const user = await User.findById(userId);
 
   if (!user) {
     return notFound();
@@ -36,19 +39,9 @@ const ProfilePage = async ({ params }: Context) => {
       <MainNavbar />
       <div className='p-4 sm:p-6'>
         <div className='max-w-full sm:max-w-4xl mx-auto'>
-          <Header
-            user={{
-              id: user.id,
-              username: user.username,
-              displayName: user.displayName,
-              bio: user.bio || 'Your bio here',
-              avatar: user.avatar || '',
-              bgc: user.bgc || '',
-              createdAt: user.createdAt.toISOString(),
-            }}
-          />
-          <Stats userId={id} />
-          <UserRecipes userId={id} />
+          <Header user={user} />
+          <Stats userId={userId} />
+          <UserRecipes userId={userId} />
         </div>
       </div>
     </div>

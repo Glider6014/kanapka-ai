@@ -1,4 +1,4 @@
-import { MealPlannerPage } from '@/components/meal-planner/MealPlannerPage';
+import MealPlannerPage from '@/components/meal-planner/MealPlannerPage';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 

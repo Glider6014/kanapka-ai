@@ -10,15 +10,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { RecipeType } from '@/models/Recipe';
 
-type Recipe = {
-  id: string;
-  name: string;
-  description: string;
+type FavoriteUserRecipesProps = {
+  userId: string;
 };
 
-const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
-  const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
+const FavoriteUserRecipes = ({ userId }: FavoriteUserRecipesProps) => {
+  const [favoriteRecipes, setFavoriteRecipes] = useState<RecipeType[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const limitRecipesPerPage = 12;

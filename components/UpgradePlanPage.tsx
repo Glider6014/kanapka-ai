@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-export function UpgradeConfirmedPage() {
+const UpgradeConfirmedPage = () => {
   const [message, setMessage] = useState('Loading...');
 
   useEffect(() => {
@@ -32,4 +32,6 @@ export function UpgradeConfirmedPage() {
       </div>
     </div>
   );
-}
+};
+
+export default UpgradeConfirmedPage;

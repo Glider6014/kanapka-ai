@@ -15,7 +15,7 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { Logo } from '@/components/Logo';
+import Logo from '@/components/Logo';
 import { signIn } from 'next-auth/react';
 import {
   usernameSchema,

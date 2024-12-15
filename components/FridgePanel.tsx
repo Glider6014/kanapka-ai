@@ -5,14 +5,6 @@ import InputIngredient from './InputIngredient';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from './ui/button';
 
-type FridgePanelProps = {
-  setIngredients?: React.Dispatch<React.SetStateAction<string[]>>;
-  isSearchRecipesButtonVisible?: boolean;
-  isSearchRecipesButtonDisabled?: boolean;
-  searchRecipes?: (ingredients: string[]) => void;
-  fridge: FridgeType;
-};
-
 function createRecordFromList(list: string[]): Record<string, string> {
   const record: Record<string, string> = {};
 
@@ -29,7 +21,15 @@ function createRecordFromList(list: string[]): Record<string, string> {
   return record;
 }
 
-export const FridgePanel = ({
+type FridgePanelProps = {
+  setIngredients?: React.Dispatch<React.SetStateAction<string[]>>;
+  isSearchRecipesButtonVisible?: boolean;
+  isSearchRecipesButtonDisabled?: boolean;
+  searchRecipes?: (ingredients: string[]) => void;
+  fridge: FridgeType;
+};
+
+const FridgePanel = ({
   setIngredients: setIngredientsOuter,
   isSearchRecipesButtonVisible,
   isSearchRecipesButtonDisabled,
@@ -319,3 +319,5 @@ export const FridgePanel = ({
     </div>
   );
 };
+
+export default FridgePanel;

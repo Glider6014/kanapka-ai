@@ -10,15 +10,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { RecipeType } from '@/models/Recipe';
 
-type Recipe = {
-  id: string;
-  name: string;
-  description: string;
+type GeneratedUserRecipesProps = {
+  userId: string;
 };
 
-const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+const GeneratedUserRecipes = ({ userId }: GeneratedUserRecipesProps) => {
+  const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

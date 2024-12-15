@@ -1,4 +1,4 @@
-import { UpgradeConfirmedPage } from '@/components/UpgradePlanPage';
+import UpgradeConfirmedPage from '@/components/UpgradePlanPage';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 

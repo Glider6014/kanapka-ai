@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { FridgeType } from '@/models/Fridge';
-import { FridgePanel } from './FridgePanel';
+import FridgePanel from './FridgePanel';
 
 type FridgesPanelProps = {
   setIngredients?: React.Dispatch<React.SetStateAction<string[]>>;
@@ -11,7 +11,7 @@ type FridgesPanelProps = {
   searchRecipes?: (ingredients: string[]) => void;
 };
 
-export const FridgesPanel = ({
+const FridgesPanel = ({
   setIngredients,
   isSearchRecipesButtonVisible,
   isSearchRecipesButtonDisabled,
@@ -74,3 +74,5 @@ export const FridgesPanel = ({
     </div>
   );
 };
+
+export default FridgesPanel;

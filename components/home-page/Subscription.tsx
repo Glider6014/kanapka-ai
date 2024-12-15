@@ -1,73 +1,10 @@
 'use client';
 
+import { subscriptionsPlansData } from '@/data/subscriptionPlansAndFeatures';
 import { useRouter } from 'next/navigation';
 
 export default function Subscription() {
   const router = useRouter();
-
-  const plans = [
-    {
-      title: 'Kanapka Basic',
-      price: 'Free',
-      description: '',
-      features: [
-        'Access to basic recipe generator',
-        'Save up to 10 recipes',
-        'Limited ingredient database',
-        'Community support',
-      ],
-      button: 'Select plan',
-      isPopular: false,
-    },
-    {
-      title: 'Kanapka Plus',
-      price: '$5/month',
-      description: '',
-      features: [
-        'Unlimited recipe generations',
-        'Save unlimited recipes',
-        'Extended ingredient database',
-        'Nutritional information',
-        'Meal planning',
-        'Priority support',
-      ],
-      button: 'Select plan',
-      isPopular: true,
-    },
-    {
-      title: 'Kanapka Gold',
-      price: '$10/month',
-      description: '',
-      features: [
-        'Advanced recipe customization',
-        'Exclusive seasonal ingredients',
-        'Access to professional chef recipes',
-        'Dietary preferences and restrictions',
-        'Recipe sharing with friends',
-        'Detailed meal prep guides',
-        'Nutritional analytics',
-        'Recipe collaboration',
-      ],
-      button: 'Select plan',
-      isPopular: true,
-    },
-    {
-      title: 'Kanapka Premium',
-      price: '$15/month',
-      description: '',
-      features: [
-        'Personalized diet plans',
-        'One-on-one sessions with nutritionists',
-        'Early access to new features',
-        'Exclusive cooking workshops',
-        'Advanced recipe sharing and collaboration tools',
-        'Integrations with smart kitchen devices',
-        'Priority customer support',
-      ],
-      button: 'Contact sales',
-      isPopular: true,
-    },
-  ];
 
   const handleSubscription = (plan: string) => {
     if (plan !== 'Kanapka Plus') return;
@@ -88,7 +25,7 @@ export default function Subscription() {
       </h1>
 
       <div className='flex flex-col md:flex-row gap-4'>
-        {plans.map((plan, index) => (
+        {subscriptionsPlansData.map((plan, index) => (
           <div
             key={index}
             className={`w-full md:w-1/4 p-6 border rounded-lg shadow-md border-black`}

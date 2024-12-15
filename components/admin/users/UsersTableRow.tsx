@@ -18,10 +18,7 @@ export type UsersTableRowProps = {
   editPermissionsMode: boolean;
 };
 
-export function UsersTableRow({
-  user,
-  editPermissionsMode,
-}: UsersTableRowProps) {
+const UsersTableRow = ({ user, editPermissionsMode }: UsersTableRowProps) => {
   const [userData, setUserData] = useState(user);
   const [addPermissionMode, setAddPermissionMode] = useState(false);
 
@@ -159,4 +156,6 @@ export function UsersTableRow({
       </td>
     </tr>
   );
-}
+};
+
+export default UsersTableRow;

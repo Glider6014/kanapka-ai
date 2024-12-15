@@ -27,14 +27,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Pencil } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import { UserType } from '@/models/User';
 
 type EditProfileDialogProps = {
-  user: {
-    displayName: string;
-    bio: string;
-    avatar: string;
-    bgc: string;
-  };
+  user: UserType;
 };
 
 const FormSchema = z.object({
@@ -47,7 +43,7 @@ const FormSchema = z.object({
     .max(160, 'Bio must not be longer than 160 characters.'),
 });
 
-const EditProfileDialog: React.FC<EditProfileDialogProps> = ({ user }) => {
+const EditProfileDialog = ({ user }: EditProfileDialogProps) => {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
 

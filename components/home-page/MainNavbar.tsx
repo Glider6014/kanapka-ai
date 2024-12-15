@@ -2,8 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Logo } from '@/components/Logo';
-import { cn } from '@/lib/utils';
+import Logo from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import {
   NavigationMenu,
@@ -18,31 +17,33 @@ import { Menu, X } from 'lucide-react';
 import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { signOut, useSession } from 'next-auth/react';
 import UserDropDownMenu from '../UserDropDownMenu';
+import { mainNavbarComponents } from '@/data/mainNavbarComponents';
 
-const components = [
-  {
-    title: 'Recipe Generator',
-    href: '/dashboard',
-    description: 'Generate custom recipes based on your preferences.',
-  },
-  {
-    title: 'Meal Planning',
-    href: '/meal-planner',
-    description: 'Plan your meals for the week with ease.',
-  },
-  {
-    title: 'Recipes List',
-    href: '/recipes',
-    description: 'Get information on all recipes in the database.',
-  },
-  {
-    title: 'Shopping List',
-    href: '/shopping-list',
-    description: 'Generate a shopping list based on your meal plan.',
-  },
-];
+type ListItemProps = {
+  title: string;
+  href: string;
+  children?: React.ReactNode;
+};
 
-export const MainNavbar = () => {
+const ListItem = ({ title, href, children }: ListItemProps) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          className='block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
+          href={href}
+        >
+          <div className='text-sm font-medium leading-none'>{title}</div>
+          <p className='line-clamp-2 text-sm leading-snug text-muted-foreground'>
+            {children}
+          </p>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  );
+};
+
+const MainNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: session } = useSession();
 
@@ -75,7 +76,7 @@ export const MainNavbar = () => {
                       </a>
                     </NavigationMenuLink>
                   </li>
-                  {components.map((component) => (
+                  {mainNavbarComponents.map((component) => (
                     <ListItem
                       key={component.title}
                       title={component.title}
@@ -194,7 +195,7 @@ export const MainNavbar = () => {
                 </span>
               </Link>
             </li>
-            {components.map((component) => (
+            {mainNavbarComponents.map((component) => (
               <li key={component.title}>
                 <Link href={component.href} passHref>
                   <span className='block text-gray-800 hover:text-black'>
@@ -227,29 +228,4 @@ export const MainNavbar = () => {
   );
 };
 
-const ListItem = React.forwardRef<
-  React.ElementRef<'a'>,
-  React.ComponentPropsWithoutRef<'a'>
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-            className
-          )}
-          {...props}
-        >
-          <div className='text-sm font-medium leading-none'>{title}</div>
-          <p className='line-clamp-2 text-sm leading-snug text-muted-foreground'>
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
-
-ListItem.displayName = 'ListItem';
+export default MainNavbar;

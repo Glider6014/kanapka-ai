@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function Greeting() {
+const Greeting = () => {
   return (
     <div className='relative bg-gradient-to-r from-start-prim to-end-prim text-white py-12 md:pt-12 md:pb-48 px-8'>
       <div className='max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center'>
@@ -34,4 +34,6 @@ export default function Greeting() {
       <div className='hidden md:block wave-bottom absolute inset-x-0 bottom-0'></div>
     </div>
   );
-}
+};
+
+export default Greeting;

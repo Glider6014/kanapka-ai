@@ -1,5 +1,5 @@
+import { Person } from '@/data/peopleArrays';
 import Image from 'next/image';
-import { Person } from './PeopleArr';
 
 type PeopleProps = {
   people: Person[];

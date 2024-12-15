@@ -5,20 +5,13 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Calendar } from 'lucide-react';
 import EditProfileDialog from './EditProfileDialog';
 import { useSession } from 'next-auth/react';
+import { UserType } from '@/models/User';
 
 type HeaderProps = {
-  user: {
-    id: string;
-    displayName: string;
-    username: string;
-    bio: string;
-    avatar: string;
-    bgc: string;
-    createdAt: string;
-  };
+  user: UserType;
 };
 
-const Header: React.FC<HeaderProps> = ({ user }) => {
+const Header = ({ user }: HeaderProps) => {
   const joinDate = new Date(user.createdAt).toLocaleString('en-GB', {
     month: 'long',
     year: 'numeric',

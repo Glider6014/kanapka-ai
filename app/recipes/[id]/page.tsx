@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Navbar } from '@/components/Navbar';
+import Navbar from '@/components/Navbar';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Logo } from '@/components/Logo';
+import Logo from '@/components/Logo';
 import { RecipeTypeWithPopulatedIngredients } from '@/models/Recipe';
 import { Context } from '@/lib/apiUtils';
 

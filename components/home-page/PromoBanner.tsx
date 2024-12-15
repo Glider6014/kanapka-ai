@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 
-export default function PromoBanner() {
+const PromoBanner = () => {
   return (
     <div className='bg-gradient-to-r from-purple-700 to-orange-500 text-white py-12 px-6'>
       <div className='max-w-7xl mx-auto flex flex-col lg:flex-row items-center'>
@@ -38,4 +38,6 @@ export default function PromoBanner() {
       </div>
     </div>
   );
-}
+};
+
+export default PromoBanner;

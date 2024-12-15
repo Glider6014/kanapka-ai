@@ -16,7 +16,7 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { Logo } from '@/components/Logo';
+import Logo from '@/components/Logo';
 import {
   SignInFormData,
   signInFormSchema,

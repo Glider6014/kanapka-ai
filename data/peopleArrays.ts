@@ -5,7 +5,7 @@ export type Person = {
   image: string;
 };
 
-export const people0 = [
+export const peopleArray0: Person[] = [
   {
     name: 'Anna Kowalska',
     work: 'Piekarz',
@@ -85,7 +85,7 @@ export const people0 = [
   },
 ];
 
-export const people1 = [
+export const peopleArray1: Person[] = [
   {
     name: 'Anna Kowalska',
     work: 'Piekarz',

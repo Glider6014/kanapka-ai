@@ -8,12 +8,7 @@ interface ContextMenuProps {
   onClose: () => void;
 }
 
-const ContextMenu: React.FC<ContextMenuProps> = ({
-  x,
-  y,
-  onDelete,
-  onClose,
-}) => {
+const ContextMenu = ({ x, y, onDelete, onClose }: ContextMenuProps) => {
   React.useEffect(() => {
     const handleClick = () => onClose();
     window.addEventListener('click', handleClick);

@@ -1,14 +1,12 @@
 import { ToolbarProps } from 'react-big-calendar';
-import { FC } from 'react';
 import { CustomEvent } from '@/types/calendar';
 import { Button } from '../ui/button';
 import { ArrowBigLeft } from 'lucide-react';
 import { ArrowBigRight } from 'lucide-react';
 
-const CustomToolbar: FC<ToolbarProps<CustomEvent, object>> = ({
-  onNavigate,
-  label,
-}) => {
+type CustomToolbarProps = ToolbarProps<CustomEvent, object>;
+
+const CustomToolbar = ({ onNavigate, label }: CustomToolbarProps) => {
   return (
     <div className='flex justify-between items-center py-4 px-6 bg-gray-100 border-b border-gray-300'>
       <Button
