@@ -17,7 +17,6 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { signOut, useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import UserDropDownMenu from '../UserDropDownMenu';
 
 const components = [
@@ -46,7 +45,6 @@ const components = [
 export const MainNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: session } = useSession();
-  const router = useRouter();
 
   const logout = async () => {
     await signOut({ callbackUrl: '/' });

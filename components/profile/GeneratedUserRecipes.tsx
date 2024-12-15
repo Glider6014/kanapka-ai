@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Pagination,
   PaginationContent,
@@ -24,27 +24,30 @@ const GeneratedUserRecipes = ({ userId }: { userId: string }) => {
   const [totalPages, setTotalPages] = useState(1);
   const limitRecipesPerPage = 12;
 
-  const fetchRecipes = async (page: number) => {
-    setLoading(true);
-    try {
-      const offset = (page - 1) * limitRecipesPerPage;
-      const response = await fetch(
-        `/api/recipes?offset=${offset}&limit=${limitRecipesPerPage}&createdBy=${userId}`
-      );
-      const data = await response.json();
+  const fetchRecipes = useCallback(
+    async (page: number) => {
+      setLoading(true);
+      try {
+        const offset = (page - 1) * limitRecipesPerPage;
+        const response = await fetch(
+          `/api/recipes?offset=${offset}&limit=${limitRecipesPerPage}&createdBy=${userId}`
+        );
+        const data = await response.json();
 
-      setRecipes(data.results || []);
-      setTotalPages(Math.ceil(data.count / limitRecipesPerPage));
-    } catch (error) {
-      console.error('Error fetching recipes:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        setRecipes(data.results || []);
+        setTotalPages(Math.ceil(data.count / limitRecipesPerPage));
+      } catch (error) {
+        console.error('Error fetching recipes:', error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId]
+  );
 
   useEffect(() => {
     fetchRecipes(currentPage);
-  }, [currentPage]);
+  }, [currentPage, fetchRecipes]);
 
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) {

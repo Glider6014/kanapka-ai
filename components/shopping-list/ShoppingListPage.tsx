@@ -23,7 +23,7 @@ export function ShoppingListPage() {
     if (date) {
       fetchShoppingList(date);
     }
-  }, []);
+  }, [date]);
 
   const fetchShoppingList = async (selectedDate: Date) => {
     setLoading(true);

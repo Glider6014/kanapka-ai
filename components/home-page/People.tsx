@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Person } from './PeopleArr';
 
 type PeopleProps = {
@@ -23,10 +24,13 @@ const People = ({ people, isReverse }: PeopleProps) => {
             >
               <div className='relative group'>
                 <div className='flex items-center space-x-4'>
-                  <img
+                  <Image
                     src={person.image}
-                    className='w-14 h-14 bg-center bg-cover border rounded-full'
+                    width={14 * 4}
+                    height={14 * 4}
+                    className='rounded-full border bg-center bg-cover'
                     alt={person.name}
+                    style={{ objectFit: 'cover' }}
                   />
                   <div>
                     <h3 className='text-xl font-semibold text-gray-900'>

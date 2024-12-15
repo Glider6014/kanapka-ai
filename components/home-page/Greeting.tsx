@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Greeting() {
@@ -21,7 +22,12 @@ export default function Greeting() {
 
         <div className='relative flex justify-center items-center'>
           <div className='flex justify-center items-center'>
-            <img className='w-100 h-100' src='greeting.png' alt='sandwich' />
+            <Image
+              src='/greeting.png'
+              alt='sandwich'
+              width={200 * 4}
+              height={200 * 4}
+            />
           </div>
         </div>
       </div>

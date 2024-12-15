@@ -1,9 +1,9 @@
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { CircleUserRound, LogOut, Settings } from 'lucide-react';
+import { CircleUserRound, LogOut } from 'lucide-react';
 
 type User = {
   id: string;
@@ -23,7 +23,7 @@ const AvatarDropdown: React.FC = () => {
   const router = useRouter();
   const { data: session } = useSession();
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     if (session?.user?.id) {
       const response = await fetch(`/api/profile/${session.user.id}`);
       const data = await response.json();
@@ -60,11 +60,11 @@ const AvatarDropdown: React.FC = () => {
         }
       }
     }
-  };
+  }, [session]);
 
   useEffect(() => {
     fetchUserData();
-  }, [session]);
+  }, [fetchUserData]);
 
   const logout = async () => {
     await signOut({ callbackUrl: '/' });

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Pagination,
   PaginationContent,
@@ -24,7 +24,7 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
   const limitRecipesPerPage = 12;
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchFavoriteRecipes = async () => {
+  const fetchFavoriteRecipes = useCallback(async () => {
     try {
       const response = await fetch(`/api/profile/${userId}`);
       const data = await response.json();
@@ -38,12 +38,12 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     setLoading(true);
     fetchFavoriteRecipes();
-  }, [userId]);
+  }, [fetchFavoriteRecipes]);
 
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) {

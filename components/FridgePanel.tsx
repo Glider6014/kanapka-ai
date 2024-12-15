@@ -136,13 +136,16 @@ export const FridgePanel = ({
     setIngredientsOuter?.(Object.values(ingredients));
   }, [ingredients, refreshIngredients, setIngredientsOuter]);
 
-  const handleIngredientChange = (key: number, value: string) => {
-    const newIngredients = { ...ingredients };
-    newIngredients[key] = value;
+  const handleIngredientChange = useCallback(
+    (key: number, value: string) => {
+      const newIngredients = { ...ingredients };
+      newIngredients[key] = value;
 
-    setIngredients(newIngredients);
-    setIsSaved(false);
-  };
+      setIngredients(newIngredients);
+      setIsSaved(false);
+    },
+    [ingredients]
+  );
 
   const handleRemoveIngredient = (key: number) => {
     const newIngredients = { ...ingredients };
@@ -249,12 +252,9 @@ export const FridgePanel = ({
     [keyPressed, handleIngredientChange, refreshIngredients]
   );
 
-  const handleKeyUp = useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
-      setKeyPressed(null);
-    },
-    []
-  );
+  const handleKeyUp = () => {
+    setKeyPressed(null);
+  };
 
   useEffect(() => {
     if (!isTryingToSearch) return;

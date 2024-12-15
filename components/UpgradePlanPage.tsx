@@ -1,8 +1,8 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 
 export function UpgradeConfirmedPage() {
-  const [promoCode, setPromoCode] = useState('');
   const [message, setMessage] = useState('Loading...');
 
   useEffect(() => {

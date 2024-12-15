@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 
 export default function PromoBanner() {
@@ -24,7 +25,14 @@ export default function PromoBanner() {
 
         <div className='lg:w-1/2 flex justify-center mt-8 lg:mt-0'>
           <div className='relative w-72 h-72'>
-            <img src='promo_blog.png' />
+            <Image
+              src='/promo_blog.png'
+              width={72 * 4}
+              height={72 * 4}
+              alt='Promotional banner'
+              className='object-cover'
+              style={{ width: '100%', height: '100%' }}
+            />
           </div>
         </div>
       </div>

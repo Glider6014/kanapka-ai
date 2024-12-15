@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Image from 'next/image';
 
 const AboutApp = () => {
   const [currentImage, setCurrentImage] = useState(0);
@@ -9,19 +10,19 @@ const AboutApp = () => {
       title: 'Recipe Board',
       description:
         'Kanapka AI recipe boards keep your meals organized and your culinary adventures moving forward. At a glance, see everything from “ingredients on hand” to “aww yeah, delicious success!”',
-      image: 'about_app.jpg',
+      image: '/about_app.jpg',
     },
     {
       title: 'List',
       description:
         'The different stages of a recipe. Start as simple as Ingredients, Preparation, or Completed—or build a workflow custom fit to your culinary needs. There’s no wrong way to Kanapka AI.',
-      image: 'about_app1.webp',
+      image: '/about_app1.webp',
     },
     {
       title: 'Cards',
       description:
         'Cards represent recipes and ideas and hold all the information to create delicious dishes. As you make progress, move cards across lists to show their status.',
-      image: 'about_app2.webp',
+      image: '/about_app2.webp',
     },
   ];
 
@@ -74,15 +75,19 @@ const AboutApp = () => {
                 animate ? 'animate-slide-right' : ''
               }`}
             >
-              <img
+              <Image
                 src={images[currentImage].image}
                 alt={images[currentImage].title}
+                width={96 * 4}
+                height={96 * 4}
                 className='w-96 h-auto rounded-lg'
               />
               {animate && (
-                <img
+                <Image
                   src={images[currentImage].image}
                   alt={images[currentImage].title}
+                  width={96 * 4}
+                  height={96 * 4}
                   className='w-full h-auto rounded-lg absolute left-full top-0'
                 />
               )}
