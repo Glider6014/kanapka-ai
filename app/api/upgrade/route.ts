@@ -4,7 +4,13 @@ import { User } from '@/models/User';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required environment variable: STRIPE_SECRET_KEY');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2024-11-20.acacia',
+});
 
 const handlePOST = async (_req: NextRequest) => {
   await connectDB();

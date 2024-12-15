@@ -4,7 +4,7 @@ import { Recipe, RecipeType } from '@/models/Recipe';
 import { z } from 'zod';
 import { processApiHandler } from '@/lib/apiUtils';
 
-export const GetRecipesSchema = z.object({
+const GetRecipesSchema = z.object({
   // Pagination
   offset: z.coerce.number().int().nonnegative().default(0),
   limit: z.coerce.number().int().min(1).max(100).default(20),
@@ -23,8 +23,8 @@ export const GetRecipesSchema = z.object({
     .optional(),
   difficulty: z.array(z.string()).optional(),
   createdBy: z.string().optional(),
-  createdBefore: z.date().optional(), // createdAt <= createdBefore
-  createdAfter: z.date().optional(), // createdAt >= createdAfter
+  createdBefore: z.date().optional(),
+  createdAfter: z.date().optional(),
 });
 
 export type GetRecipesSchemaType = z.infer<typeof GetRecipesSchema>;
