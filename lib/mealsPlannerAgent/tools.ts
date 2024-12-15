@@ -8,7 +8,7 @@ import { Types } from 'mongoose';
 import { Nutrition } from '../nutrition';
 
 export interface Ingredient {
-  _id: string;
+  id: string;
   name: string;
   unit: 'g' | 'ml' | 'piece';
   nutrition: {
@@ -77,8 +77,8 @@ export const ingredientsGenerator = tool(
     description: `Adds ingredients to the database from comma-separated names. 
 Input format: "ingredient1, ingredient2, ingredient3"
 Example: "chicken, rice, tomato"
-Returns: Array of ingredients with their IDs (_id field) that you'll need for recipe generation.
-IMPORTANT: Save the _id values as you'll need them for recipe_generator!`,
+Returns: Array of ingredients with their IDs (id field) that you'll need for recipe generation.
+IMPORTANT: Save the id values as you'll need them for recipe_generator!`,
     schema: z.object({
       ingredientNames: z
         .string()
@@ -138,13 +138,13 @@ export const recipeGenerator = tool(
     description: `Creates a recipe using ingredient IDs from ingredients_generator.
 Required parameters:
 1. recipeName: Name of the recipe you want to create
-2. ingredientIds: Comma-separated list of ingredient _id values from ingredients_generator
+2. ingredientIds: Comma-separated list of ingredient id values from ingredients_generator
 
 Example:
 - recipeName: "Chicken Rice Bowl"
 - ingredientIds: "507f1f77bcf86cd799439011, 507f1f77bcf86cd799439012"
 
-IMPORTANT: Use the exact _id values returned by ingredients_generator!`,
+IMPORTANT: Use the exact id values returned by ingredients_generator!`,
     schema: z.object({
       recipeName: z
         .string()
@@ -152,7 +152,7 @@ IMPORTANT: Use the exact _id values returned by ingredients_generator!`,
       ingredientIds: z
         .string()
         .describe(
-          'Comma-separated list of ingredient _id values from ingredients_generator'
+          'Comma-separated list of ingredient id values from ingredients_generator'
         ),
       userId: z
         .string()

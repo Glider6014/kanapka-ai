@@ -1,5 +1,13 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, {
+  Document,
+  InferSchemaType,
+  model,
+  Model,
+  models,
+  Schema,
+} from 'mongoose';
 import './Recipe';
+import { schemaOptionsSwitchToId, withId } from '@/lib/mongooseUtilities';
 
 const mealScheduleSchema = new Schema(
   {
@@ -23,21 +31,28 @@ const mealScheduleSchema = new Schema(
     },
   },
   {
+    ...schemaOptionsSwitchToId,
     timestamps: true,
   }
 );
 
-mealScheduleSchema.pre('save', async function (next) {
-  if (this.isNew) {
-    const Recipe = mongoose.model('Recipe');
-    const recipe = await Recipe.findById(this.recipeId);
-    if (recipe) {
-      this.duration = recipe.prepTime + recipe.cookTime;
+mealScheduleSchema.pre(
+  'save',
+  async function (this: Document & MealScheduleType, next) {
+    if (this.isNew) {
+      const Recipe = mongoose.model('Recipe');
+      const recipe = await Recipe.findById(this.recipeId);
+      if (recipe) {
+        this.duration = recipe.prepTime + recipe.cookTime;
+      }
     }
+    next();
   }
-  next();
-});
+);
+
+export type MealScheduleType = InferSchemaType<typeof mealScheduleSchema> &
+  withId;
 
 export const MealSchedule =
-  mongoose.models.MealSchedule ||
-  mongoose.model('MealSchedule', mealScheduleSchema);
+  (models.MealSchedule as Model<MealScheduleType>) ||
+  model('MealSchedule', mealScheduleSchema);

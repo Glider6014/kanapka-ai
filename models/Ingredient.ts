@@ -14,7 +14,7 @@ const nutritionSchema = new Schema({
 
 const IngredientSchema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, index: true, unique: true },
     unit: {
       type: String,
       enum: unitsList,
@@ -29,9 +29,6 @@ const IngredientSchema = new Schema(
     ...schemaOptionsSwitchToId,
   }
 );
-
-// Add index for faster name lookups
-IngredientSchema.index({ name: 1 });
 
 export type IngredientType = InferSchemaType<typeof IngredientSchema> & withId;
 

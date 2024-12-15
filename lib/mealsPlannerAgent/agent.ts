@@ -81,11 +81,11 @@ export const planMeals = async (
 
 1. First, call ingredients_generator:
    - Input the ingredients as a comma-separated list: 
-   - SAVE the _id values from the response for step 2
+   - SAVE the id values from the response for step 2
 
 2. Then, call recipe_generator for each recipe you want to create:
    - Provide a recipe name
-   - Use the exact _id values from step 1 as ingredientIds
+   - Use the exact id values from step 1 as ingredientIds
    - Include the User ID "${userId}" in the userId parameter when calling recipe_generator
    - SAVE the recipe.id values from the response for step 3
 
@@ -96,8 +96,8 @@ export const planMeals = async (
    - The plan will be for date: ${targetDate}
 
 Example flow:
-1. ingredients_generator -> returns ingredients with _ids
-2. recipe_generator -> use those _ids to create recipes
+1. ingredients_generator -> returns ingredients with ids
+2. recipe_generator -> use those ids to create recipes
 3. meal_scheduler -> schedule the recipes using their ids
 
 Remember to use the exact IDs returned by each tool!`;

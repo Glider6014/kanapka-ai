@@ -5,7 +5,7 @@ import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
 
 const UserSchema = new Schema(
   {
-    username: { type: String, required: true, unique: true },
+    username: { type: String, required: true, unique: true, index: true },
     displayName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -34,9 +34,6 @@ const UserSchema = new Schema(
     timestamps: true,
   }
 );
-
-// Double index for faster lookups
-UserSchema.index({ username: 1 });
 
 export type UserType = InferSchemaType<typeof UserSchema> & withId;
 

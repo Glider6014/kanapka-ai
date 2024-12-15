@@ -1,5 +1,21 @@
 import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
 
+const ShoppingItemSchema = new Schema({
+  ingredient: {
+    type: Schema.Types.ObjectId,
+    ref: 'Ingredient',
+    required: true,
+  },
+  amount: {
+    type: Number,
+    required: true,
+  },
+  checked: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 const ShoppingListSchema = new Schema(
   {
     userId: {
@@ -11,27 +27,11 @@ const ShoppingListSchema = new Schema(
       type: Date,
       required: true,
     },
-    items: [
-      {
-        ingredient: {
-          type: Schema.Types.ObjectId,
-          ref: 'Ingredient',
-          required: true,
-        },
-        amount: {
-          type: Number,
-          required: true,
-        },
-        unit: {
-          type: String,
-          required: true,
-        },
-        checked: {
-          type: Boolean,
-          default: false,
-        },
-      },
-    ],
+    items: {
+      type: [ShoppingItemSchema],
+      default: [],
+      required: true,
+    },
   },
   {
     timestamps: true,

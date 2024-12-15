@@ -4,7 +4,7 @@ import { MealSchedule } from '@/models/MealSchedule';
 import { getServerSessionProcessed, processApiHandler } from '@/lib/apiUtils';
 
 interface Schedule {
-  _id: string;
+  id: string;
   date: string;
   duration: number;
   recipeId: {
@@ -33,7 +33,7 @@ const handleGET = async () => {
     if (!recipe) return null;
 
     return {
-      id: schedule._id.toString(),
+      id: schedule.id,
       title: schedule.recipeId.name,
       start: startDate.toISOString(),
       end: endDate.toISOString(),

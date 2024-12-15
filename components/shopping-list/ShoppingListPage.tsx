@@ -7,7 +7,7 @@ import { Navbar } from '../Navbar';
 import { Checkbox } from '@/components/ui/checkbox';
 
 type ShoppingItem = {
-  _id: string;
+  id: string;
   name: string;
   amount: number;
   unit: string;
@@ -97,13 +97,13 @@ export function ShoppingListPage() {
           ) : items.length > 0 ? (
             <ul className='space-y-2 flex-grow'>
               {items.map((item) => (
-                <li key={item._id} className='flex items-center gap-2'>
+                <li key={item.id} className='flex items-center gap-2'>
                   <Checkbox
-                    checked={checkedItems.has(item._id)}
-                    onCheckedChange={() => toggleItem(item._id)}
+                    checked={checkedItems.has(item.id)}
+                    onCheckedChange={() => toggleItem(item.id)}
                   />
                   <span
-                    className={checkedItems.has(item._id) ? 'line-through' : ''}
+                    className={checkedItems.has(item.id) ? 'line-through' : ''}
                   >
                     {item.name} - {item.amount} {item.unit}
                   </span>

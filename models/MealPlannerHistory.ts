@@ -1,8 +1,8 @@
+import { schemaOptionsSwitchToId, withId } from '@/lib/mongooseUtilities';
 import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
 
 const MealPlannerHistorySchema = new Schema(
   {
-    _id: { type: Schema.Types.ObjectId, auto: true, required: true },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -21,13 +21,15 @@ const MealPlannerHistorySchema = new Schema(
     // ],
   },
   {
+    ...schemaOptionsSwitchToId,
     timestamps: true,
   }
 );
 
 export type MealPlannerHistoryType = InferSchemaType<
   typeof MealPlannerHistorySchema
->;
+> &
+  withId;
 
 export const MealPlannerHistory =
   (models.MealPlannerHistory as Model<MealPlannerHistoryType>) ||

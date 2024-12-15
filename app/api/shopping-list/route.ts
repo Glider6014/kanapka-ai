@@ -44,7 +44,7 @@ const handleGET = async (req: NextRequest) => {
   mealSchedules.forEach((schedule) => {
     const recipe = schedule.recipeId;
     if (!recipe) {
-      console.log('No recipe found for schedule:', schedule._id);
+      console.log('No recipe found for schedule:', schedule.id);
       return;
     }
 
