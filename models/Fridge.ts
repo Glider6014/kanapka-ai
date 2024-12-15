@@ -37,7 +37,5 @@ export type FridgeType = InferSchemaType<typeof FridgeSchema> &
     isMember: (_userId: string) => boolean;
   };
 
-const Fridge =
+export const Fridge =
   (models.Fridge as Model<FridgeType>) || model('Fridge', FridgeSchema);
-
-export default Fridge;

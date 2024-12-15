@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isValidObjectId } from 'mongoose';
 import connectDB from '@/lib/connectToDatabase';
-import User from '@/models/User';
-import Recipe from '@/models/Recipe';
+import { User } from '@/models/User';
+import { Recipe } from '@/models/Recipe';
 import { Context, processApiHandler } from '@/lib/apiUtils';
 
 const handleGET = async (_req: NextRequest, { params }: Context) => {

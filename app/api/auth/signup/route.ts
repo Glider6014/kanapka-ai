@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import connectDB from '@/lib/connectToDatabase';
-import User from '@/models/User';
+import { User } from '@/models/User';
 import { signUpFormSchema } from '@/lib/formSchemas/authFormSchemas';
 import { processApiHandler } from '@/lib/apiUtils';
 

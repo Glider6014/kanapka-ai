@@ -2,7 +2,7 @@ import Header from '@/components/profile/Header';
 import Stats from '@/components/profile/Stats';
 import UserRecipes from '@/components/profile/UserRecipes';
 import connectDB from '@/lib/connectToDatabase';
-import User from '@/models/User';
+import { User } from '@/models/User';
 import { Logo } from '@/components/Logo';
 import { ObjectId } from 'mongodb';
 import { MainNavbar } from '@/components/home-page/MainNavbar';

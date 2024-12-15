@@ -40,8 +40,6 @@ const ShoppingListSchema = new Schema(
 
 export type ShoppingListType = InferSchemaType<typeof ShoppingListSchema>;
 
-const ShoppingList =
+export const ShoppingList =
   (models.ShoppingList as Model<ShoppingListType>) ||
   model('ShoppingList', ShoppingListSchema);
-
-export default ShoppingList;

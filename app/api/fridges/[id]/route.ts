@@ -4,10 +4,10 @@ import {
   getServerSessionProcessed,
   Context,
 } from '@/lib/apiUtils';
-import Fridge from '@/models/Fridge';
+import { Fridge } from '@/models/Fridge';
 import connectDB from '@/lib/connectToDatabase';
 import { z } from 'zod';
-import User from '@/models/User';
+import { User } from '@/models/User';
 
 const handleGET = async (_req: NextRequest, { params }: Context) => {
   await connectDB();

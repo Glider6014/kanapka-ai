@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/connectToDatabase';
-import User from '@/models/User';
-import Recipe from '@/models/Recipe';
+import { User } from '@/models/User';
+import { Recipe } from '@/models/Recipe';
 import {
   Context,
   getServerSessionProcessed,

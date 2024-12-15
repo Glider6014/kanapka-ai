@@ -32,8 +32,6 @@ const IngredientSchema = new Schema(
 
 export type IngredientType = InferSchemaType<typeof IngredientSchema> & withId;
 
-const Ingredient =
+export const Ingredient =
   (models.Ingredient as Model<IngredientType>) ||
   model('Ingredient', IngredientSchema);
-
-export default Ingredient;

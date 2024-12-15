@@ -3,7 +3,7 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { z } from 'zod';
 import connectDB from '@/lib/connectToDatabase';
-import Ingredient, { IngredientType } from '@/models/Ingredient';
+import { Ingredient }, { IngredientType } from '@/models/Ingredient';
 
 const ingredientSchema = z.object({
   name: z.string({

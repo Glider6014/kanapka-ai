@@ -87,8 +87,6 @@ export type RecipeType = InferSchemaType<typeof RecipeSchema> &
     calculateNutrition(): Promise<Nutrition>;
   };
 
-const Recipe =
+export const Recipe =
   (models.Recipe as Model<RecipeType>) ||
   model<RecipeType>('Recipe', RecipeSchema);
-
-export default Recipe;

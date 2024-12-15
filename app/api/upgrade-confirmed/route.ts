@@ -1,9 +1,9 @@
-import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
-import connectDB from "@/lib/connectToDatabase";
-import { UserSubscription } from "@/lib/subscriptions";
-import User from "@/models/User";
-import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
+import { getServerSessionProcessed, processApiHandler } from '@/lib/apiUtils';
+import connectDB from '@/lib/connectToDatabase';
+import { UserSubscription } from '@/lib/subscriptions';
+import { User } from '@/models/User';
+import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
@@ -15,16 +15,16 @@ const handleGET = async (_req: NextRequest) => {
   const user = await User.findById(session.user.id);
 
   if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
 
   const checkout = await stripe.checkout.sessions.retrieve(
-    user.stripeCheckoutSessionId || ""
+    user.stripeCheckoutSessionId || ''
   );
 
-  if (checkout.payment_status != "paid") {
+  if (checkout.payment_status != 'paid') {
     return NextResponse.json(
-      { message: "Your subscription is not paid" },
+      { message: 'Your subscription is not paid' },
       { status: 400 }
     );
   }
@@ -33,7 +33,7 @@ const handleGET = async (_req: NextRequest) => {
   await user.save();
 
   return NextResponse.json({
-    message: "Upgrade confirmed successfully",
+    message: 'Upgrade confirmed successfully',
     success: true,
   });
 };

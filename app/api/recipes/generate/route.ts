@@ -3,7 +3,7 @@ import { generateRecipes } from '@/lib/Recipe/generateRecipes';
 import connectDB from '@/lib/connectToDatabase';
 import { getServerSessionProcessed, processApiHandler } from '@/lib/apiUtils';
 import { RecipeType } from '@/models/Recipe';
-import Fridge from '@/models/Fridge';
+import { Fridge } from '@/models/Fridge';
 import { validateIngredients } from '@/lib/ingredients/validateNames';
 import { RecipeGeneratorHistory } from '@/models/RecipeGeneratorHistory';
 import { UserSubscription } from '@/lib/subscriptions';

@@ -1,7 +1,7 @@
-import { processApiHandler } from "@/lib/apiUtils";
-import connectDB from "@/lib/connectToDatabase";
-import Ingredient from "@/models/Ingredient";
-import { NextResponse } from "next/server";
+import { processApiHandler } from '@/lib/apiUtils';
+import connectDB from '@/lib/connectToDatabase';
+import { Ingredient } from '@/models/Ingredient';
+import { NextResponse } from 'next/server';
 
 const handleGET = async () => {
   await connectDB();

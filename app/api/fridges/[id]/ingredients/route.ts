@@ -4,7 +4,7 @@ import {
   getServerSessionProcessed,
   Context,
 } from '@/lib/apiUtils';
-import Fridge from '@/models/Fridge';
+import { Fridge } from '@/models/Fridge';
 import { z } from 'zod';
 import connectDB from '@/lib/connectToDatabase';
 import { generateIngredient } from '@/lib/ingredients/generateIngredients';

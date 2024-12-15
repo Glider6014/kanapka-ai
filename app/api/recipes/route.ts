@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/connectToDatabase";
-import Recipe, { RecipeType } from "@/models/Recipe";
+import { Recipe }, { RecipeType } from "@/models/Recipe";
 import { z } from "zod";
 import { processApiHandler } from "@/lib/apiUtils";
 

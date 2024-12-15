@@ -37,6 +37,5 @@ const UserSchema = new Schema(
 
 export type UserType = InferSchemaType<typeof UserSchema> & withId;
 
-const User = (models.User as Model<UserType>) || model('User', UserSchema);
-
-export default User;
+export const User =
+  (models.User as Model<UserType>) || model('User', UserSchema);

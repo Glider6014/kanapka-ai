@@ -2,7 +2,7 @@ import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import connectDB from '@/lib/connectToDatabase';
-import User from '@/models/User';
+import { User } from '@/models/User';
 import { getServerSession } from 'next-auth';
 
 const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
