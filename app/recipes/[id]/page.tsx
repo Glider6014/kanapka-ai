@@ -12,11 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Logo } from '@/components/Logo';
-import {
-  RecipeType,
-  RecipeTypeWithPopulatedIngredients,
-} from '@/models/Recipe';
-import { IngredientType } from '@/models/Ingredient';
+import { RecipeTypeWithPopulatedIngredients } from '@/models/Recipe';
 import { Context } from '@/lib/apiUtils';
 
 type NutrutionType = {

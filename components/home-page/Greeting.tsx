@@ -14,7 +14,7 @@ export default function Greeting() {
               href='/user/signup'
               className='bg-black font-bold text-center text-white px-6 py-2 rounded-md transition'
             >
-              Sign up - it's free!
+              Sign up - it&apos;s free!
             </Link>
           </form>
         </div>

@@ -9,9 +9,9 @@ export default function PromoBanner() {
             Discover the magic of personalized recipes with Kanapka AI!
           </h2>
           <p className='text-lg mb-6'>
-            Whether you're a busy professional, a home cook, or a culinary
+            Whether you&apos;re a busy professional, a home cook, or a culinary
             enthusiast, our goal is to help you create delicious meals
-            effortlessly. Let Kanapka AI turn your fridge's contents into
+            effortlessly. Let Kanapka AI turn your fridge&apos;s contents into
             delightful dishes.
           </p>
           <a

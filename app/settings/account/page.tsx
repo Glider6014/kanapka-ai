@@ -30,7 +30,7 @@ export default function Home() {
     resolver: zodResolver(formSchema),
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {}
+  function onSubmit(_values: z.infer<typeof formSchema>) {}
 
   return (
     <div className='container mx-auto p-4'>
@@ -67,7 +67,7 @@ export default function Home() {
                       <Input placeholder='Email' {...field} />
                     </FormControl>
                     <FormDescription>
-                      We'll never share your email with anyone else.
+                      We&apos;ll never share your email with anyone else.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

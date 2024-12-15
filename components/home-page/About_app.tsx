@@ -42,7 +42,7 @@ const AboutApp = () => {
         <div className='w-full flex flex-col items-start gap-4'>
           <h1 className='text-3xl font-bold mb-6'>Your Culinary Companion</h1>
           <p className='text-lgS mb-6'>
-            Simple, flexible, and powerful. All it takes are your fridge's
+            Simple, flexible, and powerful. All it takes are your fridge&apos;s
             contents for Kanapka AI to whip up recipes that bring your culinary
             dreams to life. Our app provides a clear view of what you can cook,
             who you are, and what you can achieve in your kitchen. Learn more in
