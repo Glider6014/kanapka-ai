@@ -7,16 +7,6 @@ import { z } from 'zod';
 
 const MAX_INGREDIENTS = 100;
 
-const nutritionSchema = z.object({
-  calories: z.coerce.number().int().min(0).optional(),
-  protein: z.coerce.number().int().min(0).optional(),
-  fats: z.coerce.number().int().min(0).optional(),
-  carbs: z.coerce.number().int().min(0).optional(),
-  fiber: z.coerce.number().int().min(0).optional(),
-  sugar: z.coerce.number().int().min(0).optional(),
-  sodium: z.coerce.number().int().min(0).optional(),
-});
-
 const getIngredientsSchema = z.object({
   // Pagination
   offset: z.coerce.number().int().nonnegative().default(0),
@@ -28,9 +18,7 @@ const getIngredientsSchema = z.object({
 
   // Filters
   nameRegex: z.string().optional(),
-  units: z.array(z.enum(unitsList)).optional(),
-  nutritionUnder: nutritionSchema.optional(),
-  nutritionOver: nutritionSchema.optional(),
+  unit: z.enum(unitsList).optional(),
 });
 
 export type GetIngredientsSchemaType = z.infer<typeof getIngredientsSchema>;
@@ -52,19 +40,7 @@ function createQuery(params: GetIngredientsSchemaType) {
 
   if (params.nameRegex) query.where('name').regex(params.nameRegex);
 
-  if (params.units?.length) query.where('unit').in(params.units);
-
-  if (params.nutritionUnder) {
-    for (const [key, value] of Object.entries(params.nutritionUnder)) {
-      query.where(`nutrition.${key}`).lte(value);
-    }
-  }
-
-  if (params.nutritionOver) {
-    for (const [key, value] of Object.entries(params.nutritionOver)) {
-      query.where(`nutrition.${key}`).gte(value);
-    }
-  }
+  if (params.unit) query.where('unit').equals(params.unit);
 
   return query;
 }
