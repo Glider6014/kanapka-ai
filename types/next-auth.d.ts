@@ -1,20 +1,14 @@
 import "next-auth";
 import { DefaultSession, DefaultJWT } from "next-auth";
 
-export interface User {
-  _id: string;
-  email: string;
-  username: string;
-  password: string;
-  permissions: string[];
-}
-
 declare module "next-auth" {
   interface User {
     id: string;
     email: string;
     username: string;
+    displayName: string;
     permissions: string[];
+    subscriptionType: string;
   }
 
   interface Session extends DefaultSession {
@@ -22,7 +16,9 @@ declare module "next-auth" {
       id: string;
       email: string;
       username: string;
+      displayName: string;
       permissions: string[];
+      subscriptionType: string;
     } & DefaultSession["user"];
   }
 }
@@ -30,7 +26,10 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT extends DefaultJWT {
     id: string;
+    email: string;
     username: string;
+    displayName: string;
     permissions: string[];
+    subscriptionType: string;
   }
 }

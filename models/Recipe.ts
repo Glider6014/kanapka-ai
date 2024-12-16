@@ -1,7 +1,8 @@
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
 import Ingredient from "./Ingredient";
 import { NutritionTotals } from "../types/NutritionTotals";
-import calculateFactor from "@/lib/Ingredients/calculateFactor";
+import calculateFactor from "@/lib/ingredients/calculateFactor";
+import { Unit } from "../types/Unit";
 
 type RecipeIngredient = {
   ingredient: Schema.Types.ObjectId;
@@ -31,7 +32,6 @@ const RecipeSchema = new Schema({
     required: true,
     default: "Easy",
   },
-  experience: { type: Number, required: true, default: 10 },
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -63,7 +63,7 @@ RecipeSchema.methods.calculateNutrition =
       );
       if (ingredient) {
         const factor = calculateFactor(
-          ingredient.unit,
+          ingredient.unit as Unit,
           recipeIngredient.amount
         );
         if (ingredient.nutrition) {

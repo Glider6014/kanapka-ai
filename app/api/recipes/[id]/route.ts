@@ -1,36 +1,28 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { isValidObjectId } from "mongoose";
 import connectDB from "@/lib/connectToDatabase";
 import Recipe from "@/models/Recipe";
+import { Context, processApiHandler } from "@/lib/apiUtils";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const { id } = params;
+const handleGET = async (_req: NextRequest, { params }: Context) => {
+  await connectDB();
 
-    if (!isValidObjectId(id)) {
-      return NextResponse.json(
-        { error: "Invalid recipe ID format" },
-        { status: 400 }
-      );
-    }
+  const { id } = params;
 
-    await connectDB();
-
-    const recipe = await Recipe.findById(id).populate("ingredients.ingredient");
-
-    if (!recipe) {
-      return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
-    }
-
-    return NextResponse.json(recipe);
-  } catch (error) {
-    console.error("Error fetching recipe:", error);
+  if (!isValidObjectId(id)) {
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: "Invalid recipe ID format" },
+      { status: 400 }
     );
   }
-}
+
+  const recipe = await Recipe.findById(id).populate("ingredients.ingredient");
+
+  if (!recipe) {
+    return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
+  }
+
+  return NextResponse.json(recipe);
+};
+
+export const GET = processApiHandler(handleGET);

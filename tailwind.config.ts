@@ -9,6 +9,20 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      animation: {
+        marquee: "marquee 40s linear infinite",
+        "marquee-reverse": "marquee-reverse 40s linear infinite",
+      },
+      keyframes: {
+        marquee: {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+        "marquee-reverse": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -50,6 +64,19 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        "start-prim": {
+          DEFAULT: "#7e22ce",
+          foreground: "#4B0082",
+          primary: "#800080",
+        },
+        "end-prim": {
+          DEFAULT: "#f97316",
+          foreground: "#FF4500",
+          primary: "#FFA500",
+        },
+      },
+      backgroundImage: {
+        "gradient-to-r": "linear-gradient(to right, #7e22ce, #f97316)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -57,7 +84,16 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
     },
+    variants: {
+      extend: {
+        animation: ["hover", "focus"],
+      },
+    },
   },
-  plugins: [require("tailwindcss-animate"), require("tailwindcss-motion")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("tailwindcss-motion"),
+    require("tailwindcss-animate"),
+  ],
 };
 export default config;

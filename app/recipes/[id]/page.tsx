@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Navbar } from "@/components/Navbar";
@@ -13,10 +12,30 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Logo } from "@/components/Logo";
+import { RecipeType } from "@/models/Recipe";
+import { IngredientType } from "@/models/Ingredient";
+import { Context } from "@/lib/apiUtils";
 
-export default function RecipePage({ params }: { params: { id: string } }) {
-  const [recipe, setRecipe] = useState<any>(null);
-  const [nutrition, setNutrition] = useState<any>(null);
+type NutrutionType = {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fats: number;
+  fiber: number;
+  sugar: number;
+  sodium: number;
+};
+
+type PopulatedRecipeType = {
+  ingredients: {
+    ingredient: IngredientType;
+    amount: number;
+  }[];
+} & RecipeType;
+
+export default function RecipePage({ params }: Context) {
+  const [recipe, setRecipe] = useState<PopulatedRecipeType | null>(null);
+  const [nutrition, setNutrition] = useState<NutrutionType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -72,7 +91,6 @@ export default function RecipePage({ params }: { params: { id: string } }) {
           <CardTitle className="text-3xl font-bold">{recipe.name}</CardTitle>
           <div className="flex gap-2 mt-2">
             <Badge>{recipe.difficulty}</Badge>
-            <Badge variant="secondary">{recipe.experience}XP</Badge>
           </div>
         </CardHeader>
         <CardContent>
@@ -100,10 +118,12 @@ export default function RecipePage({ params }: { params: { id: string } }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recipe.ingredients.map((ing: any, index: number) => (
+                  {recipe.ingredients.map((ing, index: number) => (
                     <TableRow key={index}>
                       <TableCell>{ing.ingredient.name}</TableCell>
-                      <TableCell>{ing.amount}</TableCell>
+                      <TableCell>
+                        {ing.amount} {ing.ingredient.unit}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

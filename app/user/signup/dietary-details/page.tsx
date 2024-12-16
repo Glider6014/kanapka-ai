@@ -46,7 +46,6 @@ export default function Home() {
   const [religion, setReligion] = useState<string | null>(null);
   const [allergies, setAllergies] = useState<string[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [openModal, setOpenModal] = useState<PreferenceCategory | null>(null);
 
   // Category options
   const options = {
@@ -63,7 +62,6 @@ export default function Home() {
 
   // Initialisation of selected options when opening a modal
   const openPreferenceModal = (type: PreferenceCategory) => {
-    setOpenModal(type);
     if (type === "diets") {
       setSelectedOptions([diet].filter(Boolean) as string[]);
     }
@@ -96,7 +94,6 @@ export default function Home() {
     if (type === "diets") setDiet(selectedOptions[0] || null);
     if (type === "religions") setReligion(selectedOptions[0] || null);
     if (type === "allergies") setAllergies(selectedOptions);
-    setOpenModal(null); // Close modal
     setSelectedOptions([]); //Restart choice
   };
 

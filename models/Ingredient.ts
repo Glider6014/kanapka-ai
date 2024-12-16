@@ -1,11 +1,12 @@
 import { Schema, InferSchemaType, Model, model, models } from "mongoose";
+import { Unit } from "@/types/Unit";
 
 const IngredientSchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true, required: true },
   name: { type: String, required: true },
   unit: {
     type: String,
-    enum: ["g", "ml", "piece"],
+    enum: Object.values(Unit),
     required: true,
   },
   nutrition: {
@@ -18,6 +19,10 @@ const IngredientSchema = new Schema({
     sodium: { type: Number, required: true },
   },
 });
+
+// Add index for faster name lookups
+IngredientSchema.index({ _id: 1 });
+IngredientSchema.index({ name: 1 });
 
 export type IngredientType = InferSchemaType<typeof IngredientSchema>;
 

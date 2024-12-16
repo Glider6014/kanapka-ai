@@ -1,58 +1,51 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
+import { signUpFormSchema } from "@/lib/formSchemas/authFormSchemas";
+import { processApiHandler } from "@/lib/apiUtils";
 
-export async function POST(request: Request) {
-  try {
-    const { username, email, password } = await request.json();
+const handlePOST = async (req: NextRequest) => {
+  await connectDB();
 
-    // Validate input
-    if (!username || !email || !password) {
-      return NextResponse.json(
-        { message: "Missing required fields" },
-        { status: 400 }
-      );
-    }
+  const body = await req.json().catch(() => null);
+  const validationResult = signUpFormSchema.safeParse(body);
 
-    // Connect to database
-    await connectDB();
-
-    // Check if user already exists
-    const existingUser = await User.findOne({
-      $or: [{ email }, { username }],
-    });
-
-    if (existingUser) {
-      return NextResponse.json(
-        { message: "User with this email or username already exists" },
-        { status: 409 }
-      );
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Create user
-    const user = await User.create({
-      username,
-      email,
-      password: hashedPassword,
-    });
-
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user.toObject();
-
-
+  if (!validationResult.success) {
     return NextResponse.json(
-      { message: "User created successfully", user: userWithoutPassword },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error("Registration error:", error);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
+      { error: validationResult.error.message },
+      { status: 400 }
     );
   }
-}
+
+  const { username, displayName, email, password } = validationResult.data;
+
+  if (
+    await User.exists({
+      $or: [{ email }, { username }],
+    })
+  ) {
+    return NextResponse.json(
+      { message: "User with this email or username already exists" },
+      { status: 409 }
+    );
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 12);
+
+  const createdUser = await User.create({
+    username,
+    displayName,
+    email,
+    password: hashedPassword,
+  });
+
+  const user = await User.findById(createdUser._id).select("-password");
+
+  return NextResponse.json(
+    { message: "User created successfully", user },
+    { status: 201 }
+  );
+};
+
+export const POST = processApiHandler(handlePOST);

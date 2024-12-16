@@ -5,22 +5,53 @@ import connectDB from "@/lib/connectToDatabase";
 import User from "@/models/User";
 import { getServerSession } from "next-auth";
 
+const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
+
+if (!NEXTAUTH_SECRET) {
+  throw new Error("You must provide a NEXTAUTH_SECRET environment variable");
+}
+
+async function getUserWithoutPassword(userId: string) {
+  await connectDB();
+
+  const user = await User.findById(userId).select("-password");
+  if (!user) return null;
+
+  return {
+    id: user._id.toString(),
+    email: user.email,
+    username: user.username,
+    displayName: user.displayName,
+    permissions: user.permissions,
+    subscriptionType: user.subscriptionType,
+  };
+}
+
 const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        emailOrUsername: {
+          label: "Email or Username",
+          type: "text",
+          placeholder: "Enter email or username",
+        },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.emailOrUsername || !credentials?.password) {
           throw new Error("Email and password required");
         }
 
         await connectDB();
 
-        const user = await User.findOne({ email: credentials.email });
+        const user = await User.findOne({
+          $or: [
+            { email: credentials.emailOrUsername },
+            { username: credentials.emailOrUsername },
+          ],
+        });
         if (!user) {
           throw new Error("No user found with this email");
         }
@@ -37,7 +68,9 @@ const authOptions: NextAuthOptions = {
           id: user._id.toString(),
           email: user.email,
           username: user.username,
+          displayName: user.displayName,
           permissions: user.permissions,
+          subscriptionType: user.subscriptionType,
         };
       },
     }),
@@ -48,21 +81,14 @@ const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.username = user.username;
-        token.permissions = user.permissions;
-      }
-
-      return token;
+      return user ? { ...token, ...user } : token;
     },
 
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.username = token.username;
-        session.user.permissions = token.permissions;
-      }
+      const user = await getUserWithoutPassword(token.id);
+      if (!user) throw new Error("User no longer exists");
+
+      session.user = user;
 
       return session;
     },
