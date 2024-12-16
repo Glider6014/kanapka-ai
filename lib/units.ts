@@ -4,7 +4,8 @@ export enum Unit {
   PIECE = 'piece',
 }
 
-export const unitsList = Object.values(Unit);
+// Zod doesn't support normal array type, so got to make this... thing.
+export const unitsList = Object.values(Unit) as unknown as readonly [string, ...string[]];
 
 export const unitToFactor: Record<Unit | string, number> = {
   [Unit.GRAM]: 100,
