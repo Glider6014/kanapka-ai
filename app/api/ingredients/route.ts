@@ -7,6 +7,15 @@ import { z } from 'zod';
 
 const MAX_INGREDIENTS = 100;
 
+function isRegexPattern(str: string) {
+  try {
+    new RegExp(str);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 const getIngredientsSchema = z.object({
   // Pagination
   offset: z.coerce.number().int().nonnegative().default(0),
@@ -17,7 +26,7 @@ const getIngredientsSchema = z.object({
   order: z.union([z.literal(-1), z.literal(1)]).default(1),
 
   // Filters
-  nameRegex: z.string().optional(),
+  name: z.string().refine((name) => isRegexPattern(name), 'Invalid name regex pattern').optional(),
   unit: z.enum(unitsList).optional(),
 });
 
@@ -38,7 +47,7 @@ function createQuery(params: GetIngredientsSchemaType) {
 
   if (params.sortBy) query.sort({ [params.sortBy]: params.order });
 
-  if (params.nameRegex) query.where('name').regex(params.nameRegex);
+  if (params.name) query.where('name').regex(params.name);
 
   if (params.unit) query.where('unit').equals(params.unit);
 
