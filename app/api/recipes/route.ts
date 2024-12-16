@@ -4,10 +4,12 @@ import { Recipe, RecipeType } from '@/models/Recipe';
 import { z } from 'zod';
 import { processApiHandler } from '@/lib/apiUtils';
 
+const MAX_RECIPES = 100;
+
 const GetRecipesSchema = z.object({
   // Pagination
   offset: z.coerce.number().int().nonnegative().default(0),
-  limit: z.coerce.number().int().min(1).max(100).default(20),
+  limit: z.coerce.number().int().min(1).max(MAX_RECIPES).default(20),
 
   // Sorting
   sortBy: z.enum(['name', 'createdAt', 'difficulty', 'steps']).optional(),
