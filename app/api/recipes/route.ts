@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { extractParamsFromURL, processApiHandler } from '@/lib/apiUtils';
+import {
+  extractParamsFromURLBasedOnSchema,
+  processApiHandler,
+} from '@/lib/apiUtils';
 import { paginationGetRecipes, paginationRecipesSchema } from './logic';
 
 const MAX_RECIPES = 100;
 
 const handleGET = async (req: NextRequest) => {
-  const searchParams = extractParamsFromURL(
+  const searchParams = extractParamsFromURLBasedOnSchema(
     req.nextUrl,
     paginationRecipesSchema
   );

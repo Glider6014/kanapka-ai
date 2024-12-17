@@ -74,7 +74,7 @@ function isZodArray(schema: ZodTypeAny) {
   return true;
 }
 
-export function extractParamsFromURL<T extends ZodRawShape>(
+export function extractParamsFromURLBasedOnSchema<T extends ZodRawShape>(
   url: URL,
   schema: ZodObject<T>
 ) {
