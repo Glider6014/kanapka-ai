@@ -3,6 +3,7 @@ import connectDB from '@/lib/connectToDatabase';
 import { Recipe, RecipeType } from '@/models/Recipe';
 import { z } from 'zod';
 import { processApiHandler } from '@/lib/apiUtils';
+import { isRegexPattern } from '@/lib/utils';
 
 const MAX_RECIPES = 100;
 
@@ -16,6 +17,7 @@ const GetRecipesSchema = z.object({
   order: z.union([z.literal(-1), z.literal(1)]).default(1),
 
   // Filters
+  name: z.string().refine((s) => isRegexPattern(s), 'Invalid name regex pattern').optional(),
   ingredients: z
     .preprocess((val) => {
       if (typeof val === 'string') return val.split(',');
@@ -44,7 +46,9 @@ function createQuery(params: GetRecipesSchemaType) {
   query.skip(params.offset);
   query.limit(params.limit);
 
-  if (params.sortBy) query.sort({ [params.sortBy]: params.order });
+  if (params.sortBy) query.sort({ [params.sortBy]: params.order || 1 });
+
+  if (params.name) query.where('name').regex(params.name);
 
   if (params.ingredients?.length)
     query.where('ingredients.ingredient').in(params.ingredients);

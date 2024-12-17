@@ -37,7 +37,7 @@ function createQuery(params: GetIngredientsSchemaType) {
   query.skip(params.offset);
   query.limit(params.limit);
 
-  if (params.sortBy) query.sort({ [params.sortBy]: params.order });
+  if (params.sortBy) query.sort({ [params.sortBy]: params.order || 1 });
 
   if (params.name) query.where('name').regex(params.name);
 
