@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/nextauth';
 import { NextRequest, NextResponse } from 'next/server';
+import { ZodObject, ZodRawShape, ZodTypeAny } from 'zod';
 
 export class ApiError extends Error {
   status: number;
@@ -61,4 +62,36 @@ export async function getServerSessionProcessed(permissions?: string[]) {
   }
 
   return session;
+}
+
+function isZodArray(schema: ZodTypeAny) {
+  while (schema._def?.typeName !== 'ZodArray') {
+    schema = schema._def?.innerType || schema._def?.type || schema._def?.schema;
+
+    if (!schema) return false;
+  }
+
+  return true;
+}
+
+export function extractParamsFromURL<T extends ZodRawShape>(
+  url: URL,
+  schema: ZodObject<T>
+) {
+  const searchParams = url.searchParams;
+  const searchParamsKeys = Array.from(searchParams.keys());
+
+  console.log(`searchParamsKeys`, searchParamsKeys);
+
+  const result: Record<string, string | string[]> = {};
+
+  for (const key of searchParamsKeys) {
+    if (isZodArray(schema.shape[key])) {
+      result[key] = searchParams.getAll(key);
+    } else {
+      result[key] = searchParams.get(key) || '';
+    }
+  }
+
+  return result;
 }
