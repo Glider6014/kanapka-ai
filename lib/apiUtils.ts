@@ -74,6 +74,9 @@ function isZodArray(schema: ZodTypeAny) {
   return true;
 }
 
+/**
+ * When working with GET requests and need arrays in query params
+ */
 export function extractParamsFromURLBasedOnSchema<T extends ZodRawShape>(
   url: URL,
   schema: ZodObject<T>
