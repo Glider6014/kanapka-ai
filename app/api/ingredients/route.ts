@@ -1,71 +1,30 @@
-import { processApiHandler } from '@/lib/apiUtils';
-import connectDB from '@/lib/connectToDatabase';
-import { unitsList } from '@/lib/units';
-import { isRegexPattern } from '@/lib/utils';
-import { Ingredient, IngredientType } from '@/models/Ingredient';
+import { extractParamsFromURL, processApiHandler } from '@/lib/apiUtils';
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { paginationGetIngredients, paginationIngredientsSchema } from './logic';
 
 const MAX_INGREDIENTS = 100;
 
-const getIngredientsSchema = z.object({
-  // Pagination
-  offset: z.coerce.number().int().nonnegative().default(0),
-  limit: z.coerce.number().int().min(1).max(MAX_INGREDIENTS).default(20),
-
-  // Sorting
-  sortBy: z.enum(['name']).optional(),
-  order: z.union([z.literal(-1), z.literal(1)]).default(1),
-
-  // Filters
-  name: z.string().refine((name) => isRegexPattern(name), 'Invalid name regex pattern').optional(),
-  unit: z.enum(unitsList).optional(),
-});
-
-export type GetIngredientsSchemaType = z.infer<typeof getIngredientsSchema>;
-
-export type GetIngredientsResponse = {
-  count: number;
-  results: IngredientType[];
-  offset: number;
-  limit: number;
-};
-
-function createQuery(params: GetIngredientsSchemaType) {
-  const query = Ingredient.find();
-
-  query.skip(params.offset);
-  query.limit(params.limit);
-
-  if (params.sortBy) query.sort({ [params.sortBy]: params.order || 1 });
-
-  if (params.name) query.where('name').regex(params.name);
-
-  if (params.unit) query.where('unit').equals(params.unit);
-
-  return query;
-}
-
 const handleGET = async (req: NextRequest) => {
-  await connectDB();
+  const searchParams = extractParamsFromURL(
+    req.nextUrl,
+    paginationIngredientsSchema
+  );
 
-  const searchParams = Object.fromEntries(req.nextUrl.searchParams.entries());
-  const params = getIngredientsSchema.parse(searchParams);
+  const validationResult = paginationIngredientsSchema.safeParse(searchParams);
 
-  const itemsQuery = createQuery(params);
-  const countQuery = Ingredient.find(itemsQuery.getQuery());
+  if (!validationResult.success) {
+    return NextResponse.json(
+      { error: 'Invalid search params', issues: validationResult.error.issues },
+      { status: 400 }
+    );
+  }
 
-  const ingredients = await itemsQuery.lean().exec();
-  const count = await countQuery.countDocuments();
+  const params = validationResult.data;
+  params.limit = Math.min(params.limit, MAX_INGREDIENTS);
 
-  const response: GetIngredientsResponse = {
-    count,
-    results: ingredients,
-    offset: params.offset,
-    limit: params.limit,
-  };
+  const ingredientsData = await paginationGetIngredients(params);
 
-  return NextResponse.json(response);
+  return NextResponse.json(ingredientsData);
 };
 
 export const GET = processApiHandler(handleGET);
