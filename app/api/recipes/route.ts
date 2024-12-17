@@ -1,94 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/connectToDatabase';
-import { Recipe, RecipeType } from '@/models/Recipe';
-import { z } from 'zod';
-import { processApiHandler } from '@/lib/apiUtils';
-import { isRegexPattern } from '@/lib/utils';
-import mongoose from 'mongoose';
+import { NextRequest, NextResponse } from "next/server";
+import { processApiHandler } from "@/lib/apiUtils";
+import { paginationGetRecipes, GetRecipesSchema } from "./logic";
 
 const MAX_RECIPES = 100;
 
-const GetRecipesSchema = z.object({
-  // Pagination
-  offset: z.coerce.number().int().nonnegative().default(0),
-  limit: z.coerce.number().int().min(1).max(MAX_RECIPES).default(20),
-
-  // Sorting
-  sortBy: z.enum(['name', 'createdAt', 'difficulty', 'steps']).optional(),
-  order: z.union([z.literal(-1), z.literal(1)]).default(1),
-
-  // Filters
-  name: z.string().refine((s) => isRegexPattern(s), 'Invalid name regex pattern').optional(),
-  ingredients: z
-    .preprocess((val) => {
-      if (typeof val === 'string') return val.split(',');
-      if (Array.isArray(val)) return val;
-      return [];
-    }, z.array(z.string()))
-    .refine((arr) => arr.every((s) => mongoose.isValidObjectId(s)), 'Invalid ingredient ID')
-    .optional(),
-  difficulty: z.array(z.string()).optional(),
-  createdBy: z.string().optional(),
-  createdBefore: z.date().optional(),
-  createdAfter: z.date().optional(),
-});
-
-export type GetRecipesSchemaType = z.infer<typeof GetRecipesSchema>;
-
-export type GetRecipesResponse = {
-  count: number;
-  results: RecipeType[];
-  offset: number;
-  limit: number;
-};
-
-function createQuery(params: GetRecipesSchemaType) {
-  const query = Recipe.find();
-
-  query.skip(params.offset);
-  query.limit(params.limit);
-
-  if (params.sortBy) query.sort({ [params.sortBy]: params.order || 1 });
-
-  if (params.name) query.where('name').regex(params.name);
-
-  if (params.ingredients?.length)
-    query.where('ingredients.ingredient').in(params.ingredients);
-
-  if (params.difficulty?.length)
-    query.where('difficulty').in(params.difficulty);
-
-  if (params.createdBy) query.where('createdBy').equals(params.createdBy);
-
-  if (params.createdBefore)
-    query.where('createdAt').lte(params.createdBefore.getTime());
-
-  if (params.createdAfter)
-    query.where('createdAt').gte(params.createdAfter.getTime());
-
-  return query;
-}
-
 const handleGET = async (req: NextRequest) => {
-  await connectDB();
-
   const searchParams = Object.fromEntries(req.nextUrl.searchParams.entries());
+
   const params = GetRecipesSchema.parse(searchParams);
+  params.limit = Math.min(params.limit, MAX_RECIPES);
 
-  const itemsQuery = createQuery(params);
-  const countQuery = Recipe.find(itemsQuery.getQuery());
+  const recipesData = await paginationGetRecipes(params);
 
-  const recipes = await itemsQuery.lean().exec();
-  const count = await countQuery.countDocuments();
-
-  const response: GetRecipesResponse = {
-    count,
-    results: recipes,
-    offset: params.offset,
-    limit: params.limit,
-  };
-
-  return NextResponse.json(response);
+  return NextResponse.json(recipesData);
 };
 
 export const GET = processApiHandler(handleGET);
