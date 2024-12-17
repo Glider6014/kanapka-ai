@@ -1,14 +1,33 @@
-import { processApiHandler } from '@/lib/apiUtils';
-import connectDB from '@/lib/connectToDatabase';
-import { Ingredient } from '@/models/Ingredient';
-import { NextResponse } from 'next/server';
+import {
+  extractParamsFromURLBasedOnSchema,
+  processApiHandler,
+} from '@/lib/apiUtils';
+import { NextRequest, NextResponse } from 'next/server';
+import { paginationGetIngredients, paginationIngredientsSchema } from './logic';
 
-const handleGET = async () => {
-  await connectDB();
+const MAX_INGREDIENTS = 100;
 
-  const ingredients = await Ingredient.find({});
+const handleGET = async (req: NextRequest) => {
+  const searchParams = extractParamsFromURLBasedOnSchema(
+    req.nextUrl,
+    paginationIngredientsSchema
+  );
 
-  return NextResponse.json(ingredients, { status: 200 });
+  const validationResult = paginationIngredientsSchema.safeParse(searchParams);
+
+  if (!validationResult.success) {
+    return NextResponse.json(
+      { error: 'Invalid search params', issues: validationResult.error.issues },
+      { status: 400 }
+    );
+  }
+
+  const params = validationResult.data;
+  params.limit = Math.min(params.limit, MAX_INGREDIENTS);
+
+  const ingredientsData = await paginationGetIngredients(params);
+
+  return NextResponse.json(ingredientsData);
 };
 
 export const GET = processApiHandler(handleGET);
