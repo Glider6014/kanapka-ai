@@ -55,7 +55,7 @@ const handleGET = async (req: NextRequest) => {
   const itemsQuery = createQuery(params);
   const countQuery = Ingredient.find(itemsQuery.getQuery());
 
-  const ingredients = await itemsQuery.exec();
+  const ingredients = await itemsQuery.lean().exec();
   const count = await countQuery.countDocuments();
 
   const response: GetIngredientsResponse = {

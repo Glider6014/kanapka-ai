@@ -4,6 +4,7 @@ import { Recipe, RecipeType } from '@/models/Recipe';
 import { z } from 'zod';
 import { processApiHandler } from '@/lib/apiUtils';
 import { isRegexPattern } from '@/lib/utils';
+import mongoose from 'mongoose';
 
 const MAX_RECIPES = 100;
 
@@ -24,6 +25,7 @@ const GetRecipesSchema = z.object({
       if (Array.isArray(val)) return val;
       return [];
     }, z.array(z.string()))
+    .refine((arr) => arr.every((s) => mongoose.isValidObjectId(s)), 'Invalid ingredient ID')
     .optional(),
   difficulty: z.array(z.string()).optional(),
   createdBy: z.string().optional(),
@@ -76,7 +78,7 @@ const handleGET = async (req: NextRequest) => {
   const itemsQuery = createQuery(params);
   const countQuery = Recipe.find(itemsQuery.getQuery());
 
-  const recipes = await itemsQuery.exec();
+  const recipes = await itemsQuery.lean().exec();
   const count = await countQuery.countDocuments();
 
   const response: GetRecipesResponse = {
