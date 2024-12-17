@@ -81,8 +81,6 @@ export function extractParamsFromURLBasedOnSchema<T extends ZodRawShape>(
   const searchParams = url.searchParams;
   const searchParamsKeys = Array.from(searchParams.keys());
 
-  console.log(`searchParamsKeys`, searchParamsKeys);
-
   const result: Record<string, string | string[]> = {};
 
   for (const key of searchParamsKeys) {
