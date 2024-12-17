@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { isRegexPattern } from '@/lib/utils';
 import mongoose from 'mongoose';
 
-export const GetRecipesSchema = z.object({
+export const paginationRecipesSchema = z.object({
   // Pagination
   offset: z.coerce.number().int().nonnegative().default(0),
   limit: z.coerce.number().int().min(1).default(20),
@@ -31,16 +31,9 @@ export const GetRecipesSchema = z.object({
   createdAfter: z.date().optional(),
 });
 
-export type GetRecipesSchemaType = z.infer<typeof GetRecipesSchema>;
+export type PaginationRecipesInput = z.infer<typeof paginationRecipesSchema>;
 
-export type GetRecipesResponse = {
-  count: number;
-  results: RecipeType[];
-  offset: number;
-  limit: number;
-};
-
-function createQuery(params: GetRecipesSchemaType) {
+function createQuery(params: PaginationRecipesInput) {
   const query = Recipe.find();
 
   query.skip(params.offset);
@@ -51,7 +44,9 @@ function createQuery(params: GetRecipesSchemaType) {
   if (params.name) query.where('name').regex(params.name);
 
   if (params.ingredients?.length)
-    query.where('ingredients.ingredient').in(params.ingredients);
+    for (const ingredient of params.ingredients) {
+      query.where('ingredients.ingredient').in([ingredient]);
+    }
 
   if (params.difficulty?.length)
     query.where('difficulty').in(params.difficulty);
@@ -67,19 +62,28 @@ function createQuery(params: GetRecipesSchemaType) {
   return query;
 }
 
-export const paginationGetRecipes = async (params: GetRecipesSchemaType) => {
+export type PaginationRecipesOutput = {
+  count: number;
+  results: RecipeType[];
+  offset: number;
+  limit: number;
+};
+
+export const paginationGetRecipes = async (params: PaginationRecipesInput) => {
   await connectDB();
 
   const itemsQuery = createQuery(params);
   const countQuery = Recipe.find(itemsQuery.getQuery());
 
-  const recipes = await itemsQuery.lean().exec();
-  const count = await countQuery.countDocuments();
+  const [results, count] = await Promise.all([
+    itemsQuery.lean().exec(),
+    countQuery.countDocuments(),
+  ]);
 
   return {
     count,
-    results: recipes,
+    results,
     offset: params.offset,
     limit: params.limit,
-  } as GetRecipesResponse;
+  } as PaginationRecipesOutput;
 };
