@@ -1,20 +1,12 @@
 import { processApiHandler } from '@/lib/apiUtils';
 import connectDB from '@/lib/connectToDatabase';
 import { unitsList } from '@/lib/units';
+import { isRegexPattern } from '@/lib/utils';
 import { Ingredient, IngredientType } from '@/models/Ingredient';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const MAX_INGREDIENTS = 100;
-
-function isRegexPattern(str: string) {
-  try {
-    new RegExp(str);
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 const getIngredientsSchema = z.object({
   // Pagination
