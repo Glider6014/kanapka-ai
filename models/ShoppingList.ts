@@ -1,4 +1,25 @@
-import { Schema, InferSchemaType, Model, model, models } from "mongoose";
+import { Schema, InferSchemaType, Model, model, models } from 'mongoose';
+import {
+  createBaseToJSON,
+  createBaseToObject,
+  InferBaseSchemaType,
+} from './BaseSchema';
+
+const ShoppingItemSchema = new Schema({
+  ingredient: {
+    type: Schema.Types.ObjectId,
+    ref: 'Ingredient',
+    required: true,
+  },
+  amount: {
+    type: Number,
+    required: true,
+  },
+  checked: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const ShoppingListSchema = new Schema(
   {
@@ -11,37 +32,22 @@ const ShoppingListSchema = new Schema(
       type: Date,
       required: true,
     },
-    items: [
-      {
-        ingredient: {
-          type: Schema.Types.ObjectId,
-          ref: "Ingredient",
-          required: true,
-        },
-        amount: {
-          type: Number,
-          required: true,
-        },
-        unit: {
-          type: String,
-          required: true,
-        },
-        checked: {
-          type: Boolean,
-          default: false,
-        },
-      },
-    ],
+    items: {
+      type: [ShoppingItemSchema],
+      default: [],
+      required: true,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-export type ShoppingListType = InferSchemaType<typeof ShoppingListSchema>;
+ShoppingListSchema.set('toJSON', createBaseToJSON());
+ShoppingListSchema.set('toObject', createBaseToObject());
 
-const ShoppingList =
+export type ShoppingListType = InferBaseSchemaType<typeof ShoppingListSchema>;
+
+export const ShoppingList =
   (models.ShoppingList as Model<ShoppingListType>) ||
-  model("ShoppingList", ShoppingListSchema);
-
-export default ShoppingList;
+  model('ShoppingList', ShoppingListSchema);

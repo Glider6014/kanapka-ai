@@ -21,7 +21,7 @@ export type RecipeOutput = {
   steps: string[];
   prepTime: number;
   cookTime: number;
-  difficulty: "Easy" | "Medium" | "Hard";
+  difficulty: 'Easy' | 'Medium' | 'Hard';
 };
 
 export type GenerateRecipeOutput = RecipeOutput[];

@@ -1,7 +1,7 @@
-import { Trash2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { KeyboardEvent, forwardRef, useState, useRef } from "react";
+import { Trash2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { KeyboardEvent, forwardRef, useState, useRef } from 'react';
 
 type InputIngredientProps = {
   value: string;
@@ -32,7 +32,7 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
       onKeyDown,
       onKeyUp,
       error,
-      errorMessage = "Invalid ingredient",
+      errorMessage = 'Invalid ingredient',
     },
     ref
   ) => {
@@ -40,10 +40,10 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
     const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter" && value.trim() !== "") {
+      if (e.key === 'Enter' && value.trim() !== '') {
         onAdd?.();
         const nextEmptyInput = Object.values(inputRefs.current).find(
-          (input) => input && input.value.trim() === ""
+          (input) => input && input.value.trim() === ''
         );
         nextEmptyInput?.focus();
       }
@@ -59,13 +59,13 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
     };
 
     return (
-      <div className="flex flex-col gap-2 mb-4 w-full">
-        <div className="flex items-center gap-2">
+      <div className='flex flex-col gap-2 mb-4 w-full'>
+        <div className='flex items-center gap-2'>
           <Input
-            type="text"
-            placeholder="Enter ingredient..."
+            type='text'
+            placeholder='Enter ingredient...'
             className={`w-full ${
-              error ? "border-red-500 focus-visible:ring-red-500" : ""
+              error ? 'border-red-500 focus-visible:ring-red-500' : ''
             }`}
             value={value}
             onChange={onChange}
@@ -75,7 +75,7 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
             onKeyUp={handleKeyUp}
             ref={(el) => {
               if (ref) {
-                if (typeof ref === "function") {
+                if (typeof ref === 'function') {
                   ref(el);
                 } else {
                   ref.current = el;
@@ -84,10 +84,10 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
               if (inputRef) inputRef(el);
             }}
           />
-          {value.trim() !== "" && (
+          {value.trim() !== '' && (
             <Button
-              variant="destructive"
-              className={`p-2 rounded-md ${error ? "h-9 w-11" : "h-9 w-11"}`}
+              variant='destructive'
+              className={`p-2 rounded-md ${error ? 'h-9 w-11' : 'h-9 w-11'}`}
               onClick={onRemove}
               disabled={isDeleteButtonDisabled}
             >
@@ -95,12 +95,12 @@ const InputIngredient = forwardRef<HTMLInputElement, InputIngredientProps>(
             </Button>
           )}
         </div>
-        {error && <p className="text-sm text-red-500 pl-1">{errorMessage}</p>}
+        {error && <p className='text-sm text-red-500 pl-1'>{errorMessage}</p>}
       </div>
     );
   }
 );
 
-InputIngredient.displayName = "InputIngredient";
+InputIngredient.displayName = 'InputIngredient';
 
 export default InputIngredient;

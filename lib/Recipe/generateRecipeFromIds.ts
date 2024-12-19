@@ -1,11 +1,11 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";
-import { z } from "zod";
-import Recipe, { RecipeType } from "@/models/Recipe";
-import Ingredient from "@/models/Ingredient";
-import { Types } from "mongoose";
-import connectDB from "../connectToDatabase";
+import { ChatOpenAI } from '@langchain/openai';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
+import { StringOutputParser } from '@langchain/core/output_parsers';
+import { z } from 'zod';
+import { Recipe, RecipeType } from '@/models/Recipe';
+import { Ingredient } from '@/models/Ingredient';
+import { Types } from 'mongoose';
+import connectDB from '../connectToDatabase';
 
 const singleRecipeSchema = z.object({
   name: z.string(),
@@ -19,11 +19,11 @@ const singleRecipeSchema = z.object({
   steps: z.array(z.string()).min(1),
   prepTime: z.number().nonnegative(),
   cookTime: z.number().nonnegative(),
-  difficulty: z.enum(["Easy", "Medium", "Hard"]),
+  difficulty: z.enum(['Easy', 'Medium', 'Hard']),
 });
 
 const model = new ChatOpenAI({
-  modelName: "gpt-4o-mini",
+  modelName: 'gpt-4o-mini',
   temperature: 0,
   openAIApiKey: process.env.OPENAI_API_KEY,
   cache: true,
@@ -31,7 +31,7 @@ const model = new ChatOpenAI({
 
 const systemPrompt = ChatPromptTemplate.fromMessages([
   [
-    "system",
+    'system',
     `You are a recipe creation assistant. Create precise recipes following JSON format.
 
 Response must be a valid JSON object with this structure:
@@ -72,7 +72,7 @@ Respond ONLY with a valid JSON object for a single recipe.`,
 
 const humanPrompt = ChatPromptTemplate.fromMessages([
   [
-    "human",
+    'human',
     `Create a recipe named "{recipeName}" using these ingredients:
 {ingredients}
 
@@ -99,12 +99,12 @@ export async function generateRecipeFromIds(
     });
 
     if (!ingredients.length) {
-      console.error("No ingredients found for the given IDs");
+      console.error('No ingredients found for the given IDs');
       return null;
     }
     const ingredientsText = ingredients
-      .map((ing) => `${ing._id}: ${ing.name} (${ing.unit})`)
-      .join("\n");
+      .map((ing) => `${ing.id}: ${ing.name} (${ing.unit})`)
+      .join('\n');
 
     const result = await chain.invoke({
       recipeName,
@@ -114,7 +114,7 @@ export async function generateRecipeFromIds(
     const validationResult = singleRecipeSchema.safeParse(JSON.parse(result));
 
     if (!validationResult.success) {
-      console.error("Recipe validation failed:", validationResult.error);
+      console.error('Recipe validation failed:', validationResult.error);
       return null;
     }
     const recipe = new Recipe({
@@ -134,9 +134,9 @@ export async function generateRecipeFromIds(
     return recipe;
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error("Validation errors:", error.flatten().fieldErrors);
+      console.error('Validation errors:', error.flatten().fieldErrors);
     } else {
-      console.error("Recipe generation error:", error);
+      console.error('Recipe generation error:', error);
     }
     return null;
   }

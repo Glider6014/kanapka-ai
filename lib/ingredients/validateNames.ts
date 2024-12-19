@@ -1,5 +1,5 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatOpenAI } from '@langchain/openai';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
 
 type ValidationResult = {
   ingredient: string;
@@ -7,32 +7,32 @@ type ValidationResult = {
 };
 
 const model = new ChatOpenAI({
-  modelName: "gpt-4o-mini",
+  modelName: 'gpt-4o-mini',
   openAIApiKey: process.env.OPENAI_API_KEY,
-  stop: ["\n", " "],
+  stop: ['\n', ' '],
   cache: true,
 });
 
 const forbiddenIngredients = [
-  "dog meat",
-  "cat meat",
-  "human meat",
-  "rat meat",
-  "toxic",
-  "poison",
-  "chemical",
-  "nuclear",
-  "radiation",
-  "unicorn",
-  "dragon meat",
-  "mystical ingredient",
-  "random characters",
-  "non-food",
+  'dog meat',
+  'cat meat',
+  'human meat',
+  'rat meat',
+  'toxic',
+  'poison',
+  'chemical',
+  'nuclear',
+  'radiation',
+  'unicorn',
+  'dragon meat',
+  'mystical ingredient',
+  'random characters',
+  'non-food',
 ];
 
 const forbiddenExamples = forbiddenIngredients
   .map((ingredient) => `"${ingredient}"`)
-  .join(", ");
+  .join(', ');
 
 const systemPrompt = ChatPromptTemplate.fromTemplate(`
     You are an ingredient evaluator. Assess if the given ingredient is an edible food product. Answer only "true" or "false".
@@ -82,10 +82,13 @@ export async function validateIngredient(
   ingredient: string
 ): Promise<ValidationResult> {
   const response = await chain.invoke({ ingredient, forbiddenExamples });
-  console.log(ingredient, response.content === "true");
+  const isValid = response.content === 'true';
+
+  console.log(`Validating ingredient "${ingredient}": ${isValid}`);
+
   return {
     ingredient,
-    isValid: response.content === "true",
+    isValid: response.content === 'true',
   };
 }
 

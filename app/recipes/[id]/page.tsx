@@ -1,8 +1,9 @@
-"use client";
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Navbar } from "@/components/Navbar";
-import { Badge } from "@/components/ui/badge";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Navbar from '@/components/Navbar';
+import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -10,11 +11,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Logo } from "@/components/Logo";
-import { RecipeType } from "@/models/Recipe";
-import { IngredientType } from "@/models/Ingredient";
-import { Context } from "@/lib/apiUtils";
+} from '@/components/ui/table';
+import Logo from '@/components/Logo';
+import { RecipeTypeWithPopulatedIngredients } from '@/models/Recipe';
+import { Context } from '@/lib/apiUtils';
 
 type NutrutionType = {
   calories: number;
@@ -26,15 +26,9 @@ type NutrutionType = {
   sodium: number;
 };
 
-type PopulatedRecipeType = {
-  ingredients: {
-    ingredient: IngredientType;
-    amount: number;
-  }[];
-} & RecipeType;
-
 export default function RecipePage({ params }: Context) {
-  const [recipe, setRecipe] = useState<PopulatedRecipeType | null>(null);
+  const [recipe, setRecipe] =
+    useState<RecipeTypeWithPopulatedIngredients | null>(null);
   const [nutrition, setNutrition] = useState<NutrutionType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -46,7 +40,7 @@ export default function RecipePage({ params }: Context) {
           fetch(`/api/recipes/${params.id}/nutrition`),
         ]);
 
-        if (!recipeRes.ok) throw new Error("Failed to fetch recipe");
+        if (!recipeRes.ok) throw new Error('Failed to fetch recipe');
         const recipeData = await recipeRes.json();
         setRecipe(recipeData);
 
@@ -55,7 +49,7 @@ export default function RecipePage({ params }: Context) {
           setNutrition(nutritionData);
         }
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       } finally {
         setIsLoading(false);
       }
@@ -66,7 +60,7 @@ export default function RecipePage({ params }: Context) {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8 flex justify-center">
+      <div className='container mx-auto py-8 flex justify-center'>
         <p>Loading...</p>
       </div>
     );
@@ -74,42 +68,42 @@ export default function RecipePage({ params }: Context) {
 
   if (!recipe) {
     return (
-      <div className="container mx-auto py-8 flex justify-center">
-        <div className="text-center pt-10">
-          <Logo className="text-5xl md:text-9xl" />
-          <p className="mt-4 text-2xl font-bold text-black">Recipe not found</p>
+      <div className='container mx-auto py-8 flex justify-center'>
+        <div className='text-center pt-10'>
+          <Logo className='text-5xl md:text-9xl' />
+          <p className='mt-4 text-2xl font-bold text-black'>Recipe not found</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto pt-3 pb-5">
+    <div className='container mx-auto pt-3 pb-5'>
       <Navbar />
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl font-bold">{recipe.name}</CardTitle>
-          <div className="flex gap-2 mt-2">
+          <CardTitle className='text-3xl font-bold'>{recipe.name}</CardTitle>
+          <div className='flex gap-2 mt-2'>
             <Badge>{recipe.difficulty}</Badge>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
+          <div className='space-y-6'>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Description</h3>
-              <p className="text-gray-600">{recipe.description}</p>
+              <h3 className='text-xl font-semibold mb-2'>Description</h3>
+              <p className='text-gray-600'>{recipe.description}</p>
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2">Time</h3>
-              <div className="flex gap-4">
+              <h3 className='text-xl font-semibold mb-2'>Time</h3>
+              <div className='flex gap-4'>
                 <p>Prep: {recipe.prepTime} min</p>
                 <p>Cook: {recipe.cookTime} min</p>
               </div>
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2">Ingredients</h3>
+              <h3 className='text-xl font-semibold mb-2'>Ingredients</h3>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -131,10 +125,10 @@ export default function RecipePage({ params }: Context) {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2">Steps</h3>
-              <ol className="list-decimal list-inside space-y-2">
+              <h3 className='text-xl font-semibold mb-2'>Steps</h3>
+              <ol className='list-decimal list-inside space-y-2'>
                 {recipe.steps.map((step: string, index: number) => (
-                  <li key={index} className="text-gray-600">
+                  <li key={index} className='text-gray-600'>
                     {step}
                   </li>
                 ))}
@@ -143,7 +137,7 @@ export default function RecipePage({ params }: Context) {
 
             {nutrition && (
               <div>
-                <h3 className="text-xl font-semibold mb-2">Nutrition Facts</h3>
+                <h3 className='text-xl font-semibold mb-2'>Nutrition Facts</h3>
                 <Table>
                   <TableBody>
                     <TableRow>

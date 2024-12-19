@@ -1,10 +1,16 @@
-import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
-import connectDB from "@/lib/connectToDatabase";
-import User from "@/models/User";
-import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
+import { getServerSessionProcessed, processApiHandler } from '@/lib/apiUtils';
+import connectDB from '@/lib/connectToDatabase';
+import { User } from '@/models/User';
+import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required environment variable: STRIPE_SECRET_KEY');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2024-11-20.acacia',
+});
 
 const handlePOST = async (_req: NextRequest) => {
   await connectDB();
@@ -14,30 +20,30 @@ const handlePOST = async (_req: NextRequest) => {
   const user = await User.findById(session.user.id);
 
   if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
 
   const product = await stripe.products.create({
-    name: "Plus Subscription",
-    description: "Unlock unlimited access to all features",
-    images: ["https://i.imgur.com/XeCUkMO.png"],
+    name: 'Plus Subscription',
+    description: 'Unlock unlimited access to all features',
+    images: ['https://i.imgur.com/XeCUkMO.png'],
   });
 
   const priceObject = await stripe.prices.create({
     product: product.id,
     unit_amount: 500, // Price in cents
-    currency: "usd",
+    currency: 'usd',
   });
 
   const checkoutSession = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
+    payment_method_types: ['card'],
     line_items: [
       {
         price: priceObject.id,
         quantity: 1,
       },
     ],
-    mode: "payment",
+    mode: 'payment',
     success_url: `http://localhost:3000/user/upgrade-confirmed`,
     cancel_url: `http://localhost:3000/pricing`,
   });

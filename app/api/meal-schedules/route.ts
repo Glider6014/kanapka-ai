@@ -1,15 +1,15 @@
-import { NextResponse } from "next/server";
-import connectDB from "@/lib/connectToDatabase";
-import { MealSchedule } from "@/models/MealSchedule";
-import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
+import { NextResponse } from 'next/server';
+import connectDB from '@/lib/connectToDatabase';
+import { MealSchedule } from '@/models/MealSchedule';
+import { getServerSessionProcessed, processApiHandler } from '@/lib/apiUtils';
 
 interface Schedule {
-  _id: string;
+  id: string;
   date: string;
   duration: number;
   recipeId: {
     name: string;
-    _id: string;
+    id: string;
   };
 }
 
@@ -21,7 +21,7 @@ const handleGET = async () => {
   const schedules: Schedule[] = await MealSchedule.find({
     userId: session.user.id,
   })
-    .populate("recipeId", "name")
+    .populate('recipeId', 'name')
     .lean<Schedule[]>();
 
   const events = schedules.map((schedule: Schedule) => {
@@ -33,13 +33,13 @@ const handleGET = async () => {
     if (!recipe) return null;
 
     return {
-      id: schedule._id.toString(),
+      id: schedule.id,
       title: schedule.recipeId.name,
       start: startDate.toISOString(),
       end: endDate.toISOString(),
       allDay: false,
       duration: schedule.duration,
-      recipeId: schedule.recipeId._id.toString(),
+      recipeId: schedule.recipeId.id,
     };
   });
 

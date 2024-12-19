@@ -113,7 +113,8 @@ body {
 }
 
 .wave-bottom {
-  background: url('https://images.ctfassets.net/rz1oowkt5gyp/7lTGeXbBRNRLaVk2MdBjtJ/99c266ed4cb8cc63bd0c388071f01ff6/white-wave-bg.svg') no-repeat center bottom;
+  background: url('https://images.ctfassets.net/rz1oowkt5gyp/7lTGeXbBRNRLaVk2MdBjtJ/99c266ed4cb8cc63bd0c388071f01ff6/white-wave-bg.svg')
+    no-repeat center bottom;
   background-size: cover;
   height: 30%;
 }
