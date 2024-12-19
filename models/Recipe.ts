@@ -58,14 +58,14 @@ RecipeSchema.methods.calculateNutrition = async function (
   const nutritionTotals = ingredients.reduce((acc, ing) => {
     const factor = ing.amount / unitToFactor[ing.unit];
 
-    Object.keys(ing.nutrition).forEach((key) => {
-      const value = ing.nutrition[key as keyof Nutrition];
-
-      acc[key as keyof Nutrition] += value * factor;
-    });
+    for (const key of Object.keys(emptyNutrition) as (keyof Nutrition)[]) {
+      acc[key] += ing.nutrition[key] * factor;
+    }
 
     return acc;
   }, emptyNutrition);
+
+  console.log(nutritionTotals);
 
   return nutritionTotals;
 };
