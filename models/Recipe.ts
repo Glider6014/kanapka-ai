@@ -65,8 +65,6 @@ RecipeSchema.methods.calculateNutrition = async function (
     return acc;
   }, emptyNutrition);
 
-  console.log(nutritionTotals);
-
   return nutritionTotals;
 };
 

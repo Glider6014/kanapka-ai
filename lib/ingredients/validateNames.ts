@@ -82,7 +82,10 @@ export async function validateIngredient(
   ingredient: string
 ): Promise<ValidationResult> {
   const response = await chain.invoke({ ingredient, forbiddenExamples });
-  console.log(ingredient, response.content === 'true');
+  const isValid = response.content === 'true';
+
+  console.log(`Validating ingredient "${ingredient}": ${isValid}`);
+
   return {
     ingredient,
     isValid: response.content === 'true',
