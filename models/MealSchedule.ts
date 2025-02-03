@@ -1,7 +1,16 @@
-import mongoose, { Schema } from "mongoose";
-import "./Recipe";
+import { Document, model, Model, models, Schema } from 'mongoose';
+import {
+  createBaseToJSON,
+  createBaseToObject,
+  InferBaseSchemaType,
+} from './BaseSchema';
+import {
+  Recipe,
+  RecipeType,
+  RecipeTypeWithPopulatedIngredients,
+} from './Recipe';
 
-const mealScheduleSchema = new Schema(
+const MealScheduleSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -11,7 +20,7 @@ const mealScheduleSchema = new Schema(
     recipeId: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "Recipe",
+      ref: 'Recipe',
     },
     date: {
       type: Date,
@@ -27,17 +36,40 @@ const mealScheduleSchema = new Schema(
   }
 );
 
-mealScheduleSchema.pre("save", async function (next) {
-  if (this.isNew) {
-    const Recipe = mongoose.model("Recipe");
-    const recipe = await Recipe.findById(this.recipeId);
-    if (recipe) {
-      this.duration = recipe.prepTime + recipe.cookTime;
+MealScheduleSchema.set('toJSON', createBaseToJSON());
+MealScheduleSchema.set('toObject', createBaseToObject());
+
+MealScheduleSchema.pre(
+  'save',
+  async function (this: Document & MealScheduleType, next) {
+    if (this.isNew) {
+      const recipe = await Recipe.findById(this.recipeId);
+      if (recipe) {
+        this.duration = recipe.prepTime + recipe.cookTime;
+      }
     }
+    next();
   }
-  next();
-});
+);
+
+export type MealScheduleType = InferBaseSchemaType<typeof MealScheduleSchema>;
 
 export const MealSchedule =
-  mongoose.models.MealSchedule ||
-  mongoose.model("MealSchedule", mealScheduleSchema);
+  (models.MealSchedule as Model<MealScheduleType>) ||
+  model('MealSchedule', MealScheduleSchema);
+
+// <-- Additional populated types -->
+
+export type MealScheduleTypeWithPopulatedRecipe = Omit<
+  MealScheduleType,
+  'recipeId'
+> & {
+  recipeId: RecipeType;
+};
+
+export type MealScheduleTypeWithPopulatedRecipeWithPopulatedIngredients = Omit<
+  MealScheduleType,
+  'recipeId'
+> & {
+  recipeId: RecipeTypeWithPopulatedIngredients;
+};

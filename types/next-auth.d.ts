@@ -1,7 +1,7 @@
-import "next-auth";
-import { DefaultSession, DefaultJWT } from "next-auth";
+import 'next-auth';
+import { DefaultSession, DefaultJWT } from 'next-auth';
 
-declare module "next-auth" {
+declare module 'next-auth' {
   interface User {
     id: string;
     email: string;
@@ -19,11 +19,11 @@ declare module "next-auth" {
       displayName: string;
       permissions: string[];
       subscriptionType: string;
-    } & DefaultSession["user"];
+    } & DefaultSession['user'];
   }
 }
 
-declare module "next-auth/jwt" {
+declare module 'next-auth/jwt' {
   interface JWT extends DefaultJWT {
     id: string;
     email: string;

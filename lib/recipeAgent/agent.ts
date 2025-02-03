@@ -1,13 +1,13 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { ToolNode } from "@langchain/langgraph/prebuilt";
-import { StateGraph, MessagesAnnotation } from "@langchain/langgraph";
-import { tools } from "./tools";
-import { SystemMessage } from "@langchain/core/messages";
+import { ChatOpenAI } from '@langchain/openai';
+import { ToolNode } from '@langchain/langgraph/prebuilt';
+import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
+import { tools } from './tools';
+import { SystemMessage } from '@langchain/core/messages';
 
 const toolNode = new ToolNode(tools);
 
 const model = new ChatOpenAI({
-  modelName: "gpt-4o-mini",
+  modelName: 'gpt-4o-mini',
   temperature: 0.7,
   cache: true,
 }).bindTools(tools);
@@ -45,7 +45,7 @@ Remember:
 
 function shouldContinue({ messages }: typeof MessagesAnnotation.State) {
   const lastMessage = messages[messages.length - 1];
-  return lastMessage?.additional_kwargs?.tool_calls ? "tools" : "__end__";
+  return lastMessage?.additional_kwargs?.tool_calls ? 'tools' : '__end__';
 }
 
 async function callModel(state: typeof MessagesAnnotation.State) {
@@ -58,17 +58,17 @@ async function callModel(state: typeof MessagesAnnotation.State) {
     const response = await model.invoke(state.messages);
     return { messages: [...state.messages, response] };
   } catch (error) {
-    console.error("Error in model invocation:", error);
+    console.error('Error in model invocation:', error);
     throw error;
   }
 }
 
 const workflow = new StateGraph(MessagesAnnotation)
-  .addNode("agent", callModel)
-  .addEdge("__start__", "agent")
-  .addNode("tools", toolNode)
-  .addEdge("tools", "agent")
-  .addConditionalEdges("agent", shouldContinue);
+  .addNode('agent', callModel)
+  .addEdge('__start__', 'agent')
+  .addNode('tools', toolNode)
+  .addEdge('tools', 'agent')
+  .addConditionalEdges('agent', shouldContinue);
 
 const agent = workflow.compile();
 

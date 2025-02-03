@@ -1,11 +1,15 @@
-import { Schema, InferSchemaType, Model, model, models } from "mongoose";
+import { Schema, Model, model, models } from 'mongoose';
+import {
+  createBaseToJSON,
+  createBaseToObject,
+  InferBaseSchemaType,
+} from './BaseSchema';
 
 const MealPlannerHistorySchema = new Schema(
   {
-    _id: { type: Schema.Types.ObjectId, auto: true, required: true },
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     preferences: {
@@ -25,10 +29,13 @@ const MealPlannerHistorySchema = new Schema(
   }
 );
 
-export type MealPlannerHistoryType = InferSchemaType<
+MealPlannerHistorySchema.set('toJSON', createBaseToJSON());
+MealPlannerHistorySchema.set('toObject', createBaseToObject());
+
+export type MealPlannerHistoryType = InferBaseSchemaType<
   typeof MealPlannerHistorySchema
 >;
 
 export const MealPlannerHistory =
   (models.MealPlannerHistory as Model<MealPlannerHistoryType>) ||
-  model("MealPlannerHistory", MealPlannerHistorySchema);
+  model('MealPlannerHistory', MealPlannerHistorySchema);

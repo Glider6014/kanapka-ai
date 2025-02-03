@@ -37,12 +37,12 @@ interface CalendarProps {
   onEventDelete?: (event: CustomEvent) => Promise<void>;
 }
 
-const Calendar: React.FC<CalendarProps> = ({
+const Calendar = ({
   events,
   setEvents,
   onEventDrop,
   onEventResize,
-}) => {
+}: CalendarProps) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<View>('week');
 

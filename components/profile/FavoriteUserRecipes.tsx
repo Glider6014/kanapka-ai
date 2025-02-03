@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import Link from 'next/link';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Pagination,
   PaginationContent,
@@ -9,22 +9,21 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from '@/components/ui/pagination';
+import { RecipeType } from '@/models/Recipe';
 
-type Recipe = {
-  _id: string;
-  name: string;
-  description: string;
+type FavoriteUserRecipesProps = {
+  userId: string;
 };
 
-const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
-  const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
+const FavoriteUserRecipes = ({ userId }: FavoriteUserRecipesProps) => {
+  const [favoriteRecipes, setFavoriteRecipes] = useState<RecipeType[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const limitRecipesPerPage = 12;
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchFavoriteRecipes = async () => {
+  const fetchFavoriteRecipes = useCallback(async () => {
     try {
       const response = await fetch(`/api/profile/${userId}`);
       const data = await response.json();
@@ -34,16 +33,16 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
         Math.ceil((data.favoriteRecipes || []).length / limitRecipesPerPage)
       );
     } catch (error) {
-      console.error("Error fetching favorite recipes:", error);
+      console.error('Error fetching favorite recipes:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     setLoading(true);
     fetchFavoriteRecipes();
-  }, [userId]);
+  }, [fetchFavoriteRecipes]);
 
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) {
@@ -77,29 +76,29 @@ const FavoriteUserRecipes = ({ userId }: { userId: string }) => {
   return (
     <>
       {favoriteRecipes.length === 0 ? (
-        <p className="text-gray-600">No favorite recipes found.</p>
+        <p className='text-gray-600'>No favorite recipes found.</p>
       ) : (
         <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
             {currentRecipes.map((recipe) => (
               <div
-                key={recipe._id}
-                className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center"
+                key={recipe.id}
+                className='bg-white p-4 rounded-lg shadow-lg flex flex-col items-center'
               >
-                <Link href={`/recipes/${recipe._id}`}>
-                  <h3 className="text-lg font-semibold text-gray-800 text-center">
+                <Link href={`/recipes/${recipe.id}`}>
+                  <h3 className='text-lg font-semibold text-gray-800 text-center'>
                     {recipe.name}
                   </h3>
                 </Link>
-                <p className="text-sm text-gray-600 text-center">
+                <p className='text-sm text-gray-600 text-center'>
                   {recipe.description}
                 </p>
               </div>
             ))}
           </div>
 
-          <Pagination className="mt-5 overflow-x-auto">
-            <PaginationContent className="cursor-pointer">
+          <Pagination className='mt-5 overflow-x-auto'>
+            <PaginationContent className='cursor-pointer'>
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => handlePageChange(currentPage - 1)}

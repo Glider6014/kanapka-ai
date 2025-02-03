@@ -1,11 +1,11 @@
-import validateEnv from "./env.validation";
+import validateEnv from './env.validation';
 
 const validators: Record<string, () => void | Promise<void>> = {
-  "Environment Variables": validateEnv,
+  'Environment Variables': validateEnv,
 };
 
 async function runValidations() {
-  console.log("\n🔍 Running preflight checks...\n");
+  console.log('\n🔍 Running preflight checks...\n');
 
   for (const [name, fn] of Object.entries(validators)) {
     try {
@@ -22,7 +22,7 @@ async function runValidations() {
     }
   }
 
-  console.log("\n✅ All preflight checks passed!\n");
+  console.log('\n✅ All preflight checks passed!\n');
 }
 
 runValidations();

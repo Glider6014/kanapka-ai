@@ -1,18 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/connectToDatabase";
-import { MealSchedule } from "@/models/MealSchedule";
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/lib/connectToDatabase';
+import { MealSchedule } from '@/models/MealSchedule';
 import {
   Context,
   getServerSessionProcessed,
   processApiHandler,
-} from "@/lib/apiUtils";
+} from '@/lib/apiUtils';
 
 const handlePOST = async (req: NextRequest, { params }: Context) => {
   const session = await getServerSessionProcessed();
 
   const { date, duration } = await req.json();
   if (!date) {
-    return NextResponse.json({ error: "Date is required" }, { status: 400 });
+    return NextResponse.json({ error: 'Date is required' }, { status: 400 });
   }
 
   const updateData: { date: Date; duration?: number } = {
@@ -31,12 +31,12 @@ const handlePOST = async (req: NextRequest, { params }: Context) => {
   );
 
   if (!schedule) {
-    return NextResponse.json({ error: "Schedule not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Schedule not found' }, { status: 404 });
   }
 
   const startTime = new Date(schedule.date);
   const endTime = new Date(startTime);
-  endTime.setMinutes(startTime.getMinutes() + schedule.duration);
+  endTime.setMinutes(startTime.getMinutes() + (schedule.duration || 15));
 
   return NextResponse.json({
     schedule: {
@@ -59,7 +59,7 @@ const handleDELETE = async (req: NextRequest, { params }: Context) => {
   });
 
   if (!schedule) {
-    return NextResponse.json({ error: "Schedule not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Schedule not found' }, { status: 404 });
   }
 
   return NextResponse.json({ success: true });

@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/connectToDatabase";
-import User from "@/models/User";
-import { Session, User as UserType } from "next-auth";
-import { z } from "zod";
-import { UserPermissions } from "@/lib/permissions";
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/lib/connectToDatabase';
+import { User } from '@/models/User';
+import { Session, User as UserType } from 'next-auth';
+import { z } from 'zod';
+import { UserPermissions } from '@/lib/permissions';
 import {
   Context,
   getServerSessionProcessed,
   processApiHandler,
-} from "@/lib/apiUtils";
+} from '@/lib/apiUtils';
 
 function canEditUser(user: UserType, session: Session) {
   return (
@@ -35,7 +35,7 @@ const handlePOST = async (req: NextRequest, { params }: Context) => {
   const { id: userId } = params;
 
   if (!canEditUser(session.user, session)) {
-    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
   }
 
   const body = await req.json();
@@ -44,7 +44,7 @@ const handlePOST = async (req: NextRequest, { params }: Context) => {
   if (!validationResult.success) {
     return NextResponse.json(
       {
-        message: "Invalid input",
+        message: 'Invalid input',
         errors: validationResult.error.errors,
       },
       { status: 400 }
@@ -60,11 +60,11 @@ const handlePOST = async (req: NextRequest, { params }: Context) => {
   );
 
   if (!updatedUser) {
-    return NextResponse.json({ message: "User not found" }, { status: 404 });
+    return NextResponse.json({ message: 'User not found' }, { status: 404 });
   }
 
   return NextResponse.json({
-    message: "User updated successfully",
+    message: 'User updated successfully',
   });
 };
 

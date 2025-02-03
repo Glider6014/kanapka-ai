@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { getServerSessionProcessed, processApiHandler } from "@/lib/apiUtils";
+import { NextResponse } from 'next/server';
+import { getServerSessionProcessed, processApiHandler } from '@/lib/apiUtils';
 
 const handleGET = async () => {
   const session = await getServerSessionProcessed();

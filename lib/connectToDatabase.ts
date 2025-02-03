@@ -1,9 +1,9 @@
-import mongoose, { ConnectOptions } from "mongoose";
+import mongoose, { ConnectOptions } from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
 
 if (!MONGODB_URI) {
-  throw new Error("You must provide a MONGODB_URI environment variable");
+  throw new Error('You must provide a MONGODB_URI environment variable');
 }
 
 // Global cache to store the connection
@@ -31,7 +31,7 @@ async function connectDB(): Promise<mongoose.Connection> {
   cached.conn = (await cached.promise).connection;
 
   if (!cached.conn) {
-    throw new Error("Failed to connect to the database");
+    throw new Error('Failed to connect to the database');
   }
 
   return cached.conn;

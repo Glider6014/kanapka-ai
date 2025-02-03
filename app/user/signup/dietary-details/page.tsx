@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,35 +11,35 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Plus, Check, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/alert-dialog';
+import { Plus, Check, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 // Enum for options
 enum PreferencesEnum {
-  Vegan = "Veganism",
-  Vegetarian = "Vegetarianism",
-  Paleo = "Paleo",
-  Keto = "Keto",
-  GlutenFree = "Gluten-free",
-  Mediterranean = "Mediterranean",
-  Christianity = "Christianity",
-  Islam = "Islam",
-  Judaism = "Judaism",
-  Hinduism = "Hinduism",
-  Buddhism = "Buddhism",
-  Atheism = "Atheism",
-  Milk = "Milk",
-  Nuts = "Nuts",
-  Gluten = "Gluten",
-  Shellfish = "Seafood",
-  Eggs = "Eggs",
-  Soy = "Soy",
-  NotSpecified = "I prefer not to specify",
+  Vegan = 'Veganism',
+  Vegetarian = 'Vegetarianism',
+  Paleo = 'Paleo',
+  Keto = 'Keto',
+  GlutenFree = 'Gluten-free',
+  Mediterranean = 'Mediterranean',
+  Christianity = 'Christianity',
+  Islam = 'Islam',
+  Judaism = 'Judaism',
+  Hinduism = 'Hinduism',
+  Buddhism = 'Buddhism',
+  Atheism = 'Atheism',
+  Milk = 'Milk',
+  Nuts = 'Nuts',
+  Gluten = 'Gluten',
+  Shellfish = 'Seafood',
+  Eggs = 'Eggs',
+  Soy = 'Soy',
+  NotSpecified = 'I prefer not to specify',
 }
 
 // Types of preferences
-type PreferenceCategory = "diets" | "religions" | "allergies";
+type PreferenceCategory = 'diets' | 'religions' | 'allergies';
 
 export default function Home() {
   const [diet, setDiet] = useState<string | null>(null);
@@ -62,13 +62,13 @@ export default function Home() {
 
   // Initialisation of selected options when opening a modal
   const openPreferenceModal = (type: PreferenceCategory) => {
-    if (type === "diets") {
+    if (type === 'diets') {
       setSelectedOptions([diet].filter(Boolean) as string[]);
     }
-    if (type === "religions") {
+    if (type === 'religions') {
       setSelectedOptions([religion].filter(Boolean) as string[]);
     }
-    if (type === "allergies") {
+    if (type === 'allergies') {
       setSelectedOptions(allergies);
     }
   };
@@ -91,9 +91,9 @@ export default function Home() {
 
   // Saving preferences
   const saveSelection = (type: PreferenceCategory) => {
-    if (type === "diets") setDiet(selectedOptions[0] || null);
-    if (type === "religions") setReligion(selectedOptions[0] || null);
-    if (type === "allergies") setAllergies(selectedOptions);
+    if (type === 'diets') setDiet(selectedOptions[0] || null);
+    if (type === 'religions') setReligion(selectedOptions[0] || null);
+    if (type === 'allergies') setAllergies(selectedOptions);
     setSelectedOptions([]); //Restart choice
   };
 
@@ -102,21 +102,21 @@ export default function Home() {
     type: PreferenceCategory,
     value: string | string[]
   ) => {
-    if (type === "diets") setDiet(null);
-    if (type === "religions") setReligion(null);
-    if (type === "allergies" && typeof value === "string")
+    if (type === 'diets') setDiet(null);
+    if (type === 'religions') setReligion(null);
+    if (type === 'allergies' && typeof value === 'string')
       setAllergies((prev) => prev.filter((item) => item !== value));
   };
 
   // Rendering options in modals
   const renderOptions = (type: PreferenceCategory) => {
-    const isSingleSelect = type === "diets" || type === "religions";
+    const isSingleSelect = type === 'diets' || type === 'religions';
 
     return options[type].map((option) => (
       <div
         key={option}
         className={`flex items-center gap-2 px-4 py-2 rounded-md cursor-pointer ${
-          selectedOptions.includes(option) ? "bg-blue-100" : "hover:bg-gray-100"
+          selectedOptions.includes(option) ? 'bg-blue-100' : 'hover:bg-gray-100'
         }`}
         onClick={() => {
           if (isSingleSelect) setSelectedOptions([option]);
@@ -126,8 +126,8 @@ export default function Home() {
         <Check
           className={`w-4 h-4 ${
             selectedOptions.includes(option)
-              ? "text-purple-700"
-              : "text-gray-300"
+              ? 'text-purple-700'
+              : 'text-gray-300'
           }`}
         />
         <span>{option}</span>
@@ -140,12 +140,12 @@ export default function Home() {
     value: string | null | string[],
     type: PreferenceCategory
   ) => {
-    if (type === "diets" || type === "religions") {
+    if (type === 'diets' || type === 'religions') {
       return value ? (
-        <div className="inline-flex items-center gap-2 bg-gray-100 px-4 py-1 rounded-full text-sm shadow-sm transition-transform transform hover:scale-105 hover:bg-gray-200">
+        <div className='inline-flex items-center gap-2 bg-gray-100 px-4 py-1 rounded-full text-sm shadow-sm transition-transform transform hover:scale-105 hover:bg-gray-200'>
           <span>{value}</span>
           <X
-            className="w-4 h-4 cursor-pointer text-black hover:text-red-600"
+            className='w-4 h-4 cursor-pointer text-black hover:text-red-600'
             onClick={() => removePreference(type, value)}
           />
         </div>
@@ -155,11 +155,11 @@ export default function Home() {
     return (value as string[]).map((pref) => (
       <div
         key={pref}
-        className="inline-flex items-center gap-2 bg-gray-100 px-4 py-1 rounded-full text-sm shadow-sm transition-transform transform hover:scale-105 hover:bg-gray-200"
+        className='inline-flex items-center gap-2 bg-gray-100 px-4 py-1 rounded-full text-sm shadow-sm transition-transform transform hover:scale-105 hover:bg-gray-200'
       >
         <span>{pref}</span>
         <X
-          className="w-4 h-4 cursor-pointer text-black hover:text-red-600"
+          className='w-4 h-4 cursor-pointer text-black hover:text-red-600'
           onClick={() => removePreference(type, pref)}
         />
       </div>
@@ -171,7 +171,7 @@ export default function Home() {
     return (
       <AlertDialog>
         <AlertDialogTrigger onClick={() => openPreferenceModal(type)}>
-          <Plus className="w-6 h-6 cursor-pointer text-purple-700 hover:text-orange-500 transition-transform transform hover:scale-110" />
+          <Plus className='w-6 h-6 cursor-pointer text-purple-700 hover:text-orange-500 transition-transform transform hover:scale-110' />
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -179,16 +179,16 @@ export default function Home() {
               Select {type.charAt(0).toUpperCase() + type.slice(1)}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {type === "allergies"
-                ? "Select multiple options from the list."
-                : "Select one option from the list."}
+              {type === 'allergies'
+                ? 'Select multiple options from the list.'
+                : 'Select one option from the list.'}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className="space-y-2">{renderOptions(type)}</div>
+          <div className='space-y-2'>{renderOptions(type)}</div>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="font-bold hover:bg-gradient-to-r from-purple-700 to-orange-500 transition-transform transform hover:scale-105"
+              className='font-bold hover:bg-gradient-to-r from-purple-700 to-orange-500 transition-transform transform hover:scale-105'
               onClick={() => saveSelection(type)}
             >
               Save
@@ -200,46 +200,46 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="flex flex-col w-full max-w-6xl items-center justify-center">
-        <div className="mb-8">
-          <p className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-700 to-orange-500 bg-clip-text text-transparent text-center">
+    <div className='min-h-screen flex items-center justify-center bg-gray-100'>
+      <div className='flex flex-col w-full max-w-6xl items-center justify-center'>
+        <div className='mb-8'>
+          <p className='text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-700 to-orange-500 bg-clip-text text-transparent text-center'>
             Kanapka AI
           </p>
         </div>
 
-        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md space-y-8">
-          <h1 className="font-bold text-3xl">Dietary preferences</h1>
+        <div className='w-full max-w-md bg-white p-8 rounded-lg shadow-md space-y-8'>
+          <h1 className='font-bold text-3xl'>Dietary preferences</h1>
           {/* Diet Preferences */}
           <div>
-            <div className="flex items-center gap-2 justify-between">
-              <p className="text-2xl font-bold">Diets</p>
-              {renderModal("diets")}
+            <div className='flex items-center gap-2 justify-between'>
+              <p className='text-2xl font-bold'>Diets</p>
+              {renderModal('diets')}
             </div>
-            {renderPreferences(diet, "diets")}
+            {renderPreferences(diet, 'diets')}
           </div>
 
           {/* Religion Preferences */}
           <div>
-            <div className="flex items-center gap-2  justify-between">
-              <p className="text-2xl font-bold">Religions</p>
-              {renderModal("religions")}
+            <div className='flex items-center gap-2  justify-between'>
+              <p className='text-2xl font-bold'>Religions</p>
+              {renderModal('religions')}
             </div>
-            {renderPreferences(religion, "religions")}
+            {renderPreferences(religion, 'religions')}
           </div>
 
           {/* Allergies Preferences */}
           <div>
-            <div className="flex items-center gap-2 justify-between">
-              <p className="text-2xl font-bold">Allergies</p>
-              {renderModal("allergies")}
+            <div className='flex items-center gap-2 justify-between'>
+              <p className='text-2xl font-bold'>Allergies</p>
+              {renderModal('allergies')}
             </div>
-            <div className="flex flex-wrap gap-2">
-              {renderPreferences(allergies, "allergies")}
+            <div className='flex flex-wrap gap-2'>
+              {renderPreferences(allergies, 'allergies')}
             </div>
           </div>
 
-          <Button className="w-full mt-4 font-bold hover:bg-gradient-to-r from-purple-700 to-orange-500 transition-transform transform hover:scale-105">
+          <Button className='w-full mt-4 font-bold hover:bg-gradient-to-r from-purple-700 to-orange-500 transition-transform transform hover:scale-105'>
             Continue
           </Button>
         </div>

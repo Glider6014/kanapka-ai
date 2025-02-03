@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { processApiHandler, getServerSessionProcessed } from "@/lib/apiUtils";
-import Fridge from "@/models/Fridge";
-import connectDB from "@/lib/connectToDatabase";
-import { z } from "zod";
+import { NextRequest, NextResponse } from 'next/server';
+import { processApiHandler, getServerSessionProcessed } from '@/lib/apiUtils';
+import { Fridge } from '@/models/Fridge';
+import connectDB from '@/lib/connectToDatabase';
+import { z } from 'zod';
 
 const handleGET = async () => {
   await connectDB();
@@ -12,11 +12,11 @@ const handleGET = async () => {
   const userId = session.user.id;
   const fridges = await Fridge.find({
     $or: [{ owner: userId }, { members: { $in: [userId] } }],
-  }).populate("members");
+  }).populate('members');
 
   if (fridges.length === 0) {
     const newFridge = new Fridge({
-      name: "Home",
+      name: 'Home',
       owner: userId,
     });
 
@@ -42,7 +42,7 @@ const handlePOST = async (req: NextRequest) => {
 
   if (!validationResult.success) {
     return NextResponse.json(
-      { error: "Invalid input", issues: validationResult.error.issues },
+      { error: 'Invalid input', issues: validationResult.error.issues },
       { status: 400 }
     );
   }

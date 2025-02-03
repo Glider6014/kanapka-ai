@@ -1,11 +1,12 @@
-"use client";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Eye, EyeOff } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { Eye, EyeOff } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -13,16 +14,16 @@ import {
   FormLabel,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { Logo } from "@/components/Logo";
-import { signIn } from "next-auth/react";
+} from '@/components/ui/form';
+import Logo from '@/components/Logo';
+import { signIn } from 'next-auth/react';
 import {
   usernameSchema,
   emailSchema,
   passwordSchema,
   displayNameSchema,
-} from "@/lib/formSchemas/authFormSchemas";
-import { z } from "zod";
+} from '@/lib/formSchemas/authFormSchemas';
+import { z } from 'zod';
 
 const signUpFormSchemaWithConfirmPassword = z
   .object({
@@ -33,8 +34,8 @@ const signUpFormSchemaWithConfirmPassword = z
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
   });
 
 type SignUpFormWithConfirmPasswordData = z.infer<
@@ -48,21 +49,21 @@ export default function Home() {
   const form = useForm<SignUpFormWithConfirmPasswordData>({
     resolver: zodResolver(signUpFormSchemaWithConfirmPassword),
     defaultValues: {
-      username: "",
-      displayName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      username: '',
+      displayName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
   });
 
   //Define a submit handler
   async function onSubmit(values: SignUpFormWithConfirmPasswordData) {
     try {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           username: values.username,
@@ -75,45 +76,45 @@ export default function Home() {
       const data = await response.json();
 
       if (!response.ok) {
-        console.error("Signup error:", data.message);
+        console.error('Signup error:', data.message);
       }
 
-      await signIn("credentials", {
+      await signIn('credentials', {
         emailOrUsername: values.email,
         password: values.password,
-        callbackUrl: "/dashboard",
+        callbackUrl: '/dashboard',
       });
     } catch (error) {
-      console.error("An unexpected error occurred:", error);
+      console.error('An unexpected error occurred:', error);
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="flex flex-col w-[93%] max-w-6xl items-center justify-center">
+    <div className='min-h-screen flex items-center justify-center bg-gray-100'>
+      <div className='flex flex-col w-[93%] max-w-6xl items-center justify-center'>
         {/* Title - Kanapka AI */}
-        <div className="mb-8">
-          <Logo className="text-5xl md:text-6xl" />
+        <div className='mb-8'>
+          <Logo className='text-5xl md:text-6xl' />
         </div>
 
         {/* Form */}
-        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md mx-4 sm:mx-auto">
-          <Tabs defaultValue="account">
-            <TabsContent value="account">
+        <div className='w-full max-w-md bg-white p-8 rounded-lg shadow-md mx-4 sm:mx-auto'>
+          <Tabs defaultValue='account'>
+            <TabsContent value='account'>
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-6"
+                  className='space-y-6'
                 >
                   {/* Input - username */}
                   <FormField
                     control={form.control}
-                    name="username"
+                    name='username'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-lg">Username</FormLabel>
+                        <FormLabel className='text-lg'>Username</FormLabel>
                         <FormControl>
-                          <Input placeholder="Username" {...field} />
+                          <Input placeholder='Username' {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -123,12 +124,12 @@ export default function Home() {
                   {/* Input - displayName */}
                   <FormField
                     control={form.control}
-                    name="displayName"
+                    name='displayName'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-lg">Display Name</FormLabel>
+                        <FormLabel className='text-lg'>Display Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Display Name" {...field} />
+                          <Input placeholder='Display Name' {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -138,12 +139,12 @@ export default function Home() {
                   {/* Input - email */}
                   <FormField
                     control={form.control}
-                    name="email"
+                    name='email'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-lg">Email</FormLabel>
+                        <FormLabel className='text-lg'>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="Email" {...field} />
+                          <Input placeholder='Email' {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -153,27 +154,27 @@ export default function Home() {
                   {/* Input - password */}
                   <FormField
                     control={form.control}
-                    name="password"
+                    name='password'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-lg">Password</FormLabel>
+                        <FormLabel className='text-lg'>Password</FormLabel>
                         <FormControl>
-                          <div className="relative">
+                          <div className='relative'>
                             <Input
-                              type={showPassword ? "text" : "password"}
-                              placeholder="Password"
+                              type={showPassword ? 'text' : 'password'}
+                              placeholder='Password'
                               {...field}
-                              className="pr-10"
+                              className='pr-10'
                             />
                             <button
-                              type="button"
+                              type='button'
                               onClick={() => setShowPassword(!showPassword)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                              className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-500'
                             >
                               {showPassword ? (
-                                <Eye className="w-5 h-5" />
+                                <Eye className='w-5 h-5' />
                               ) : (
-                                <EyeOff className="w-5 h-5" />
+                                <EyeOff className='w-5 h-5' />
                               )}
                             </button>
                           </div>
@@ -186,31 +187,31 @@ export default function Home() {
                   {/* Input - re-enter password*/}
                   <FormField
                     control={form.control}
-                    name="confirmPassword"
+                    name='confirmPassword'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-lg">
+                        <FormLabel className='text-lg'>
                           Re-enter Password
                         </FormLabel>
                         <FormControl>
-                          <div className="relative">
+                          <div className='relative'>
                             <Input
-                              type={showConfirmPassword ? "text" : "password"}
-                              placeholder="Re-enter Password"
+                              type={showConfirmPassword ? 'text' : 'password'}
+                              placeholder='Re-enter Password'
                               {...field}
-                              className="pr-10"
+                              className='pr-10'
                             />
                             <button
-                              type="button"
+                              type='button'
                               onClick={() =>
                                 setShowConfirmPassword(!showConfirmPassword)
                               }
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                              className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-500'
                             >
                               {showConfirmPassword ? (
-                                <Eye className="w-5 h-5" />
+                                <Eye className='w-5 h-5' />
                               ) : (
-                                <EyeOff className="w-5 h-5" />
+                                <EyeOff className='w-5 h-5' />
                               )}
                             </button>
                           </div>
@@ -222,20 +223,20 @@ export default function Home() {
 
                   {/* Button - Sign up */}
                   <Button
-                    type="submit"
-                    className="w-full mt-4 font-bold hover:bg-gradient-to-r from-purple-700 to-orange-500 transition-transform transform hover:scale-105"
+                    type='submit'
+                    className='w-full mt-4 font-bold hover:bg-gradient-to-r from-purple-700 to-orange-500 transition-transform transform hover:scale-105'
                   >
                     Sign up
                   </Button>
                 </form>
 
                 {/* Link to login form */}
-                <div className="w-full border-t border-gray-200 mt-6 pt-4 text-center">
-                  <p className="text-sm text-gray-700">
-                    Already have an account?{" "}
+                <div className='w-full border-t border-gray-200 mt-6 pt-4 text-center'>
+                  <p className='text-sm text-gray-700'>
+                    Already have an account?{' '}
                     <a
-                      href="/user/signin"
-                      className="text-purple-700 font-bold hover:underline"
+                      href='/user/signin'
+                      className='text-purple-700 font-bold hover:underline'
                     >
                       Log in
                     </a>
